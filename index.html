@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>روابط الدفع Paymob</title>
   <style>
     body {
@@ -26,33 +26,31 @@
   </style>
 </head>
 <body>
-
   <h1>اختار طريقة الدفع</h1>
-  <button onclick="createPayment('card')">💳 بطاقة</button>
-  <button onclick="createPayment('wallet')">📱 محفظة</button>
-  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
+  <input type="number" id="amount" placeholder="المبلغ بالجنيه" style="padding:10px;border-radius:8px;border:none;width:200px;text-align:center;">
+  <br><br>
+  <button onclick="pay('card')">💳 بطاقة</button>
+  <button onclick="pay('wallet')">📱 محفظة</button>
+  <button onclick="pay('kiosk')">🏧 كيوسك (فوري)</button>
 
   <script>
-    async function createPayment(type) {
-      try {
-        const res = await fetch("/.netlify/functions/create-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ integration_type: type })
-        });
-        const data = await res.json();
-        console.log("Response:", data);
+    async function pay(type) {
+      const amount = document.getElementById("amount").value || 10;
+      const res = await fetch("/api/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount, type }),
+      });
+      const data = await res.json();
 
-        if (data.ok && data.payment_url) {
-          window.location.href = data.payment_url; // 👈 يفتح صفحة الدفع مباشرة
-        } else {
-          alert("خطأ أثناء إنشاء الرابط:\n" + JSON.stringify(data));
-        }
-      } catch (err) {
-        alert("حدث خطأ في الاتصال: " + err.message);
+      if (data.type === "kiosk") {
+        alert("رقم فوري الخاص بك: " + data.ref);
+      } else if (data.url) {
+        window.open(data.url, "_blank");
+      } else {
+        alert("حدث خطأ أثناء إنشاء الرابط");
       }
     }
   </script>
-
 </body>
 </html>
