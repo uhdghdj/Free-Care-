@@ -1,27 +1,63 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <title>دفع Paymob</title>
-  </head>
-  <body style="font-family: Cairo; text-align: center; margin-top: 50px;">
-    <h2>اختبار الدفع عبر Paymob</h2>
-    <input id="amount" type="number" placeholder="المبلغ بالجنيه" />
-    <button id="pay">ادفع الآن</button>
-    <p id="link"></p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>روابط الدفع</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background: linear-gradient(180deg, #0b6df0, #0b84ff);
+      color: white;
+      text-align: center;
+      padding-top: 80px;
+    }
+    h2 {
+      margin-bottom: 40px;
+    }
+    button {
+      background-color: white;
+      color: #0b6df0;
+      border: none;
+      padding: 15px 25px;
+      margin: 10px;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background-color: #0b6df0;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h2>اختر طريقة الدفع</h2>
+  <button onclick="pay('card')">💳 بطاقة</button>
+  <button onclick="pay('wallet')">📱 محفظة</button>
+  <button onclick="pay('kiosk')">🏧 كيوسك</button>
 
-    <script>
-      document.getElementById("pay").onclick = async () => {
-        const amount = document.getElementById("amount").value;
+  <script>
+    async function pay(method) {
+      try {
         const res = await fetch("/.netlify/functions/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount }),
+          body: JSON.stringify({ integration_type: method, amount: 100 })
         });
         const data = await res.json();
-        document.getElementById("link").innerHTML =
-          `<a href="${data.iframeUrl}" target="_blank">اذهب إلى صفحة الدفع</a>`;
-      };
-    </script>
-  </body>
-</html>
+
+        if (data.redirect_url) {
+          // فتح صفحة الدفع الأصلية مباشرة
+          window.location.href = data.redirect_url;
+        } else {
+          alert("حدث خطأ في إنشاء الرابط: " + JSON.stringify(data));
+        }
+      } catch (err) {
+        alert("فشل الاتصال بالخادم");
+      }
+    }
+  </script>
+</body>
+  </html>
