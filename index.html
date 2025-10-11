@@ -1,162 +1,227 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>بوابة الدفع</title>
-  <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      background: linear-gradient(180deg, #0b6df0, #0b84ff);
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      padding: 40px 15px;
-    }
-
-    h1 {
-      margin-bottom: 25px;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      background: #fff;
-      color: #0b6df0;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #e2e2e2;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: #fff;
-      color: #000;
-      border-radius: 15px;
-      padding: 25px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-
-    .modal-content h2 {
-      color: #0b6df0;
-      margin-bottom: 10px;
-    }
-
-    .ref-box {
-      background: #f4f6fb;
-      border-radius: 10px;
-      padding: 15px;
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      margin: 10px 0;
-    }
-
-    .copy-btn {
-      background: #0b6df0;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .copy-btn:hover {
-      background: #0957c3;
-    }
-  </style>
-</head>
-<body>
-  <h1>اختر طريقة الدفع</h1>
-  <div class="buttons">
-    <button onclick="pay('card')">💳 بطاقة</button>
-    <button onclick="pay('wallet')">📱 محفظة</button>
-    <button onclick="pay('kiosk')">🏧 كيوسك</button>
-  </div>
-
-  <!-- نافذة منبثقة للنتيجة -->
-  <div class="modal" id="resultModal">
-    <div class="modal-content" id="modalContent">
-      <h2>جارٍ المعالجة...</h2>
-    </div>
-  </div>
-
-  <script>
-    async function pay(type) {
-      const modal = document.getElementById("resultModal");
-      const content = document.getElementById("modalContent");
-      modal.style.display = "flex";
-      content.innerHTML = "<h2>⏳ جاري إنشاء الطلب...</h2>";
-
-      try {
-        const res = await fetch("/.netlify/functions/pay", {
-          method: "POST",
-          body: JSON.stringify({ integration_type: type }),
-        });
-        const data = await res.json();
-
-        if (!data.ok) {
-          content.innerHTML = `<h2>❌ فشل العملية</h2><p>${data.error || "حدث خطأ غير متوقع"}</p>`;
-          return;
-        }
-
-        // ✅ لو كيوسك
-        if (data.type === "kiosk") {
-          content.innerHTML = `
-            <h2>✅ تم إنشاء رقم الدفع</h2>
-            <p>استخدم الرقم التالي للدفع في أي ماكينة فوري أو مصاري:</p>
-            <div class="ref-box" id="refBox">${data.bill_reference}</div>
-            <button class="copy-btn" onclick="copyRef()">📋 نسخ الرقم</button>
-            <p style="margin-top:10px;font-size:14px;">اذهب إلى ماكينة فوري أو مصاري > اختر Paymob أو كود الدفع > أدخل الرقم لإتمام العملية.</p>
-          `;
-          return;
-        }
-
-        // 💳 أو Wallet
-        window.location.href = data.payment_url;
-
-      } catch (e) {
-        content.innerHTML = `<h2>⚠️ خطأ</h2><p>${e.message}</p>`;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوابة الدفع | Paymob</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+      body {
+        font-family: "Cairo", sans-serif;
+        background: linear-gradient(180deg, #0b6df0, #0b84ff);
+        color: #fff;
+        text-align: center;
+        margin: 0;
+        padding: 40px 15px;
       }
-    }
 
-    function copyRef() {
-      const ref = document.getElementById("refBox").textContent;
-      navigator.clipboard.writeText(ref);
-      alert("تم نسخ رقم الدفع ✅");
-    }
+      h1 {
+        margin-bottom: 25px;
+        font-size: 28px;
+      }
 
-    // إغلاق المودال عند الضغط بالخارج
-    window.onclick = (e) => {
-      const modal = document.getElementById("resultModal");
-      if (e.target === modal) modal.style.display = "none";
-    };
-  </script>
-</body>
-  </html>
+      .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        background: #fff;
+        color: #0b6df0;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 26px;
+        font-size: 17px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        transform: scale(1.05);
+      }
+
+      /* ===== Modal ===== */
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+      }
+
+      .modal-content {
+        background: #fff;
+        color: #000;
+        border-radius: 18px;
+        padding: 35px 25px;
+        width: 90%;
+        max-width: 430px;
+        text-align: center;
+        position: relative;
+        animation: slideUp 0.3s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .close {
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #999;
+      }
+
+      .loader {
+        border: 5px solid #eee;
+        border-top: 5px solid #0b6df0;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .success-icon {
+        font-size: 60px;
+        color: #0b6df0;
+        margin-bottom: 10px;
+      }
+
+      .ref-box {
+        background: #f5f8ff;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 22px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        margin: 15px 0;
+        color: #0b6df0;
+        border: 2px dashed #0b6df0;
+      }
+
+      .copy-btn {
+        background: #0b6df0;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 25px;
+        cursor: pointer;
+        font-size: 15px;
+        transition: 0.2s;
+      }
+
+      .copy-btn:hover {
+        background: #0957c3;
+      }
+
+      .info {
+        font-size: 14px;
+        margin-top: 15px;
+        color: #333;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>اختر طريقة الدفع</h1>
+    <div class="buttons">
+      <button onclick="pay('card')">💳 بطاقة بنكية</button>
+      <button onclick="pay('wallet')">📱 محفظة إلكترونية</button>
+      <button onclick="pay('kiosk')">🏧 كيوسك (فوري / مصاري)</button>
+    </div>
+
+    <!-- نافذة منبثقة -->
+    <div class="modal" id="resultModal">
+      <div class="modal-content" id="modalContent">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="modalInner">
+          <h2>⏳ جاري المعالجة...</h2>
+          <div class="loader"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function pay(type) {
+        const modal = document.getElementById("resultModal");
+        const inner = document.getElementById("modalInner");
+        modal.style.display = "flex";
+        inner.innerHTML = `<h2>⏳ جاري إنشاء الطلب...</h2><div class='loader'></div>`;
+
+        try {
+          const res = await fetch("/.netlify/functions/pay", {
+            method: "POST",
+            body: JSON.stringify({ integration_type: type }),
+          });
+          const data = await res.json();
+
+          if (!data.ok) {
+            inner.innerHTML = `<h2>❌ فشل العملية</h2><p>${data.error || "حدث خطأ غير متوقع"}</p>`;
+            return;
+          }
+
+          if (data.type === "kiosk") {
+            inner.innerHTML = `
+              <div class="success-icon">✅</div>
+              <h2>تم إنشاء كود الدفع بنجاح</h2>
+              <p>استخدم هذا الرقم للدفع من أي ماكينة فوري أو مصاري أو Bee:</p>
+              <div class="ref-box" id="refBox">${data.bill_reference}</div>
+              <button class="copy-btn" onclick="copyRef()">📋 نسخ الرقم</button>
+              <div class="info">
+                توجه لأي ماكينة واختر <b>Paymob</b> أو <b>كود الدفع</b> وأدخل الرقم لإتمام العملية.
+              </div>
+            `;
+            return;
+          }
+
+          // 💳 أو محفظة — تحويل للرابط
+          inner.innerHTML = `<h2>جارٍ تحويلك إلى صفحة الدفع...</h2><div class='loader'></div>`;
+          setTimeout(() => {
+            window.location.href = data.payment_url;
+          }, 1000);
+        } catch (e) {
+          inner.innerHTML = `<h2>⚠️ حدث خطأ</h2><p>${e.message}</p>`;
+        }
+      }
+
+      function closeModal() {
+        document.getElementById("resultModal").style.display = "none";
+      }
+
+      function copyRef() {
+        const ref = document.getElementById("refBox").textContent;
+        navigator.clipboard.writeText(ref);
+        const btn = document.querySelector(".copy-btn");
+        btn.textContent = "✅ تم النسخ";
+        setTimeout(() => (btn.textContent = "📋 نسخ الرقم"), 1500);
+      }
+
+      // إغلاق عند الضغط بالخارج
+      window.onclick = (e) => {
+        const modal = document.getElementById("resultModal");
+        if (e.target === modal) modal.style.display = "none";
+      };
+    </script>
+  </body>
+</html>
