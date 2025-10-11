@@ -90,12 +90,15 @@ export const handler = async (event) => {
       if (!kioskData.id && !kioskData.data?.bill_reference)
         throw new Error("Kiosk payment فشل");
 
+      const ref = kioskData.data.bill_reference;
+
       return {
         statusCode: 200,
         body: JSON.stringify({
           ok: true,
           type: "kiosk",
-          bill_reference: kioskData.data.bill_reference
+          bill_reference: ref,
+          message: `✅ تم إنشاء رقم الدفع بنجاح!\n\nرقم المرجع الخاص بك: ${ref}\n\nتوجه لأي ماكينة فوري أو مصاري أو Bee، واختار خدمة "Paymob" أو "كود الدفع"، وادخل الرقم ده علشان تكمل الدفع.`
         })
       };
     }
@@ -105,10 +108,17 @@ export const handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ ok: true, type: integrationType, payment_url: iframeUrl })
+      body: JSON.stringify({
+        ok: true,
+        type: integrationType,
+        payment_url: iframeUrl
+      })
     };
   } catch (err) {
     console.error("Error:", err);
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message })
+    };
   }
 };
