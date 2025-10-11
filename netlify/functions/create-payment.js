@@ -1,43 +1,32 @@
-import express from "express";
 import fetch from "node-fetch";
-import cors from "cors";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// 🔑 Paymob API Key بتاعتك
-const API_KEY = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjb";
-
-// 🆔 Integration IDs لكل وسيلة دفع
-const INTEGRATION_IDS = {
-  card: 5245183,
-  wallet: 5245282,
-  kiosk: 5345183,
-};
-
-// 📦 إنشاء الدفع
-app.post("/create-payment", async (req, res) => {
-  const { amount, type } = req.body;
-  const integration_id = INTEGRATION_IDS[type];
-
-  if (!integration_id) return res.status(400).json({ error: "نوع الدفع غير صالح" });
-
+export async function handler(event) {
   try {
-    // 1️⃣ إنشاء توكن
+    const { amount, type } = JSON.parse(event.body);
+
+    const API_KEY =
+      "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTlRrMU5EZzBPREV1Tnprek1UYzFJbjAuaXRlRmd2cEdIbXBXRV8zQ2QwRVpyQ2QxOXlqX3lXbVI0RXl4bElnQXJtVkN4dEhhcjlRWmRKc2NoUi1qd1VvbHJJTURiMzVOZ01vVUFlYnVibElydXc=";
+
+    const INTEGRATIONS = {
+      card: 5245183,
+      wallet: 5245282,
+      kiosk: 5345183,
+    };
+
+    // 1️⃣ التوكن
     const authRes = await fetch("https://accept.paymob.com/api/auth/tokens", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ api_key: API_KEY }),
     });
-    const { token: auth_token } = await authRes.json();
+    const { token } = await authRes.json();
 
-    // 2️⃣ إنشاء الطلب
+    // 2️⃣ إنشاء الأوردر
     const orderRes = await fetch("https://accept.paymob.com/api/ecommerce/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        auth_token,
+        auth_token: token,
         delivery_needed: false,
         amount_cents: amount * 100,
         currency: "EGP",
@@ -46,12 +35,12 @@ app.post("/create-payment", async (req, res) => {
     });
     const order = await orderRes.json();
 
-    // 3️⃣ إنشاء Payment Key
-    const payRes = await fetch("https://accept.paymob.com/api/acceptance/payment_keys", {
+    // 3️⃣ إنشاء payment key
+    const paymentKeyRes = await fetch("https://accept.paymob.com/api/acceptance/payment_keys", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        auth_token,
+        auth_token: token,
         amount_cents: amount * 100,
         expiration: 3600,
         order_id: order.id,
@@ -71,51 +60,37 @@ app.post("/create-payment", async (req, res) => {
           state: "NA",
         },
         currency: "EGP",
-        integration_id,
+        integration_id: INTEGRATIONS[type],
       }),
     });
+    const paymentKey = await paymentKeyRes.json();
 
-    const payData = await payRes.json();
-
-    // 4️⃣ لو النوع كارد → رابط مباشر
-    if (type === "card") {
-      const iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/952326?payment_token=${payData.token}`;
-      return res.json({ url: iframeUrl });
-    }
-
-    // 5️⃣ لو Wallet → نجيب اللينك من endpoint الخاص بالمحافظ
-    if (type === "wallet") {
-      const walletRes = await fetch("https://accept.paymob.com/api/acceptance/payments/pay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source: { identifier: "01010101010", subtype: "WALLET" },
-          payment_token: payData.token,
-        }),
-      });
-      const walletData = await walletRes.json();
-      return res.json(walletData);
-    }
-
-    // 6️⃣ لو Kiosk → نجيب رقم المرجع
+    // 4️⃣ لو كيوسك
     if (type === "kiosk") {
       const kioskRes = await fetch("https://accept.paymob.com/api/acceptance/payments/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           source: { identifier: "AGGREGATOR", subtype: "KIOSK" },
-          payment_token: payData.token,
+          payment_token: paymentKey.token,
         }),
       });
       const kioskData = await kioskRes.json();
-      return res.json(kioskData);
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ type: "kiosk", ref: kioskData.data?.bill_reference }),
+      };
     }
 
+    // 5️⃣ باقي الطرق (Card / Wallet)
+    const iframeId = type === "wallet" ? 952340 : 952326;
+    const paymentUrl = `https://accept.paymob.com/api/acceptance/iframes/${iframeId}?payment_token=${paymentKey.token}`;
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ type, url: paymentUrl }),
+    };
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "حدث خطأ أثناء إنشاء الدفع" });
+    return { statusCode: 500, body: JSON.stringify({ error: "خطأ في إنشاء الدفع" }) };
   }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+                }
