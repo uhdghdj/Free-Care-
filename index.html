@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>روابط الدفع Paymob</title>
+  <title>روابط الدفع | Paymob</title>
   <style>
     body {
       font-family: "Cairo", sans-serif;
@@ -44,6 +44,7 @@
       max-width: 400px;
       text-align: center;
       position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
     .close {
       position: absolute;
@@ -54,7 +55,7 @@
     }
     .qr-code {
       margin: 20px 0;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: bold;
       padding: 15px;
       border: 2px dashed #0b6df0;
@@ -67,8 +68,8 @@
 <body>
 
   <h1>اختار طريقة الدفع</h1>
-  <button onclick="createPayment('card')">💳 بطاقة</button>
-  <button onclick="createPayment('wallet')">📱 محفظة</button>
+  <button onclick="createPayment('card')">💳 بطاقة بنكية</button>
+  <button onclick="createPayment('wallet')">📱 محفظة إلكترونية</button>
   <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
 
   <!-- Modal -->
@@ -76,22 +77,38 @@
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <h2>ادفع عن طريق الكيوسك</h2>
-      <p>استخدم هذا الكود في أي كيوسك لدفع الفاتورة:</p>
-      <div id="kioskCode" class="qr-code">1234-5678-9012</div>
-      <button onclick="copyCode()">نسخ الكود</button>
+      <p>استخدم هذا الكود في أي كيوسك لإتمام الدفع:</p>
+      <div id="kioskCode" class="qr-code">جاري التحميل...</div>
+      <button onclick="copyCode()">📋 نسخ الكود</button>
     </div>
   </div>
 
   <script>
     async function createPayment(type) {
-      if(type === 'kiosk') {
-        // هنا ممكن تعمل fetch للكود الحقيقي من السيرفر
-        let code = "9876-5432-1098"; 
-        document.getElementById("kioskCode").textContent = code;
-        document.getElementById("kioskModal").style.display = "block";
-      } else {
-        alert('تم اختيار طريقة الدفع: ' + type);
-        // هنا تحط باقي الأكواد للبطاقة والمحفظة
+      try {
+        // 🔹 مثال على API endpoint الخلفي اللي بيرجع رابط الدفع أو كود الكيوسك
+        const res = await fetch("https://your-backend.vercel.app/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "حدث خطأ في الدفع");
+
+        if (type === "kiosk") {
+          // عرض المودال مع الكود اللي راجع من السيرفر
+          document.getElementById("kioskCode").textContent = data.kiosk_code || "لم يتم استلام الكود";
+          document.getElementById("kioskModal").style.display = "block";
+        } 
+        else if (type === "wallet" || type === "card") {
+          // فتح الرابط في نافذة جديدة
+          window.open(data.payment_url, "_blank");
+        }
+
+      } catch (err) {
+        alert("⚠️ " + err.message);
       }
     }
 
@@ -102,11 +119,10 @@
     function copyCode() {
       let code = document.getElementById("kioskCode").textContent;
       navigator.clipboard.writeText(code).then(() => {
-        alert("تم نسخ الكود!");
+        alert("✅ تم نسخ الكود!");
       });
     }
 
-    // إغلاق المودال عند الضغط خارج المحتوى
     window.onclick = function(event) {
       let modal = document.getElementById("kioskModal");
       if(event.target === modal) modal.style.display = "none";
@@ -114,4 +130,4 @@
   </script>
 
 </body>
-  </html>
+</html>
