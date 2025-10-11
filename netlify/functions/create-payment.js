@@ -17,7 +17,7 @@ export const handler = async (event) => {
 
     const API_KEY =
       process.env.PAYMOB_API_KEY ||
-      "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTlRrMU5EZzBPREV1Tnprek1UYzFJbjAuaXRlRmd2cEdIbXBXRV8zQ2QwRVpyQ2QxOXlqX3lXbVI0RXl4bElnQXJtVkN4dEhhcjlRWmRKc2NoUi1qd1VvbHJJTURiMzVOZ01vVUFlYnVibElydXc=";
+      "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTmpBeE5UUTBNVEl1TkRJd01UTTVJbjAuZnZQZ0dNQkNUTWpZb2NIaXdXMzJWZThtdS0za2FLTHBoNFZObWxpVFlmeVpfcnllVDZXREgtMzFRaF9CUU9QcERpa2JPSUxpdUtWNnZFX3dxRVZ5ZWc==";
 
     // 1️⃣ Auth token
     const authRes = await fetch("https://accept.paymob.com/api/auth/tokens", {
