@@ -1,240 +1,58 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>بوابة الدفع | Paymob</title>
+<head>
+  <meta charset="UTF-8" />
+  <title>روابط الدفع Paymob</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background: linear-gradient(180deg, #0b6df0, #0b84ff);
+      color: #fff;
+      text-align: center;
+      padding-top: 60px;
+    }
+    button {
+      margin: 10px;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+      color: #0b6df0;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #eee; }
+  </style>
+</head>
+<body>
 
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+  <h1>اختار طريقة الدفع</h1>
+  <button onclick="createPayment('card')">💳 بطاقة</button>
+  <button onclick="createPayment('wallet')">📱 محفظة</button>
+  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
 
-      body {
-        font-family: "Cairo", sans-serif;
-        background: linear-gradient(180deg, #0b6df0, #0b84ff);
-        color: #fff;
-        text-align: center;
-        margin: 0;
-        padding: 50px 20px;
-      }
+  <script>
+    async function createPayment(type) {
+      try {
+        const res = await fetch("/.netlify/functions/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ integration_type: type })
+        });
+        const data = await res.json();
+        console.log("Response:", data);
 
-      h1 {
-        margin-bottom: 30px;
-        font-size: 28px;
-      }
-
-      .buttons {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-
-      button {
-        background: #fff;
-        color: #0b6df0;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 26px;
-        font-size: 17px;
-        cursor: pointer;
-        transition: 0.3s;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-      }
-
-      button:hover {
-        transform: translateY(-3px);
-      }
-
-      /* ===== Modal ===== */
-      .modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        justify-content: center;
-        align-items: center;
-        z-index: 999;
-        backdrop-filter: blur(5px);
-      }
-
-      .modal-content {
-        background: #fff;
-        color: #000;
-        border-radius: 20px;
-        padding: 40px 30px;
-        width: 90%;
-        max-width: 430px;
-        text-align: center;
-        position: relative;
-        animation: fadeInUp 0.35s ease;
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(40px);
+        if (data.ok && data.payment_url) {
+          window.location.href = data.payment_url; // 👈 يفتح صفحة الدفع مباشرة
+        } else {
+          alert("خطأ أثناء إنشاء الرابط:\n" + JSON.stringify(data));
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      } catch (err) {
+        alert("حدث خطأ في الاتصال: " + err.message);
       }
+    }
+  </script>
 
-      .close {
-        position: absolute;
-        top: 12px;
-        right: 15px;
-        font-size: 22px;
-        cursor: pointer;
-        color: #999;
-      }
-
-      .loader {
-        border: 5px solid #eee;
-        border-top: 5px solid #0b6df0;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
-      }
-
-      @keyframes spin {
-        100% { transform: rotate(360deg); }
-      }
-
-      .success-icon {
-        font-size: 65px;
-        color: #0b6df0;
-        margin-bottom: 10px;
-      }
-
-      .ref-box {
-        background: #f3f6ff;
-        border-radius: 12px;
-        padding: 15px;
-        font-size: 22px;
-        font-weight: bold;
-        letter-spacing: 1px;
-        margin: 20px 0;
-        color: #0b6df0;
-        border: 2px dashed #0b6df0;
-      }
-
-      .copy-btn {
-        background: #0b6df0;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 25px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: 0.25s;
-      }
-
-      .copy-btn:hover {
-        background: #0957c3;
-      }
-
-      .info {
-        font-size: 15px;
-        margin-top: 20px;
-        color: #444;
-        line-height: 1.6;
-      }
-
-      .error {
-        color: #d93025;
-        font-weight: bold;
-      }
-    </style>
-  </head>
-
-  <body>
-    <h1>اختر طريقة الدفع</h1>
-    <div class="buttons">
-      <button onclick="pay('card')">💳 بطاقة بنكية</button>
-      <button onclick="pay('wallet')">📱 محفظة إلكترونية</button>
-      <button onclick="pay('kiosk')">🏧 كيوسك (فوري / مصاري)</button>
-    </div>
-
-    <!-- نافذة منبثقة -->
-    <div class="modal" id="resultModal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div id="modalInner">
-          <h2>⏳ جاري المعالجة...</h2>
-          <div class="loader"></div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      async function pay(type) {
-        const modal = document.getElementById("resultModal");
-        const inner = document.getElementById("modalInner");
-        modal.style.display = "flex";
-        inner.innerHTML = `<h2>⏳ جاري إنشاء الطلب...</h2><div class='loader'></div>`;
-
-        try {
-          const res = await fetch("/.netlify/functions/pay", {
-            method: "POST",
-            body: JSON.stringify({ integration_type: type }),
-          });
-          const data = await res.json();
-
-          if (!res.ok) {
-            inner.innerHTML = `<h2>❌ فشل العملية</h2><p class="error">${data.error || "حدث خطأ غير متوقع"}</p>`;
-            return;
-          }
-
-          // 💳 أو Wallet → تحويل مباشر
-          if (type === "card" || type === "wallet") {
-            inner.innerHTML = `<h2>جارٍ تحويلك إلى صفحة الدفع...</h2><div class='loader'></div>`;
-            setTimeout(() => (window.location.href = data.payment_url), 1000);
-            return;
-          }
-
-          // 🏧 الكيوسك
-          if (type === "kiosk") {
-            if (data.bill_reference) {
-              inner.innerHTML = `
-                <div class="success-icon">✅</div>
-                <h2>تم إنشاء كود الدفع بنجاح</h2>
-                <p>استخدم هذا الرقم للدفع من أي ماكينة فوري أو مصاري أو Bee:</p>
-                <div class="ref-box" id="refBox">${data.bill_reference}</div>
-                <button class="copy-btn" onclick="copyRef()">📋 نسخ الرقم</button>
-                <div class="info">
-                  توجه لأي ماكينة واختر <b>Paymob</b> أو <b>كود الدفع</b> وأدخل الرقم لإتمام العملية.
-                </div>
-              `;
-            } else {
-              inner.innerHTML = `<h2>⚠️ فشل إنشاء كود الدفع</h2><p>${data.error || "حدث خطأ أثناء إنشاء الكود"}</p>`;
-            }
-          }
-        } catch (err) {
-          inner.innerHTML = `<h2>⚠️ خطأ في الاتصال</h2><p>${err.message}</p>`;
-        }
-      }
-
-      function closeModal() {
-        document.getElementById("resultModal").style.display = "none";
-      }
-
-      function copyRef() {
-        const ref = document.getElementById("refBox").textContent;
-        navigator.clipboard.writeText(ref);
-        const btn = document.querySelector(".copy-btn");
-        btn.textContent = "✅ تم النسخ";
-        setTimeout(() => (btn.textContent = "📋 نسخ الرقم"), 1500);
-      }
-
-      // إغلاق عند الضغط بالخارج
-      window.onclick = (e) => {
-        const modal = document.getElementById("resultModal");
-        if (e.target === modal) modal.style.display = "none";
-      };
-    </script>
-  </body>
-            </html>
+</body>
+</html>
