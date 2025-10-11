@@ -1,0 +1,25 @@
+<script>
+async function createPayment(integrationId) {
+  try {
+    const response = await fetch("/.netlify/functions/create-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        integration_id: integrationId,
+        amount_cents: "1000" // 10 جنيه مثلا
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.payment_url) {
+      // فتح صفحة الدفع الحقيقية
+      window.open(data.payment_url, "_blank");
+    } else {
+      alert("حدث خطأ: " + (data.error || JSON.stringify(data)));
+    }
+  } catch (err) {
+    alert("فشل الاتصال: " + err.message);
+  }
+}
+</script>
