@@ -1,109 +1,27 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>روابط الدفع - Paymob</title>
-  <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      background: linear-gradient(180deg, #0b6df0, #0b84ff);
-      color: #fff;
-      text-align: center;
-      padding-top: 60px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>دفع Paymob</title>
+  </head>
+  <body style="font-family: Cairo; text-align: center; margin-top: 50px;">
+    <h2>اختبار الدفع عبر Paymob</h2>
+    <input id="amount" type="number" placeholder="المبلغ بالجنيه" />
+    <button id="pay">ادفع الآن</button>
+    <p id="link"></p>
 
-    h1 {
-      font-size: 26px;
-      margin-bottom: 25px;
-    }
-
-    button {
-      margin: 10px;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 12px;
-      background: #fff;
-      color: #0b6df0;
-      font-size: 18px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #e5e5e5;
-    }
-
-    .link-box {
-      margin-top: 30px;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 15px;
-      border-radius: 10px;
-      display: inline-block;
-      max-width: 90%;
-      word-break: break-all;
-    }
-
-    .copy-btn {
-      display: block;
-      margin: 15px auto;
-      padding: 10px 20px;
-      background: #fff;
-      color: #0b6df0;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .copy-btn:hover {
-      background: #f3f3f3;
-    }
-  </style>
-</head>
-
-<body>
-  <h1>اختار طريقة الدفع</h1>
-
-  <button onclick="createPayment(5245183)">💳 بطاقة</button>
-  <button onclick="createPayment(5245282)">📱 محفظة</button>
-  <button onclick="createPayment(5345183)">🏧 كيوسك</button>
-
-  <div class="link-box" id="linkBox" style="display:none;">
-    <p id="paymentLink"></p>
-    <button class="copy-btn" onclick="copyLink()">📋 نسخ الرابط</button>
-  </div>
-
-  <script>
-    async function createPayment(integrationId) {
-      document.getElementById("linkBox").style.display = "none";
-      try {
+    <script>
+      document.getElementById("pay").onclick = async () => {
+        const amount = document.getElementById("amount").value;
         const res = await fetch("/.netlify/functions/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ integration_id: integrationId })
+          body: JSON.stringify({ amount }),
         });
-
         const data = await res.json();
-
-        if (data.url) {
-          document.getElementById("paymentLink").innerText = data.url;
-          document.getElementById("linkBox").style.display = "block";
-          window.open(data.url, "_blank");
-        } else {
-          alert("حدث خطأ أثناء إنشاء رابط الدفع");
-          console.log(data);
-        }
-      } catch (err) {
-        alert("فشل الاتصال بالخادم");
-        console.error(err);
-      }
-    }
-
-    function copyLink() {
-      const text = document.getElementById("paymentLink").innerText;
-      navigator.clipboard.writeText(text);
-      alert("✅ تم نسخ الرابط بنجاح!");
-    }
-  </script>
-</body>
+        document.getElementById("link").innerHTML =
+          `<a href="${data.iframeUrl}" target="_blank">اذهب إلى صفحة الدفع</a>`;
+      };
+    </script>
+  </body>
 </html>
