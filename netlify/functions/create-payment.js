@@ -1,7 +1,7 @@
 exports.handler = async function(event) {
   try {
     const body = JSON.parse(event.body);
-    const apiKey = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjb"; // مفتاحك من Paymob
+    const apiKey = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTmpBeE5UUTBNVEl1TkRJd01UTTVJbjAuZnZQZ0dNQkNUTWpZb2NIaXdXMzJWZThtdS0za2FLTHBoNFZObWxpVFlmeVpfcnllVDZXREgtMzFRaF9CUU9QcERpa2JPSUxpdUtWNnZFX3dxRVZ5ZWc="; // مفتاحك من Paymob
     const integrationId = 5245282; // 🔁 هنا اكتب الـ Integration ID بتاع البطاقة أو الـ Kiosk حسب ما تستخدم
 
     // 1️⃣ إنشاء التوكن
