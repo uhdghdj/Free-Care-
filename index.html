@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>روابط الدفع Paymob</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background: linear-gradient(180deg, #0b6df0, #0b84ff);
+      color: #fff;
+      text-align: center;
+      padding-top: 60px;
+    }
+    button {
+      margin: 10px;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+      color: #0b6df0;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #eee; }
+  </style>
+</head>
+<body>
+
+  <h1>اختار طريقة الدفع</h1>
+  <button onclick="createPayment('card')">💳 بطاقة</button>
+  <button onclick="createPayment('wallet')">📱 محفظة</button>
+  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
+
+  <script>
+    async function createPayment(type) {
+      try {
+        const res = await fetch("/.netlify/functions/create-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ integration_type: type })
+        });
+        const data = await res.json();
+        console.log("Response:", data);
+
+        if (data.ok && data.payment_url) {
+          window.location.href = data.payment_url; // 👈 يفتح صفحة الدفع مباشرة
+        } else {
+          alert("خطأ أثناء إنشاء الرابط:\n" + JSON.stringify(data));
+        }
+      } catch (err) {
+        alert("حدث خطأ في الاتصال: " + err.message);
+      }
+    }
+  </script>
+
+</body>
+</html>
