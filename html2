@@ -1,0 +1,3 @@
+<button onclick="createPayment(5245183)">دفع بالكارت</button>
+<button onclick="createPayment(5245282)">دفع بالمحفظة</button>
+<button onclick="createPayment(5345183)">دفع عن طريق كيوسك</button>
