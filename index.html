@@ -1,63 +1,70 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>روابط الدفع</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>روابط الدفع Paymob</title>
   <style>
     body {
       font-family: "Cairo", sans-serif;
       background: linear-gradient(180deg, #0b6df0, #0b84ff);
-      color: white;
+      color: #fff;
       text-align: center;
-      padding-top: 80px;
-    }
-    h2 {
-      margin-bottom: 40px;
+      padding-top: 60px;
     }
     button {
-      background-color: white;
-      color: #0b6df0;
-      border: none;
-      padding: 15px 25px;
       margin: 10px;
-      border-radius: 10px;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 12px;
+      background: #fff;
+      color: #0b6df0;
       font-size: 18px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: 0.3s;
     }
-    button:hover {
-      background-color: #0b6df0;
-      color: white;
-    }
+    button:hover { background: #eee; }
   </style>
 </head>
 <body>
-  <h2>اختر طريقة الدفع</h2>
-  <button onclick="pay('card')">💳 بطاقة</button>
-  <button onclick="pay('wallet')">📱 محفظة</button>
-  <button onclick="pay('kiosk')">🏧 كيوسك</button>
+
+  <h1>اختار طريقة الدفع</h1>
+  <button onclick="createPayment('card')">💳 بطاقة</button>
+  <button onclick="createPayment('wallet')">📱 محفظة</button>
+  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
 
   <script>
-    async function pay(method) {
+    // رقم الـ iframe الخاص بالبطاقة
+    const IFRAME_ID = "952326";
+
+    async function createPayment(method) {
       try {
         const res = await fetch("/.netlify/functions/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ integration_type: method, amount: 100 })
         });
-        const data = await res.json();
 
-        if (data.redirect_url) {
-          // فتح صفحة الدفع الأصلية مباشرة
+        const data = await res.json();
+        console.log("Response:", data);
+
+        // لو في payment_token استخدمه مع iframe مباشرة
+        if (data.token) {
+          const paymentUrl = `https://accept.paymob.com/api/acceptance/iframes/${IFRAME_ID}?payment_token=${data.token}`;
+          window.location.href = paymentUrl;
+        } else if (data.redirect_url) {
           window.location.href = data.redirect_url;
+        } else if (data.iframe) {
+          window.location.href = data.iframe;
         } else {
-          alert("حدث خطأ في إنشاء الرابط: " + JSON.stringify(data));
+          alert("حدث خطأ:\n" + JSON.stringify(data, null, 2));
         }
+
       } catch (err) {
+        console.error(err);
         alert("فشل الاتصال بالخادم");
       }
     }
   </script>
 </body>
-  </html>
+</html>
