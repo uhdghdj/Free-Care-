@@ -23,6 +23,45 @@
       transition: 0.3s;
     }
     button:hover { background: #eee; }
+
+    /* ====== Modal style ====== */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background: #fff;
+      color: #0b6df0;
+      margin: 15% auto;
+      padding: 30px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #0b6df0;
+    }
+    .qr-code {
+      margin: 20px 0;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 15px;
+      border: 2px dashed #0b6df0;
+      border-radius: 12px;
+      background: #f0f8ff;
+      color: #0b6df0;
+    }
   </style>
 </head>
 <body>
@@ -32,27 +71,47 @@
   <button onclick="createPayment('wallet')">📱 محفظة</button>
   <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
 
+  <!-- Modal -->
+  <div id="kioskModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>ادفع عن طريق الكيوسك</h2>
+      <p>استخدم هذا الكود في أي كيوسك لدفع الفاتورة:</p>
+      <div id="kioskCode" class="qr-code">1234-5678-9012</div>
+      <button onclick="copyCode()">نسخ الكود</button>
+    </div>
+  </div>
+
   <script>
     async function createPayment(type) {
-      try {
-        const res = await fetch("/.netlify/functions/create-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ integration_type: type })
-        });
-        const data = await res.json();
-        console.log("Response:", data);
-
-        if (data.ok && data.payment_url) {
-          window.location.href = data.payment_url; // 👈 يفتح صفحة الدفع مباشرة
-        } else {
-          alert("خطأ أثناء إنشاء الرابط:\n" + JSON.stringify(data));
-        }
-      } catch (err) {
-        alert("حدث خطأ في الاتصال: " + err.message);
+      if(type === 'kiosk') {
+        // هنا ممكن تعمل fetch للكود الحقيقي من السيرفر
+        let code = "9876-5432-1098"; 
+        document.getElementById("kioskCode").textContent = code;
+        document.getElementById("kioskModal").style.display = "block";
+      } else {
+        alert('تم اختيار طريقة الدفع: ' + type);
+        // هنا تحط باقي الأكواد للبطاقة والمحفظة
       }
+    }
+
+    function closeModal() {
+      document.getElementById("kioskModal").style.display = "none";
+    }
+
+    function copyCode() {
+      let code = document.getElementById("kioskCode").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("تم نسخ الكود!");
+      });
+    }
+
+    // إغلاق المودال عند الضغط خارج المحتوى
+    window.onclick = function(event) {
+      let modal = document.getElementById("kioskModal");
+      if(event.target === modal) modal.style.display = "none";
     }
   </script>
 
 </body>
-</html>
+  </html>
