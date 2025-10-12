@@ -4,13 +4,21 @@
   <meta charset="UTF-8" />
   <title>روابط الدفع Paymob</title>
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
+
     body {
       font-family: "Cairo", sans-serif;
       background: linear-gradient(180deg, #0b6df0, #0b84ff);
       color: #fff;
       text-align: center;
       padding-top: 60px;
+      min-height: 100vh;
     }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
     button {
       margin: 10px;
       padding: 15px 25px;
@@ -22,7 +30,60 @@
       cursor: pointer;
       transition: 0.3s;
     }
-    button:hover { background: #eee; }
+
+    button:hover {
+      background: #eee;
+    }
+
+    .kiosk-card {
+      display: none;
+      margin: 40px auto;
+      background: #fff;
+      color: #0b6df0;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      padding: 25px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .kiosk-code {
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px 0;
+      color: #333;
+    }
+
+    .copy-btn {
+      background: #0b6df0;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .copy-btn:hover {
+      background: #0a5fd0;
+    }
+
+    .success-msg {
+      display: none;
+      margin-top: 15px;
+      font-size: 16px;
+      color: #00ffae;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -32,27 +93,53 @@
   <button onclick="createPayment('wallet')">📱 محفظة</button>
   <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
 
+  <div class="kiosk-card" id="kioskCard">
+    <h2>💰 كود الدفع الخاص بك</h2>
+    <div class="kiosk-code" id="kioskCode">---</div>
+    <button class="copy-btn" onclick="copyCode()">📋 نسخ الكود</button>
+    <div class="success-msg" id="successMsg">✅ تم نسخ الكود بنجاح</div>
+  </div>
+
   <script>
     async function createPayment(type) {
       try {
-        const res = await fetch("/.netlify/functions/create-payment", {
+        const res = await fetch("https://stellular-rugelach-e2199d.netlify.app/.netlify/functions/pay", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ integration_type: type })
+          body: JSON.stringify({ type })
         });
-        const data = await res.json();
-        console.log("Response:", data);
 
-        if (data.ok && data.payment_url) {
-          window.location.href = data.payment_url; // 👈 يفتح صفحة الدفع مباشرة
+        const data = await res.json();
+
+        if (type === "kiosk" && data.kiosk_code) {
+          showKioskCode(data.kiosk_code);
+        } else if (data.redirect_url) {
+          window.location.href = data.redirect_url;
         } else {
-          alert("خطأ أثناء إنشاء الرابط:\n" + JSON.stringify(data));
+          alert("⚠️ حدث خطأ أثناء إنشاء الرابط");
         }
       } catch (err) {
-        alert("حدث خطأ في الاتصال: " + err.message);
+        console.error(err);
+        alert("⚠️ حدث خطأ في الاتصال بالسيرفر");
       }
+    }
+
+    function showKioskCode(code) {
+      const card = document.getElementById("kioskCard");
+      const codeEl = document.getElementById("kioskCode");
+      card.style.display = "block";
+      codeEl.textContent = code;
+      window.scrollTo({ top: card.offsetTop, behavior: "smooth" });
+    }
+
+    function copyCode() {
+      const code = document.getElementById("kioskCode").textContent;
+      navigator.clipboard.writeText(code);
+      const msg = document.getElementById("successMsg");
+      msg.style.display = "block";
+      setTimeout(() => msg.style.display = "none", 2000);
     }
   </script>
 
 </body>
-</html>
+  </html>
