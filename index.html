@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>روابط الدفع Paymob</title>
+  <title> الدفع Paymob</title>
   <style>
     body {
       font-family: "Cairo", sans-serif;
@@ -23,112 +23,108 @@
       transition: 0.3s;
     }
     button:hover { background: #eee; }
-
-    /* تصميم واجهة الكيوسك */
-    .kiosk-card {
-      display: none;
-      margin: 40px auto;
-      background: #fff;
-      color: #0b6df0;
-      width: 90%;
-      max-width: 420px;
-      border-radius: 16px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
-      padding: 22px;
-      direction: rtl;
-      text-align: center;
-      font-family: "Cairo", sans-serif;
+    kiosk-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+  }
+  .kiosk-box {
+    background: #ffffff;
+    color: #0b6df0;
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    font-family: "Cairo", sans-serif;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  .kiosk-box h2 {
+    margin-bottom: 10px;
+    font-size: 22px;
+  }
+  .kiosk-code {
+    font-size: 34px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    background: #f5f7fb;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 15px 0;
+    color: #0b1730;
+  }
+  .kiosk-info {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  .kiosk-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .copy-btn, .close-btn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .copy-btn {
+    background: #0b6df0;
+    color: white;
+  }
+  .close-btn {
+    background: #eef2ff;
+    color: #0b6df0;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
     }
-    .kiosk-card h2 { margin: 0 0 12px 0; font-size: 20px; color: #0b6df0; }
-    .kiosk-code {
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      background: #f5f7fb;
-      color: #0b1730;
-      padding: 14px;
-      border-radius: 10px;
-      margin: 12px 0;
-    }
-    .kiosk-actions { display:flex; gap:10px; justify-content:center; margin-top:10px; }
-    .kiosk-btn {
-      padding:10px 14px;
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      font-weight:600;
-    }
-    .kiosk-copy { background:#0b6df0; color:#fff; }
-    .kiosk-close { background:#eef2ff; color:#0b6df0; }
-    .kiosk-note { font-size:13px; color:#4b5563; margin-top:8px; }
-    .kiosk-success { display:none; margin-top:8px; color: #16a34a; font-weight:600; }
+    
   </style>
 </head>
 <body>
 
   <h1>اختار طريقة الدفع</h1>
   <button onclick="createPayment('card')">بطاقة</button>
-  <button onclick="createPayment('wallet')">محفظة</button>
-  <button onclick="createPayment('kiosk')">كيوسك</button>
-
-  <!-- واجهة عرض الكيوسك -->
-  <div class="kiosk-card" id="kioskCard">
-    <h2>كود الكيوسك</h2>
-    <div class="kiosk-code" id="kioskCode">---</div>
-    <div class="kiosk-actions">
-      <button class="kiosk-btn kiosk-copy" onclick="copyCode()">📋 نسخ</button>
-      <button class="kiosk-btn kiosk-close" onclick="closeKiosk()">✖ إغلاق</button>
+  <button onclick="createPayment('wallet')"> محفظة</button>
+  <button onclick="createPayment('kiosk')"> كيوسك</button>
+  div class="kiosk-container">
+  <div class="kiosk-box">
+    <h2>كود الكيوسك الخاص بك</h2>
+    <p class="kiosk-code">123456</p>
+    <p class="kiosk-info">يمكنك الدفع بهذا الكود في أي منفذ فوري أو مصاري.</p>
+    <div class="kiosk-buttons">
+      <button class="copy-btn">📋 نسخ الكود</button>
+      <button class="close-btn">✖ إغلاق</button>
     </div>
-    <div class="kiosk-note">استخدم هذا الكود للدفع في أقرب منفذ فوري أو مصاري.</div>
-    <div class="kiosk-success" id="kioskSuccess">✅ تم نسخ الكود</div>
   </div>
+</div>
 
   <script>
     async function createPayment(type) {
       try {
-        // 🔹 نفس الكود بتاعك – ما اتغيرش أي حاجة
-        const res = await fetch("/.netlify/functions/pay", {
+        const res = await fetch("/.netlify/functions/create-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type })
+          body: JSON.stringify({ integration_type: type })
         });
-
         const data = await res.json();
+        console.log("Response:", data);
 
-        if (type === "kiosk" && data.kiosk_code) {
-          showKioskCode(data.kiosk_code);
-        } else if (data.redirect_url) {
-          window.location.href = data.redirect_url;
+        if (data.ok && data.payment_url) {
+          window.location.href = data.payment_url; // 👈 يفتح صفحة الدفع مباشرة
         } else {
-          alert("حدث خطأ أثناء إنشاء الرابط");
+          alert("خطأ أثناء إنشاء الرابط:\n" + JSON.stringify(data));
         }
       } catch (err) {
-        console.error(err);
-        alert(" حدث خطأ في الاتصال بالسيرفر");
+        alert("حدث خطأ في الاتصال: " + err.message);
       }
-    }
-
-    // 💎 عرض كود الكيوسك في واجهة احترافية
-    function showKioskCode(code) {
-      const card = document.getElementById("kioskCard");
-      const codeEl = document.getElementById("kioskCode");
-      codeEl.textContent = code || "---";
-      card.style.display = "block";
-      window.scrollTo({ top: card.offsetTop - 50, behavior: "smooth" });
-    }
-
-    // 📋 نسخ الكود
-    function copyCode() {
-      const code = document.getElementById("kioskCode").textContent.trim();
-      navigator.clipboard.writeText(code);
-      const succ = document.getElementById("kioskSuccess");
-      succ.style.display = "block";
-      setTimeout(() => (succ.style.display = "none"), 2000);
-    }
-
-    // ❌ إغلاق الكارت
-    function closeKiosk() {
-      document.getElementById("kioskCard").style.display = "none";
     }
   </script>
 
