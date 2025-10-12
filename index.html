@@ -89,12 +89,12 @@
 <body>
 
   <h1>اختار طريقة الدفع</h1>
-  <button onclick="createPayment('card')">💳 بطاقة</button>
-  <button onclick="createPayment('wallet')">📱 محفظة</button>
-  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
+  <button onclick="createPayment('card')"> بطاقة</button>
+  <button onclick="createPayment('wallet')"> محفظة</button>
+  <button onclick="createPayment('kiosk')"> كيوسك</button>
 
   <div class="kiosk-card" id="kioskCard">
-    <h2>💰 كود الدفع الخاص بك</h2>
+    <h2> كود الدفع الخاص بك</h2>
     <div class="kiosk-code" id="kioskCode">---</div>
     <button class="copy-btn" onclick="copyCode()">📋 نسخ الكود</button>
     <div class="success-msg" id="successMsg">✅ تم نسخ الكود بنجاح</div>
@@ -116,11 +116,11 @@
         } else if (data.redirect_url) {
           window.location.href = data.redirect_url;
         } else {
-          alert("⚠️ حدث خطأ أثناء إنشاء الرابط");
+          alert(" حدث خطأ أثناء إنشاء الرابط");
         }
       } catch (err) {
         console.error(err);
-        alert("⚠️ حدث خطأ في الاتصال بالسيرفر");
+        alert(" حدث خطأ في الاتصال بالسيرفر");
       }
     }
 
