@@ -4,9 +4,9 @@ export const handler = async (event) => {
 
     // 👇 ثوابت التكامل (integration)
     const CONFIG = {
-      card: { integration_id: 5245183, iframe_id: 952326 },
-      wallet: { integration_id: 5245282, iframe_id: 952340 },
-      kiosk: { integration_id: 5345183 },
+      card: { integration_id: 5245183, iframe_id: 972117 },
+      wallet: { integration_id: 5369208, iframe_id: 972116 },
+      kiosk: { integration_id: 5369099 },
     };
 
     const integrationType = body.integration_type || "card";
@@ -20,7 +20,7 @@ export const handler = async (event) => {
 
     const API_KEY =
       process.env.PAYMOB_API_KEY ||
-      "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTmpBeE9UUXlNamN1TXpBNU1UZ3pJbjAuODdYUkRfenRZSWp6YkhrbWZvLXlpMmh2dDZlZEloMzBwSjctUE9GSkItRzdVMUc1NzhBeVRacGFfVXI3VHVlRnZ4VDYxSklxUDFTQzBSV2N4eHRKcHc=";
+      "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBNU5qVXpOQ3dpYm1GdFpTSTZJbWx1YVhScFlXd2lmUS4zWWIyZ09PS1pwMDNxbUI4LWpFV1lQcDFMWmc1eFU3LVRHUllWVUNmUmlXWkJ5RS1TVUJ0aDZ3cUhhemp4MVRINVlpNHM0UTFaNGxFYUJSLVZSTXRXdw==";
 
     // 1️⃣ Auth token
     const authRes = await fetch("https://accept.paymob.com/api/auth/tokens", {
