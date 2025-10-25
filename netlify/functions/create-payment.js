@@ -4,8 +4,8 @@ export const handler = async (event) => {
 
     // 👇 ثوابت التكامل (integration)
     const CONFIG = {
-      card: { integration_id: 5245183, iframe_id: 972117 },
-      wallet: { integration_id: 5369208, iframe_id: 972116 },
+      card: { integration_id:5369208 , iframe_id: 972116 },
+      wallet: { integration_id: 5245183, iframe_id: 972117 },
       kiosk: { integration_id: 5369099 },
     };
 
