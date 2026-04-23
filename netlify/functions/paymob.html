@@ -341,59 +341,31 @@ if (!bookingData) {
 /* عرض السعر */
 document.getElementById("price").textContent =
   "المبلغ المطلوب: " + bookingData.amountToPay + " جنيه";
-
-/* =========================
-   2. إنشاء الدفع
-========================= */
 async function createPayment(type) {
-  try {
-    const res = await fetch("/.netlify/functions/create-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...bookingData,
-        integration_type: type
-      })
-    });
 
-    const data = await res.json();
-    console.log(data);
+  const bookingData = JSON.parse(localStorage.getItem("bookingData"));
 
-    // 💳 تحويل مباشر
-    if (data.payment_url) {
-      window.location.href = data.payment_url;
-    }
+  const res = await fetch("/.netlify/functions/create-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      amount: bookingData.total,
+      integration_type: type
+    })
+  });
 
-    // 🏧 كيوسك
-    else if (data.method === "kiosk") {
-      document.getElementById("kioskCode").textContent =
-        data.bill_reference || "----";
+  const data = await res.json();
 
-      document.getElementById("kioskBox").style.display = "block";
-    }
-
-    else {
-      alert("خطأ: " + JSON.stringify(data));
-    }
-
-  } catch (err) {
-    alert("خطأ في الاتصال: " + err.message);
+  if (data.payment_url) {
+    window.location.href = data.payment_url;
+  } else if (data.method === "kiosk") {
+    document.getElementById("kioskCode").textContent = data.bill_reference;
+    document.getElementById("kioskBox").style.display = "block";
+  } else {
+    alert("خطأ: " + JSON.stringify(data));
   }
 }
 
-/* =========================
-   3. نسخ كود الكيوسك
-========================= */
-function copyCode() {
-  const code = document.getElementById("kioskCode").textContent;
-  navigator.clipboard.writeText(code);
-  alert("تم النسخ");
-}
-
-/* إغلاق */
-function closeBox() {
-  document.getElementById("kioskBox").style.display = "none";
-}
 </script>
 
 </body>
