@@ -330,69 +330,150 @@ button:disabled {
 /* =========================
    1. جلب بيانات الحجز
 ========================= */
-const bookingData = JSON.parse(localStorage.getItem("bookingData"));
-
-if (!bookingData) {
-  alert("لا توجد بيانات حجز");
-  window.location.href = "/";
-}
-
-/* عرض السعر */
-document.getElementById("price").textContent =
-  "المبلغ المطلوب: " + bookingData.amountToPay + " جنيه";
-
-/* =========================
-   2. إنشاء الدفع
-========================= */
-async function createPayment(type) {
+export const handler = async (event) => {
   try {
-    const res = await fetch("/.netlify/functions/create-payment", {
+    const body = JSON.parse(event.body || "{}");
+
+    const CONFIG = {
+      card: { integration_id: 5369099, iframe_id: 972116 },
+      wallet: { integration_id: 5371332, iframe_id: 972117 },
+      kiosk: { integration_id: 5369208 },
+    };
+
+    const integrationType = body.integration_type || "card";
+    const cfg = CONFIG[integrationType];
+
+    if (!cfg) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "integration_type غير صحيح" }),
+      };
+    }
+
+    // 🔥 المبلغ اللي جاي من الفرونت
+    const amount = Number(body.amount || 0);
+
+    if (!amount || amount <= 0) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "amount غير صحيح" }),
+      };
+    }
+
+    // 💰 تحويل جنيه → سنت
+    const amountCents = Math.round(amount * 100);
+
+    const API_KEY =
+      process.env.PAYMOB_API_KEY ||
+      "YOUR_API_KEY";
+
+    // 1️⃣ Auth
+    const authRes = await fetch("https://accept.paymob.com/api/auth/tokens", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...bookingData,
-        integration_type: type
-      })
+      body: JSON.stringify({ api_key: API_KEY }),
     });
 
-    const data = await res.json();
-    console.log(data);
+    const authData = await authRes.json();
+    if (!authData.token) throw new Error("Auth فشل");
 
-    // 💳 تحويل مباشر
-    if (data.payment_url) {
-      window.location.href = data.payment_url;
+    // 2️⃣ Order
+    const orderRes = await fetch(
+      "https://accept.paymob.com/api/ecommerce/orders",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          auth_token: authData.token,
+          delivery_needed: false,
+          amount_cents: amountCents,
+          currency: "EGP",
+          items: [],
+        }),
+      }
+    );
+
+    const orderData = await orderRes.json();
+    if (!orderData.id) throw new Error("Order creation failed");
+
+    // 3️⃣ Payment Key
+    const payRes = await fetch(
+      "https://accept.paymob.com/api/acceptance/payment_keys",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          auth_token: authData.token,
+          amount_cents: amountCents,
+          expiration: 3600,
+          order_id: orderData.id,
+          billing_data: {
+            apartment: "NA",
+            email: "test@example.com",
+            floor: "NA",
+            first_name: "عميل",
+            street: "NA",
+            building: "NA",
+            phone_number: "+201000000000",
+            shipping_method: "NA",
+            postal_code: "NA",
+            city: "Cairo",
+            country: "EG",
+            last_name: "User",
+            state: "NA",
+          },
+          currency: "EGP",
+          integration_id: cfg.integration_id,
+        }),
+      }
+    );
+
+    const payData = await payRes.json();
+    if (!payData.token) throw new Error("Payment key فشل");
+
+    // 4️⃣ Kiosk
+    if (integrationType === "kiosk") {
+      const kioskRes = await fetch(
+        "https://accept.paymob.com/api/acceptance/payments/pay",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            source: { identifier: "AGGREGATOR", subtype: "AGGREGATOR" },
+            payment_token: payData.token,
+          }),
+        }
+      );
+
+      const kioskData = await kioskRes.json();
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          ok: true,
+          method: "kiosk",
+          bill_reference: kioskData?.data?.bill_reference,
+        }),
+      };
     }
 
-    // 🏧 كيوسك
-    else if (data.method === "kiosk") {
-      document.getElementById("kioskCode").textContent =
-        data.bill_reference || "----";
+    // 5️⃣ Card / Wallet
+    const iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/${cfg.iframe_id}?payment_token=${payData.token}`;
 
-      document.getElementById("kioskBox").style.display = "block";
-    }
-
-    else {
-      alert("خطأ: " + JSON.stringify(data));
-    }
-
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        payment_url: iframeUrl,
+      }),
+    };
   } catch (err) {
-    alert("خطأ في الاتصال: " + err.message);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message }),
+    };
   }
-}
-
-/* =========================
-   3. نسخ كود الكيوسك
-========================= */
-function copyCode() {
-  const code = document.getElementById("kioskCode").textContent;
-  navigator.clipboard.writeText(code);
-  alert("تم النسخ");
-}
-
-/* إغلاق */
-function closeBox() {
-  document.getElementById("kioskBox").style.display = "none";
-}
+};
 </script>
 
 </body>
