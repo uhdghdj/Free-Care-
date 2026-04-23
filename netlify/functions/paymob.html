@@ -5,69 +5,301 @@
   <title>الدفع</title>
 
   <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      background: linear-gradient(180deg, #0b6df0, #0b84ff);
-      color: #fff;
-      text-align: center;
-      padding-top: 60px;
-    }
+/* ================== SUNGET.COM — PAYMENT PAGE STYLESHEET ================== */
 
-    h1 { margin-bottom: 10px; }
+/* ---------- THEME VARIABLES ---------- */
+:root,
+[data-theme="dark"] {
+  --bg: #0b0b0f;
+  --bg-2: #14141c;
+  --surface: #1a1a24;
+  --surface-2: #20202c;
+  --text: #ffffff;
+  --text-muted: #b8b8c4;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ffb400;
+  --accent-2: #ff7a00;
+  --danger: #e63946;
+  --success: #27b82e;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.55);
+  --radius: 14px;
+  --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-2));
+  --glow: 0 0 28px rgba(255, 180, 0, 0.35);
+}
 
-    .box {
-      background: #fff;
-      color: #000;
-      width: 90%;
-      max-width: 420px;
-      margin: 30px auto;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
+[data-theme="light"] {
+  --bg: #fff8ec;
+  --bg-2: #fff2dc;
+  --surface: #ffffff;
+  --surface-2: #fff7e6;
+  --text: #1a1a24;
+  --text-muted: #5a5a6a;
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow: 0 10px 30px rgba(255, 122, 0, 0.12);
+  --shadow-lg: 0 25px 60px rgba(255, 122, 0, 0.18);
+}
 
-    button {
-      margin: 10px;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 12px;
-      background: #0b6df0;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+/* ---------- RESET ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    button:hover {
-      background: #084fc7;
-    }
+html, body {
+  height: 100%;
+}
 
-    .kiosk-box {
-      display: none;
-      background: #fff;
-      color: #0b6df0;
-      width: 90%;
-      max-width: 420px;
-      margin: 40px auto;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
-      text-align: center;
-    }
+body {
+  font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 40px);
+  position: relative;
+  overflow-x: hidden;
+}
 
-    .kiosk-code {
-      font-size: 32px;
-      font-weight: bold;
-      background: #f3f3f3;
-      padding: 12px;
-      margin: 15px 0;
-      border-radius: 10px;
-    }
+/* ---------- BACKGROUND EFFECTS ---------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 180, 0, 0.18), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(255, 122, 0, 0.18), transparent 45%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+  z-index: -2;
+}
 
-    .small {
-      font-size: 14px;
-      color: #555;
-    }
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255, 180, 0, 0.5) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.15;
+  animation: drift 30s linear infinite;
+  z-index: -1;
+}
+
+@keyframes drift {
+  from { background-position: 0 0; }
+  to { background-position: 60px 60px; }
+}
+
+/* ---------- HEADING ---------- */
+h1 {
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 28px;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 40px rgba(255, 180, 0, 0.25);
+  animation: fadeUp 0.7s ease both;
+}
+
+/* ---------- MAIN BOX ---------- */
+.box {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(24px, 5vw, 40px);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  position: relative;
+  animation: fadeUp 0.8s ease both;
+}
+
+.box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  padding: 1px;
+  background: var(--gradient-accent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ---------- PRICE ---------- */
+#price {
+  font-size: clamp(18px, 3vw, 22px);
+  font-weight: 700;
+  text-align: center;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 2px solid var(--accent);
+  color: var(--text);
+  box-shadow:
+    inset 0 0 20px rgba(255, 180, 0, 0.1),
+    0 6px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+#price::before {
+  content: "💰";
+  margin-left: 8px;
+}
+
+/* ---------- BUTTONS ---------- */
+button {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  margin-top: 12px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  background: var(--gradient-accent);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(255, 180, 0, 0.45), var(--glow);
+}
+
+button:hover::before {
+  transform: translateX(100%);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---------- KIOSK BOX ---------- */
+.kiosk-box {
+  display: none;
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(24px, 5vw, 40px);
+  margin-top: 24px;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  text-align: center;
+  animation: fadeUp 0.5s ease both;
+  position: relative;
+}
+
+.kiosk-box h2 {
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 800;
+  margin-bottom: 12px;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.kiosk-box .small {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+/* ---------- KIOSK CODE ---------- */
+.kiosk-code {
+  font-size: clamp(28px, 6vw, 42px);
+  font-weight: 800;
+  letter-spacing: 6px;
+  padding: 22px;
+  margin: 18px 0;
+  border-radius: 12px;
+  background: var(--bg-2);
+  border: 2px dashed var(--accent);
+  color: var(--accent);
+  font-family: "Courier New", monospace;
+  text-shadow: 0 0 18px rgba(255, 180, 0, 0.5);
+  user-select: all;
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 480px) {
+  body {
+    padding: 16px;
+  }
+  .box, .kiosk-box {
+    padding: 20px;
+  }
+  button {
+    font-size: 15px;
+    padding: 12px 16px;
+  }
+  .kiosk-code {
+    letter-spacing: 4px;
+  }
+}
+
+@media (max-width: 380px) {
+  h1 {
+    font-size: 20px;
+  }
+  #price {
+    font-size: 16px;
+    padding: 14px;
+  }
+}
+
   </style>
 </head>
 
