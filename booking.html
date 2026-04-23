@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صفحة الحجز</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ============================================
+   SUNGET — Booking Page Stylesheet
+   نظام الألوان الموحد (برتقالي/ذهبي) • RTL • Responsive
+   ============================================ */
+
+/* ---------- THEME VARIABLES ---------- */
+:root,
+[data-theme="dark"] {
+  --bg: #0b0b0f;
+  --bg-2: #14141c;
+  --surface: #1a1a24;
+  --surface-2: #20202c;
+  --text: #ffffff;
+  --text-muted: #b8b8c4;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ffb400;
+  --accent-2: #ff7a00;
+  --danger: #e63946;
+  --success: #27b82e;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --radius: 14px;
+}
+
+[data-theme="light"] {
+  --bg: #f7f7fb;
+  --bg-2: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f1f7;
+  --text: #1a1a24;
+  --text-muted: #555566;
+  --border: rgba(0, 0, 0, 0.08);
+  --accent: #ff8a00;
+  --accent-2: #ff5e00;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- RESET ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Cairo", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background .3s ease, color .3s ease;
+  padding: 30px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ---------- HEADINGS ---------- */
+h1, h2 {
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: .3px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1rem;
+}
+
+h1 { font-size: clamp(26px, 4.5vw, 42px); }
+h2 { font-size: clamp(18px, 2.5vw, 24px); margin-top: 1.5rem; }
+
+/* ---------- MAIN CARD / CONTAINER ---------- */
+main, form, .container, .booking-container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 3.5vw, 36px);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp .6s ease;
+}
+
+main::before, form::before, .container::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- HOTEL NAME DISPLAY ---------- */
+#hotelName, .hotel-name {
+  display: block;
+  text-align: center;
+  font-size: clamp(15px, 2vw, 17px);
+  font-weight: 700;
+  color: var(--accent);
+  padding: 10px 18px;
+  margin: 14px auto 24px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  max-width: max-content;
+  letter-spacing: .3px;
+}
+
+/* ---------- FORM ---------- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  font-size: 14px;
+  letter-spacing: .2px;
+}
+
+label::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ---------- INPUTS / SELECTS ---------- */
+input, select, textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: .3s ease;
+}
+
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+input:hover, select:hover, textarea:hover {
+  border-color: var(--accent);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 180, 0, 0.18);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(70%) sepia(80%) saturate(500%) hue-rotate(360deg);
+  cursor: pointer;
+}
+
+[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(50%) sepia(90%) saturate(900%) hue-rotate(360deg);
+}
+
+select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--accent) 50%),
+    linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+  background-position: calc(0% + 18px) center, calc(0% + 24px) center;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-left: 2.5rem;
+}
+
+/* ---------- TOTAL PRICE DISPLAY ---------- */
+#totalPrice, .total-price, .price-display {
+  display: block;
+  text-align: center;
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 800;
+  padding: 18px 20px;
+  margin: 12px 0;
+  background: var(--surface-2);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  color: var(--accent);
+  letter-spacing: .5px;
+  box-shadow: 0 0 30px rgba(255, 180, 0, 0.15) inset;
+}
+
+/* ---------- BUTTONS ---------- */
+button, .btn, input[type="submit"] {
+  width: 100%;
+  padding: 14px 18px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #000;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  letter-spacing: .3px;
+  transition: .3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: 0; right: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  transition: right .55s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 138, 0, 0.35);
+}
+
+button:hover::before { right: 100%; }
+button:active { transform: translateY(0); }
+
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  filter: grayscale(.4);
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- MESSAGES ---------- */
+.message, .success, .error, .alert {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-align: center;
+  margin: 12px 0;
+  border: 1px solid;
+  font-size: 14px;
+}
+
+.success {
+  background: rgba(39, 184, 46, 0.12);
+  border-color: rgba(39, 184, 46, 0.5);
+  color: var(--success);
+}
+
+.error {
+  background: rgba(230, 57, 70, 0.12);
+  border-color: rgba(230, 57, 70, 0.5);
+  color: var(--danger);
+}
+
+/* ---------- LOADING ---------- */
+.loading {
+  display: inline-block;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.loading::after {
+  content: "...";
+  animation: dots 1.4s infinite;
+}
+
+@keyframes dots {
+  0%, 20%   { content: "."; }
+  40%       { content: ".."; }
+  60%, 100% { content: "..."; }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (min-width: 768px) {
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  body { padding: 16px 10px; }
+  main, form, .container {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+  input, select, button {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  #totalPrice {
+    font-size: 18px;
+    padding: 14px;
+  }
+}
+
+/* ---------- SCROLLBAR ---------- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ---------- SELECTION ---------- */
+::selection { background: var(--accent); color: #000; }
+
+</style>
+</head>
+<body>
+
+<h1>احجز غرفتك</h1>
+
+<div>
+  <h3 id="hotelName">جارٍ تحميل اسم الفندق...</h3>
+  
+  <label>اختر الغرفة</label>
+  <select id="roomSelect"></select>
+
+  <label>تاريخ الدخول</label>
+  <input type="date" id="checkIn">
+
+  <label>تاريخ الخروج</label>
+  <input type="date" id="checkOut">
+
+  <h3 id="totalPrice">السعر الإجمالي: 0</h3>
+<label>طريقة الدفع</label>
+<select id="paymentMethod">
+  <option value="paymob">💳 دفع أونلاين</option>
+  <option value="hotel">🏨 الدفع في الفندق</option>
+</select>
+  <button id="confirmBooking">تأكيد الحجز</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/* =========================
+   SUPABASE INIT
+========================= */
+const supabaseClient = supabase.createClient(
+  "https://mqvmxqzwvpasdytbpbke.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM"
+);
+
+/* =========================
+   GLOBAL VARIABLES
+========================= */
+let hotelId = null;
+let hotelData = null;
+let roomsArray = [];
+let roomPrices = {};
+let selectedRoomId = null;
+
+/* =========================
+   GET HOTEL ID FROM URL
+========================= */
+const params = new URLSearchParams(window.location.search);
+hotelId = params.get("id");
+
+/* =========================
+   CALCULATE TOTAL PRICE
+========================= */
+function calculateTotal() {
+  const checkIn = document.getElementById("checkIn").value;
+  const checkOut = document.getElementById("checkOut").value;
+
+  if (!checkIn || !checkOut || !selectedRoomId) {
+    document.getElementById("totalPrice").textContent = "السعر الإجمالي: 0";
+    return 0;
+  }
+
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+
+  const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+  if (nights <= 0) {
+    document.getElementById("totalPrice").textContent = "السعر الإجمالي: 0";
+    return 0;
+  }
+
+  const price = Number(roomPrices[selectedRoomId] || 0);
+  const total = price * nights;
+
+  document.getElementById("totalPrice").textContent =
+    "السعر الإجمالي: " + total + " جنيه";
+
+  return total;
+}
+
+/* =========================
+   LOAD HOTEL + ROOMS
+========================= */
+async function loadHotel() {
+  try {
+
+    if (!hotelId) {
+      alert("لم يتم تحديد الفندق");
+      return;
+    }
+
+    const { data, error } = await supabaseClient
+      .from("hotels")
+      .select("*")
+      .eq("id", hotelId)
+      .single();
+
+    if (error || !data) {
+      console.log(error);
+      alert("الفندق غير موجود");
+      return;
+    }
+
+    hotelData = data;
+    document.getElementById("hotelName").textContent = data.hotel_name;
+
+    const { data: rooms, error: roomsError } = await supabaseClient
+      .from("rooms")
+      .select("*")
+      .eq("hotel_id", hotelId);
+
+    if (roomsError) {
+      console.log(roomsError);
+      alert("خطأ في تحميل الغرف");
+      return;
+    }
+
+    if (!rooms || rooms.length === 0) {
+      alert("لا توجد غرف لهذا الفندق");
+      return;
+    }
+
+    roomsArray = rooms;
+
+    const roomSelect = document.getElementById("roomSelect");
+    roomSelect.innerHTML = "";
+
+    roomPrices = {};
+
+    rooms.forEach(r => {
+      const option = document.createElement("option");
+      option.value = r.id;
+      option.textContent = `${r.room_type} - ${r.room_number || "-"}`;
+
+      roomPrices[r.id] = Number(r.price || r.base_price || 0);
+
+      roomSelect.appendChild(option);
+    });
+
+    selectedRoomId = roomSelect.value;
+
+    /* =========================
+       EVENTS
+    ========================= */
+    roomSelect.addEventListener("change", (e) => {
+      selectedRoomId = e.target.value;
+      calculateTotal();
+    });
+
+    document.getElementById("checkIn").addEventListener("change", calculateTotal);
+    document.getElementById("checkOut").addEventListener("change", calculateTotal);
+
+    calculateTotal();
+
+  } catch (err) {
+    console.log(err);
+    alert("حدث خطأ في تحميل الصفحة");
+  }
+}
+
+/* =========================
+   BOOKING + PAYMENT
+========================= */
+document.getElementById("confirmBooking").addEventListener("click", async () => {
+
+  const checkIn = document.getElementById("checkIn").value;
+  const checkOut = document.getElementById("checkOut").value;
+  const paymentMethod = document.getElementById("paymentMethod").value;
+
+  if (!checkIn || !checkOut) {
+    return alert("اختر التواريخ");
+  }
+
+  if (!selectedRoomId) {
+    return alert("اختر غرفة");
+  }
+
+  const total = calculateTotal();
+
+  if (total <= 0) {
+    return alert("السعر غير صحيح");
+  }
+
+  const { data: userData } = await supabaseClient.auth.getUser();
+
+  if (!userData?.user) {
+    return alert("يجب تسجيل الدخول");
+  }
+
+  /* =========================
+     SAVE BOOKING
+  ========================= */
+  const { error } = await supabaseClient
+    .from("bookings")
+    .insert([{
+      user_id: userData.user.id,
+      hotel_id: hotelId,
+      room_id: selectedRoomId,
+      check_in: checkIn,
+      check_out: checkOut,
+      status: "pending",
+      total_price: total
+    }]);
+
+  if (error) {
+    console.log(error);
+    return alert("خطأ في الحجز");
+  }
+
+  /* =========================
+     SAVE FOR PAYMENT PAGE
+  ========================= */
+  localStorage.setItem("bookingData", JSON.stringify({
+    hotelId,
+    roomId: selectedRoomId,
+    checkIn,
+    checkOut,
+    amountToPay: total
+  }));
+
+  /* =========================
+     REDIRECT
+  ========================= */
+  if (paymentMethod === "paymob") {
+    window.location.href =
+      "https://celebrated-moonbeam-c21cec.netlify.app/paymob.html";
+  } else {
+    alert("تم الحجز والدفع عند الوصول");
+  }
+
+});
+
+/* =========================
+   START
+========================= */
+loadHotel();
+</script>
+</body>
+</html>

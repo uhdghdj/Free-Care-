@@ -1,168 +1,828 @@
-
-<!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <title>الدفع</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      background: linear-gradient(180deg, #0b6df0, #0b84ff);
-      color: #fff;
-      text-align: center;
-      padding-top: 60px;
-    }
+    <title>SUNGET.COM</title>
 
-    h1 { margin-bottom: 10px; }
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    .box {
-      background: #fff;
-      color: #000;
-      width: 90%;
-      max-width: 420px;
-      margin: 30px auto;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+<link rel="stylesheet" href="sunget-styles.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
 
-    button {
-      margin: 10px;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 12px;
-      background: #0b6df0;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+  </head>
+ 
+  <body>
+    <header>
+      
+        <div class="logo-text">SUN<span>GET</span>.COM</div>
+      </div>
+ <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">🌙</button>
+<div class="menu" id="menu" >
+  <div class="menu-button"style="margin-left: 300px;">
+<button onclick="event.stopPropagation(); openBox('notifBox')">
+  <i class="fa-solid fa-bell"></i>
+ 
+  <span id="notifCount" class="badge"></span>
+</button>
 
-    button:hover {
-      background: #084fc7;
-    }
+<button onclick="event.stopPropagation(); openBox('msgBox')">
+  <i class="fa-solid fa-comment-sms"></i>
+ 
+  <span id="msgCount" class="badge"></span>
+</button>
 
-    .kiosk-box {
-      display: none;
-      background: #fff;
-      color: #0b6df0;
-      width: 90%;
-      max-width: 420px;
-      margin: 40px auto;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
-      text-align: center;
-    }
+  
+  <button  onclick="event.stopPropagation(); openBox('bookBox')">
+    <i class="fa-solid fa-plane" style="color: #ffffff;"></i> 
+  </button>
+</div>
+<div class="settings-wrapper">
+  <i class="fa-solid fa-user-gear settings-icon" onclick="toggleSettings(event)"></i>
 
-    .kiosk-code {
-      font-size: 32px;
-      font-weight: bold;
-      background: #f3f3f3;
-      padding: 12px;
-      margin: 15px 0;
-      border-radius: 10px;
-    }
+  <div id="settingsMenu" class="settings-menu">
+    <div id="userName" style="padding:10px; border-bottom:1px solid #333;"><i class="fa-solid fa-circle-user"></i></div>
 
-    .small {
-      font-size: 14px;
-      color: #555;
-    }
-  </style>
-</head>
-
-<body>
-
-<h1>💳 اختر طريقة الدفع</h1>
-
-<div class="box">
-  <h2 id="price"></h2>
-
-  <button onclick="createPayment('card')">💳 بطاقة</button>
-  <button onclick="createPayment('wallet')">📱 محفظة</button>
-  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
+    <div onclick="editName()"> <i class="fa-solid fa-user-pen"></i > تعديل الاسم</div>
+    <div onclick="logout()"><i class="fa-solid fa-arrow-right-to-bracket"></i> تسجيل خروج</div>
+    <div onclick="deleteAccount()" style="color:red;"><i class="fa-solid fa-trash"></i> حذف الحساب</div>
+  </div>
+</div>
 </div>
 
-<!-- Kiosk -->
-<div id="kioskBox" class="kiosk-box">
-  <h2>تم إنشاء الكود</h2>
-  <p class="small">ادفع في فوري أو مصاري بالكود التالي:</p>
-
-  <div id="kioskCode" class="kiosk-code">------</div>
-
-  <button onclick="copyCode()">📋 نسخ الكود</button>
-  <button onclick="closeBox()">إغلاق</button>
+<div id="notifBox" class="popup-box">
+  <span class="close-box" onclick="closeAllBoxes()">✖</span>
 </div>
+
+<div id="msgBox" class="popup-box">
+  <span class="close-box" onclick="closeAllBoxes()">✖</span>
+</div>
+<div id="favBox" class="popup-box">
+  <span class="close-box" onclick="closeAllBoxes()">✖</span>
+</div>
+<div id="bookBox" class="popup-box">
+  <span class="close-box" onclick="closeAllBoxes()">✖</span>
+</div>
+   
+<div id="authButtons">
+  <a href="signup.html">
+    <button class="btn">تسجيل حساب</button>
+  </a>
+
+  <a href="login.html">
+    <button class="login-btn">تسجيل الدخول</button>
+  </a>
+</div>
+
+      <i id="menu-icon" class="fa-solid fa-align-left"  onclick="openMenu()" style="font-size: 26px;
+        cursor: pointer;
+        position: absolute;
+        right: 20px;
+        top: 25px;
+        z-index: 2000;"></i>
+
+      <div class="side-menu" id="sideMenu">
+        <i class="fa-solid fa-x" onclick="closeMenu()" style="font-size: 22px;
+        cursor: pointer;
+        color: rgb(255, 255, 255);"></i>
+        <a href="#">الرئيسية</a>
+        <a href="#hotels-list">حجز الفنادق</a>
+        <a href="#about">من نحن</a>
+        <a href="#contact">تواصل معنا</a>
+<button onclick="event.stopPropagation(); openBox('favBox')">
+  <i class="fa-solid fa-heart"></i><br>
+  المفضلة
+</button>
+
+      </div>
+      
+
+    </header>
+
+<div id="chatModal" style="
+  display:none;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:300px;
+  height:400px;
+  background:#111;
+  border-radius:12px;
+  box-shadow:0 10px 40px rgba(0,0,0,.6);
+  z-index:99999;
+  flex-direction:column;
+">
+
+  <!-- الهيدر -->
+  <div style="
+    padding:10px;
+    background:#222;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top-left-radius:12px;
+    border-top-right-radius:12px;
+  ">
+    <span>💬 المحادثة</span>
+    <span onclick="closeChat()" style="cursor:pointer">✖</span>
+  </div>
+
+  <!-- الرسائل -->
+  <div id="chatBox" style="
+    flex:1;
+    padding:10px;
+    overflow-y:auto;
+    font-size:14px;
+  "></div>
+
+  <!-- الإدخال -->
+  <div style="display:flex;border-top:1px solid #333;">
+    <input id="chatInput" placeholder="اكتب رسالة..."
+      style="flex:1;padding:8px;border:none;outline:none;background:#000;color:#fff;">
+    <button onclick="sendMessage()" style="
+      padding:8px 12px;
+      background:#fff;
+      border:none;
+      cursor:pointer;
+    ">إرسال</button>
+  </div>
+
+</div>
+
+    <section class="hero">
+      <div class="hero-content">
+<div class="search-box">
+  <input
+    id="searchInput"
+    type="text"
+    placeholder="ابحث عن فندق..."
+  />
+
+  <button onclick="searchHotels(true)">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+</div>
+        <h2>اكتشف سحر الأهرام</h2>
+
+        <p>فنادق فاخرة بجوار الأهرامات</p>
+
+        <p>بوابة التاريخ والحضارة</p>
+      </div>
+    </section>
+
+    <div id="hotels-list" class="hotels-list"></div>
+    <section id="about" class="section about-section">
+      <div class="container">
+        <h2 class="section-title">من نحن</h2>
+
+        <div class="about-box">
+          <p class="section-text">
+            SUNGET.COM هي منصة سياحية متخصصة في حجز الفنادق بجوار الأهرامات و
+            المتحف المصري الجديد, هدفنا هو تسهيل تجربة السفر من خلال توفير أفضل
+            الخيارات بأفضل الأسعار.
+          </p>
+
+          <br />
+
+          <p class="section-text">
+            نعمل على ربط العملاء بالفنادق مباشرة مع نظام شات فوري، لضمان تواصل
+            سريع وآمن وتجربة حجز مريحة وسلسة.
+          </p>
+
+          <br />
+
+          <p class="section-text">
+            رؤيتنا هي أن نكون أفضل منصة سياحية في مصر والعالم العربي.
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- ================= CONTACT ================= -->
+
+    <section id="contact" class="section contact-section">
+      <div class="container">
+        <h2 class="section-title">تواصل معنا</h2>
+
+        <p class="section-text">
+          يمكنك التواصل معنا في أي وقت وسنرد عليك في أسرع وقت ممكن
+        </p>
+
+        <div class="contact-card">
+          <form class="contact-form">
+            <input type="text" placeholder="الاسم" required />
+
+            <input type="email" placeholder="البريد الإلكتروني" required />
+
+            <textarea rows="5" placeholder="اكتب رسالتك" required></textarea>
+
+            <button type="submit" class="send-btn">إرسال الرسالة</button>
+          </form>
+
+          <div class="contact-info">
+            <div class="contact-item">
+              <a href="https://wa.me/201016745433">
+                واتساب  <i class="fa-brands fa-whatsapp" style="color: #27b82e;"></i>
+              </a>
+            </div>
+            <br />
+            <div class="contact-item1">
+              info@sunget.com <i class="fa-regular fa-envelope"></i>
+            </div>
+            <br /><br />
+            <div class="contact-item1">
+              القاهرة - مصر <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <br /><br />
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="footer">
+  <div class="footer-container">
+
+    <!-- اللوجو -->
+    <div>
+      <div class="footer-logo">SUNGET.COM</div>
+      <p class="footer-text">
+        منصة لحجز أفضل الفنادق بجوار الأهرامات بسهولة وسرعة.
+      </p>
+    </div>
+
+    <!-- روابط -->
+    <div class="footer-links">
+      <strong>روابط</strong>
+      <a href="#">الرئيسية</a>
+      <a href="#hotels-list">الفنادق</a>
+      <a href="#about">من نحن</a>
+      <a href="#contact">تواصل معنا</a>
+    </div>
+
+    <!-- تواصل -->
+    <div class="footer-links">
+      <strong>تواصل</strong>
+      <a href="mailto:info@sunget.com">info@sunget.com</a>
+      <a href="https://wa.me/201016745433">واتساب</a>
+      <a href="#">القاهرة - مصر</a>
+    </div>
+
+    <!-- سوشيال -->
+    <div>
+      <strong>تابعنا</strong>
+      <div class="footer-social">
+        <i id="fa1" class="fa-brands fa-facebook"></i>
+        <i id="fa2" class="fa-brands fa-instagram"></i>
+        <i id="fa3"class="fa-brands fa-whatsapp" ></i>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+  
+</div>
+  <div class="footer-bottom">
+    © 2026 SUNGET.COM - All Rights Reserved
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-/* =========================
-   1. جلب بيانات الحجز
-========================= */
-const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+/* ================= SUPABASE ================= */
+const supabaseClient = supabase.createClient(
+  "https://mqvmxqzwvpasdytbpbke.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM"
+);
 
-if (!bookingData) {
-  alert("لا توجد بيانات حجز");
-  window.location.href = "/";
-}
+/* ================= GLOBAL ================= */
+let userId = null;
+let currentHotelId = null;
+let favorites = [];
+let settingsMenu;
 
-/* عرض السعر */
-document.getElementById("price").textContent =
-  "المبلغ المطلوب: " + bookingData.amountToPay + " جنيه";
+/* ================= INIT ================= */
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data } = await supabaseClient.auth.getUser();
 
-/* =========================
-   2. إنشاء الدفع
-========================= */
-async function createPayment(type) {
-  try {
-    const res = await fetch("/.netlify/functions/create-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...bookingData,
-        integration_type: type
-      })
-    });
+  if (data.user) {
+    userId = data.user.id;
 
-    const data = await res.json();
-    console.log(data);
+    await loadFavorites();
+    await loadHotels();
+    await loadNotifications();
+    await loadMessagesBox();
+    await loadBookings();
 
-    // 💳 تحويل مباشر
-    if (data.payment_url) {
-      window.location.href = data.payment_url;
-    }
+    setInterval(() => {
+      loadNotifications();
+      loadMessagesBox();
+    }, 5000);
 
-    // 🏧 كيوسك
-    else if (data.method === "kiosk") {
-      document.getElementById("kioskCode").textContent =
-        data.bill_reference || "----";
+    const name =
+      data.user.user_metadata?.full_name || "مستخدم";
 
-      document.getElementById("kioskBox").style.display = "block";
-    }
+    const userNameEl = document.getElementById("userName");
+    if (userNameEl) userNameEl.innerText = name;
 
-    else {
-      alert("خطأ: " + JSON.stringify(data));
-    }
+    document.getElementById("menu").style.display = "flex";
+    document.getElementById("authButtons").style.display = "none";
 
-  } catch (err) {
-    alert("خطأ في الاتصال: " + err.message);
+  } else {
+    await loadHotels();
+    document.getElementById("menu").style.display = "none";
+    document.getElementById("authButtons").style.display = "block";
   }
+
+  settingsMenu = document.getElementById("settingsMenu");
+});
+
+/* ================= MENU BOXES ================= */
+function openBox(id) {
+  document.querySelectorAll(".popup-box").forEach(box => {
+    if (box.id === id) {
+      box.style.display = box.style.display === "block" ? "none" : "block";
+    } else {
+      box.style.display = "none";
+    }
+  });
+
+  if (id === "notifBox") loadNotifications();
+  if (id === "msgBox") loadMessagesBox();
+  if (id === "bookBox") loadBookings();
+  if (id === "favBox") loadFavoritesBox();
 }
 
-/* =========================
-   3. نسخ كود الكيوسك
-========================= */
-function copyCode() {
-  const code = document.getElementById("kioskCode").textContent;
-  navigator.clipboard.writeText(code);
-  alert("تم النسخ");
+function closeAllBoxes() {
+  document.querySelectorAll(".popup-box").forEach(box => {
+    box.style.display = "none";
+  });
 }
 
-/* إغلاق */
-function closeBox() {
-  document.getElementById("kioskBox").style.display = "none";
+/* ================= SETTINGS ================= */
+function toggleSettings(e) {
+  e.stopPropagation();
+  if (!settingsMenu) return;
+
+  settingsMenu.style.display =
+    settingsMenu.style.display === "block" ? "none" : "block";
+}
+
+document.addEventListener("click", () => {
+  if (settingsMenu) settingsMenu.style.display = "none";
+});
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+
+async function editName() {
+  const newName = prompt("اكتب الاسم الجديد:");
+  if (!newName) return;
+
+  await supabaseClient.auth.updateUser({
+    data: { full_name: newName }
+  });
+
+  location.reload();
+}
+let allHotels = [];
+
+async function loadHotels() {
+  const box = document.getElementById("hotels-list");
+
+  const { data } = await supabaseClient
+    .from("hotels")
+    .select("*");
+
+  if (!box || !data) return;
+
+  allHotels = data; // 👈 نخزن كل الفنادق
+
+  renderHotels(data);
+}
+function renderHotels(data) {
+  const box = document.getElementById("hotels-list");
+  box.innerHTML = "";
+
+  data.forEach(hotel => {
+    const img = hotel.photo_urls?.[0] || "https://via.placeholder.com/400";
+    const isFav = favorites.includes(hotel.id);
+
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      <div class="hotel-card">
+
+        <div class="img-box">
+          <img src="${img}">
+          <i class="fa-heart fav-icon ${isFav ? 'fa-solid' : 'fa-regular'}"
+             onclick="toggleFavorite('${hotel.id}', this)"
+             style="color:${isFav ? 'red' : '#fff'}">
+          </i>
+        </div>
+
+        <div class="hotel-body">
+          <h3>${hotel.hotel_name}</h3>
+          <div class="price">${hotel.price_per_night} EGP</div>
+
+          <a class="hotel-btn" href="hotel.html?id=${hotel.id}">
+            عرض
+          </a>
+        </div>
+
+      </div>
+    `;
+
+    box.appendChild(div);
+  });
+}
+
+/* تحميل المفضلة */
+async function loadFavorites() {
+  if (!userId) return;
+
+  const { data, error } = await supabaseClient
+    .from("favorites")
+    .select("hotel_id")
+    .eq("user_id", userId);
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  favorites = (data || []).map(f => Number(f.hotel_id));
+}
+
+
+/* ================= NOTIFICATIONS ================= */
+async function loadNotifications() {
+  if (!userId) return;
+
+  const { data } = await supabaseClient
+    .from("notifications")
+    .select("*")
+    .eq("user_id", userId);
+
+  const box = document.getElementById("notifBox");
+  const count = document.getElementById("notifCount");
+
+  if (!box) return;
+
+  let unread = 0;
+  box.innerHTML = "";
+
+  (data || []).forEach(n => {
+    if (!n.read) unread++;
+
+    box.innerHTML += `
+      <div>🔔 ${n.title}<br><small>${n.message}</small></div>
+    `;
+  });
+
+  if (count) count.innerText = unread;
+}
+
+/* ================= MESSAGES ================= */
+async function loadMessagesBox() {
+  if (!userId) return;
+
+  const { data } = await supabaseClient
+    .from("hotel_messages")
+    .select("*")
+    .eq("user_id", userId);
+
+  const box = document.getElementById("msgBox");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  (data || []).forEach(m => {
+    box.innerHTML += `
+      <div onclick="openChat('${m.hotel_id}')">
+        ${m.message}
+      </div>
+    `;
+  });
+}
+
+/* ================= BOOKINGS ================= */
+async function loadBookings() {
+  if (!userId) return;
+
+  const { data } = await supabaseClient
+    .from("bookings")
+    .select("*")
+    .eq("user_id", userId);
+
+  const box = document.getElementById("bookBox");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  (data || []).forEach(b => {
+    box.innerHTML += `
+      <div>
+        ${b.hotel_id}<br>
+        ${b.check_in} → ${b.check_out}
+      </div>
+    `;
+  });
+}
+
+/* ================= CHAT ================= */
+function openChat(hotelId) {
+  currentHotelId = hotelId;
+  document.getElementById("chatModal").style.display = "block";
+}
+
+function closeChat() {
+  document.getElementById("chatModal").style.display = "none";
+}
+
+async function loadChatMessages() {
+  if (!currentHotelId) return;
+
+  const { data } = await supabaseClient
+    .from("hotel_messages")
+    .select("*")
+    .eq("hotel_id", currentHotelId);
+
+  const box = document.getElementById("chatBox");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  (data || []).forEach(m => {
+    const p = document.createElement("p");
+    p.textContent = m.message;
+    box.appendChild(p);
+  });
+}
+
+async function sendMessage() {
+  const input = document.getElementById("chatInput");
+  if (!input || !userId || !currentHotelId) return;
+
+  await supabaseClient.from("hotel_messages").insert({
+    user_id: userId,
+    hotel_id: currentHotelId,
+    message: input.value,
+    sender_type: "user"
+  });
+
+  input.value = "";
+  loadChatMessages();
 }
 </script>
+<script>
+  const sideMenu = document.getElementById("sideMenu");
 
-</body>
-</html>
+  function openMenu() {
+    if (sideMenu) {
+      sideMenu.classList.add("active");
+    }
+  }
+
+  function closeMenu() {
+    if (sideMenu) {
+      sideMenu.classList.remove("active");
+    }
+  }
+
+  // قفل القائمة عند الضغط على أي رابط جواها
+  document.querySelectorAll(".side-menu a").forEach(link => {
+    link.addEventListener("click", () => {
+      closeMenu();
+    });
+  });
+
+  // قفل القائمة عند الضغط خارجها
+  document.addEventListener("click", function (e) {
+    if (
+      sideMenu &&
+      sideMenu.classList.contains("active") &&
+      !sideMenu.contains(e.target) &&
+      !e.target.classList.contains("fa-align-left")
+    ) {
+      closeMenu();
+    }
+  });
+</script>
+<script>
+async function loadFavoritesBox() {
+  if (!userId) return;
+
+  const { data, error } = await supabaseClient
+    .from("favorites")
+    .select("hotel_id, hotels(*)")
+    .eq("user_id", userId);
+
+  const box = document.getElementById("favBox");
+  if (!box) return;
+
+  box.innerHTML = `<span class="close-box" onclick="closeAllBoxes()">✖</span>`;
+
+  if (!data || data.length === 0) {
+    box.innerHTML += `<div style="padding:10px">لا توجد مفضلات ❤️</div>`;
+    return;
+  }
+data.forEach(f => {
+  const hotel = f.hotels;
+
+  const div = document.createElement("div");
+
+  div.style.cssText = `
+    padding: 14px;
+    margin-bottom: 12px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: 0.3s ease;
+    cursor: pointer;
+  `;
+
+  div.onmouseenter = () => {
+    div.style.transform = "translateY(-3px)";
+    div.style.boxShadow = "0 10px 25px rgba(0,0,0,0.4)";
+  };
+
+  div.onmouseleave = () => {
+    div.style.transform = "translateY(0)";
+    div.style.boxShadow = "none";
+  };
+
+  div.innerHTML = `
+    <img src="${hotel.photo_urls?.[0] || 'https://via.placeholder.com/200'}"
+         style="width:100%;border-radius:10px;margin-bottom:8px">
+
+    <div style="font-weight:600">${hotel.hotel_name}</div>
+    <div style="opacity:0.8">${hotel.price_per_night} EGP</div>
+  `;
+
+  box.appendChild(div);
+});
+ 
+}
+</script>
+<script>
+window.toggleFavorite = async function (hotelId, icon) {
+  if (!userId) {
+    alert("سجل دخول الأول");
+    return;
+  }
+
+  const isFav = favorites.includes(hotelId);
+
+  if (isFav) {
+    const { error } = await supabaseClient
+      .from("favorites")
+      .delete()
+      .eq("user_id", userId)
+      .eq("hotel_id", hotelId);
+
+    if (error) return console.log(error);
+
+    favorites = favorites.filter(id => id !== hotelId);
+
+    icon.classList.remove("fa-solid");
+    icon.classList.add("fa-regular");
+    icon.style.color = "white";
+
+  } else {
+    const { error } = await supabaseClient
+      .from("favorites")
+      .insert({
+        user_id: userId,
+        hotel_id: hotelId
+      });
+
+    if (error) return console.log(error);
+
+    favorites.push(hotelId);
+
+    icon.classList.remove("fa-regular");
+    icon.classList.add("fa-solid");
+    icon.style.color = "white";
+  }
+};
+
+</script>
+<script>
+async function searchHotels(scroll = false) {
+  const value = document.getElementById("searchInput").value.trim();
+  const box = document.getElementById("hotels-list");
+
+  if (value === "") {
+    await loadHotels();
+    
+    if (scroll) {
+      box.scrollIntoView({ behavior: "smooth" });
+    }
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("hotels")
+    .select("*")
+    .ilike("hotel_name", `%${value}%`);
+
+  if (error) return console.log(error);
+
+  box.innerHTML = "";
+
+  (data || []).forEach(hotel => {
+    const img = hotel.photo_urls?.[0] || "https://via.placeholder.com/400";
+    const isFav = favorites.includes(hotel.id);
+
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      <div class="hotel-card">
+        <div class="img-box">
+          <img src="${img}">
+          <i class="fa-heart fav-icon ${isFav ? 'fa-solid' : 'fa-regular'}"
+             onclick="toggleFavorite('${hotel.id}', this)"
+             style="color:${isFav ? 'red' : '#fff'}">
+          </i>
+        </div>
+
+        <div class="hotel-body">
+          <h3>${hotel.hotel_name}</h3>
+          <div class="price">${hotel.price_per_night} EGP</div>
+
+          <a class="hotel-btn" href="hotel.html?id=${hotel.id}">
+            عرض
+          </a>
+        </div>
+      </div>
+    `;
+
+    box.appendChild(div);
+  });
+
+  // 👇 السكرول بس لو جاي من الزر
+  if (scroll) {
+    box.scrollIntoView({ behavior: "smooth" });
+  }
+}
+</script>
+<script>
+  document.getElementById("searchInput").addEventListener("input", () => {
+  searchHotels();
+});
+</script>
+<script>
+
+
+(function () {
+  const STORAGE_KEY = "sunget-theme";
+  const root = document.documentElement;
+
+  function getSystemTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    const btn = document.getElementById("themeToggle");
+    if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
+  }
+
+  // أول تحميل: لو المستخدم اختار قبل كده استخدمه، وإلا اتبع النظام
+  const saved = localStorage.getItem(STORAGE_KEY);
+  applyTheme(saved || getSystemTheme());
+
+  // تبديل يدوي
+  document.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "themeToggle") {
+      const current = root.getAttribute("data-theme") || getSystemTheme();
+      const next = current === "dark" ? "light" : "dark";
+      localStorage.setItem(STORAGE_KEY, next);
+      applyTheme(next);
+    }
+  });
+
+  // متابعة تغيّر النظام لو المستخدم لسه ما اختارش يدوياً
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      applyTheme(e.matches ? "dark" : "light");
+    }
+  });
+})();
+
+
+</script>
+  </body>
+</html>      

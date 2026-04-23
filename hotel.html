@@ -1,0 +1,1291 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>تفاصيل الفندق</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href=" https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+/* ==========================================================
+   SUNGET.COM — Hotel Details Page (Luxury Pyramid Theme)
+   RTL • Light/Dark • Fully Responsive
+   ========================================================== */
+
+/* ===== Theme Tokens ===== */
+:root,
+[data-theme="light"] {
+  --bg: #f7f1e6;
+  --surface: rgba(255, 252, 245, 0.85);
+  --surface-2: rgba(255, 248, 235, 0.95);
+  --text: #2a1f10;
+  --text-soft: #5a4a32;
+  --muted: #8a7a5e;
+  --gold: #c89b3c;
+  --gold-2: #e0b860;
+  --gold-deep: #8a6a1f;
+  --border: rgba(200, 155, 60, 0.28);
+  --shadow-lg: 0 20px 60px rgba(80, 55, 10, 0.18);
+  --shadow-md: 0 10px 30px rgba(80, 55, 10, 0.12);
+  --overlay: linear-gradient(135deg, rgba(247, 241, 230, 0.6), rgba(239, 229, 208, 0.78));
+  --gradient-gold: linear-gradient(135deg, #e0b860 0%, #c89b3c 50%, #8a6a1f 100%);
+  --bubble-user: linear-gradient(135deg, #c89b3c, #8a6a1f);
+  --bubble-hotel: rgba(200, 155, 60, 0.12);
+}
+
+[data-theme="dark"] {
+  --bg: #0b0a08;
+  --surface: rgba(22, 18, 12, 0.7);
+  --surface-2: rgba(28, 22, 14, 0.9);
+  --text: #f5e9cf;
+  --text-soft: #d8c9a6;
+  --muted: #a89878;
+  --gold: #e9c46a;
+  --gold-2: #f4d98a;
+  --gold-deep: #b8902f;
+  --border: rgba(233, 196, 106, 0.22);
+  --shadow-lg: 0 25px 70px rgba(0, 0, 0, 0.55);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --overlay: linear-gradient(135deg, rgba(11,10,8,0.7), rgba(22,18,12,0.5) 50%, rgba(11,10,8,0.88));
+  --gradient-gold: linear-gradient(135deg, #f4d98a 0%, #e9c46a 50%, #b8902f 100%);
+  --bubble-user: linear-gradient(135deg, #e9c46a, #b8902f);
+  --bubble-hotel: rgba(233, 196, 106, 0.14);
+}
+
+/* ===== Reset ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--gold) transparent; }
+
+body {
+  font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+  padding: clamp(16px, 4vw, 40px);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    var(--overlay),
+    url('https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: -2;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, var(--gold-2), transparent),
+    radial-gradient(1px 1px at 60% 70%, var(--gold), transparent),
+    radial-gradient(1.5px 1.5px at 80% 20%, var(--gold-2), transparent),
+    radial-gradient(1px 1px at 35% 85%, var(--gold), transparent);
+  background-size: 600px 600px;
+  opacity: 0.3;
+  animation: drift 60s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-600px); }
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gradient-gold); border-radius: 10px; }
+
+/* ===== Main Container ===== */
+.container,
+.hotel-container,
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: var(--surface);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: clamp(20px, 4vw, 40px);
+  box-shadow: var(--shadow-lg);
+  animation: fadeUp 0.7s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Hotel Title ===== */
+#hotelName,
+h1 {
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 14px;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 4px 30px rgba(200, 155, 60, 0.25);
+}
+
+#hotelPrice,
+.price {
+  display: inline-block;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--gold);
+  background: rgba(200, 155, 60, 0.1);
+  padding: 8px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  margin: 0 auto 24px;
+}
+
+.price-wrap {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+#hotelDesc,
+.description {
+  color: var(--text-soft);
+  font-size: clamp(1rem, 1.8vw, 1.1rem);
+  line-height: 1.9;
+  text-align: center;
+  margin-bottom: 30px;
+  max-width: 800px;
+  margin-inline: auto;
+}
+
+/* ===== Book Now Button ===== */
+#bookNowBtn,
+.book-btn {
+  display: block;
+  margin: 30px auto;
+  padding: 16px 50px;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  font-weight: 800;
+  color: #fff;
+  background: var(--gradient-gold);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 10px 30px rgba(200, 155, 60, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#bookNowBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+#bookNowBtn:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 15px 40px rgba(200, 155, 60, 0.6);
+}
+
+#bookNowBtn:hover::before { transform: translateX(100%); }
+
+/* ===== Slider ===== */
+.slider,
+#slider,
+.slider-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  max-height: 520px;
+  overflow: hidden;
+  border-radius: 22px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+#slides {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(.4, 0, .2, 1);
+}
+
+#slides img,
+#slides .slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#slides .slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+}
+
+#slides .slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Slider Navigation */
+.nav,
+.slider-nav,
+.prev,
+.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  z-index: 5;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.nav:hover,
+.slider-nav:hover {
+  background: var(--gradient-gold);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 25px var(--gold);
+}
+
+.nav.prev,
+.prev { right: 16px; }
+
+.nav.next,
+.next { left: 16px; }
+
+/* Dots */
+#dots,
+.dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 5;
+}
+
+#dots span,
+.dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+#dots span.active,
+.dots span.active {
+  background: var(--gold);
+  width: 30px;
+  border-radius: 999px;
+  box-shadow: 0 0 12px var(--gold);
+}
+
+/* ===== Section Headings ===== */
+h2,
+.section-title {
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 800;
+  margin: 30px 0 18px;
+  color: var(--text);
+  position: relative;
+  padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--gradient-gold);
+  border-radius: 2px;
+}
+
+[dir="ltr"] h2::after { right: auto; left: 0; }
+
+/* ===== Amenities ===== */
+#amenities,
+.amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.amenity {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.amenity::before {
+  content: "✦";
+  color: var(--gold);
+  font-size: 0.9rem;
+}
+
+.amenity:hover {
+  background: var(--gradient-gold);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200, 155, 60, 0.4);
+  border-color: transparent;
+}
+
+.amenity:hover::before { color: #fff; }
+
+/* ===== Map Link ===== */
+#mapLink,
+.map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-2);
+  color: var(--gold);
+  padding: 12px 24px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-weight: 700;
+  border: 1.5px solid var(--gold);
+  transition: all 0.3s ease;
+  margin-bottom: 30px;
+}
+
+#mapLink::before {
+  content: "📍";
+  font-size: 1.1rem;
+}
+
+#mapLink:hover {
+  background: var(--gradient-gold);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(200, 155, 60, 0.4);
+}
+
+/* ===== Chat Section ===== */
+#chatBox,
+.chat-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+  height: 360px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(10px);
+}
+
+#chatBox p {
+  max-width: 75%;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: var(--bubble-hotel);
+  color: var(--text);
+  word-break: break-word;
+  animation: bubble 0.3s ease;
+  border: 1px solid var(--border);
+}
+
+#chatBox p[style*="right"] {
+  align-self: flex-end;
+  background: var(--bubble-user);
+  color: #fff;
+  border-color: transparent;
+}
+
+#chatBox p[style*="left"] {
+  align-self: flex-start;
+}
+
+@keyframes bubble {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Chat Input ===== */
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+#chatInput,
+.chat-input,
+input[type="text"] {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+#chatInput:focus,
+input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(200, 155, 60, 0.18);
+}
+
+#sendMsg,
+.send-btn,
+button {
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  background: var(--gradient-gold);
+  color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(200, 155, 60, 0.35);
+}
+
+#sendMsg:hover,
+button:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 10px 30px rgba(200, 155, 60, 0.55);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  body::before { background-attachment: scroll; }
+}
+
+@media (max-width: 768px) {
+  body { padding: 12px; }
+  .container, main { padding: 18px; border-radius: 20px; }
+  .slider, #slider { aspect-ratio: 4/3; }
+  .nav { width: 40px; height: 40px; font-size: 1.3rem; }
+  .nav.prev, .prev { right: 8px; }
+  .nav.next, .next { left: 8px; }
+  #chatBox { height: 300px; }
+}
+
+@media (max-width: 480px) {
+  body { padding: 8px; }
+  .container, main { padding: 14px; border-radius: 16px; }
+  #bookNowBtn { padding: 14px 32px; width: 100%; }
+  .chat-input-row { flex-direction: column; }
+  #sendMsg { width: 100%; }
+  .amenity { font-size: 0.85rem; padding: 8px 14px; }
+  #chatBox p { max-width: 90%; }
+}
+
+    </style>
+  </head>
+  <body>
+    <!-- اسم الفندق -->
+    <h1 id="hotelName"></h1>
+
+    <!-- وصف الفندق -->
+    <p id="hotelDesc"></p>
+
+    <!-- سعر الفندق -->
+    <h3 id="hotelPrice"></h3>
+    <!-- زر احجز الآن -->
+    <button
+      id="bookNowBtn"
+      style="
+        padding: 10px 20px;
+        border-radius: 25px;
+        border: none;
+        background: #00ff99;
+        color: #000;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      "
+    >
+      احجز الآن
+    </button>
+    <!-- SLIDER (صور الفندق) -->
+    <div class="slider">
+      <button class="nav prev">‹</button>
+      <div class="slides" id="slides"></div>
+      <button class="nav next">›</button>
+    </div>
+    <div class="dots" id="dots"></div>
+
+    <!-- المرافق -->
+    <h3 data-i18n="hotel.amenities">المرافق</h3>
+    <div id="amenities" class="amenities"></div>
+
+    <!-- رابط الخريطة -->
+    <a id="mapLink" class="map-btn" target="_blank" data-i18n="hotel.map">
+      عرض الموقع على الخريطة
+    </a>
+
+    <hr style="margin: 30px 0" />
+
+    <!-- الدردشة -->
+    <h3 data-i18n="chat.title">الدردشة مع الفندق</h3>
+    <div
+      id="chatBox"
+      style="
+        border-radius: 15px;
+        border: 1px solid #555;
+        padding: 13px;
+        height: 200px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      "
+    ></div>
+
+    <input
+      id="chatInput"
+      data-i18n-placeholder="chat.placeholder"
+      placeholder="اكتب رسالتك..."
+      style="
+        width: 75%;
+        padding: 9px;
+        border-radius: 25px;
+        border: 1px solid #ccc;
+        color: #ffffff;
+      "
+    />
+    <a
+      id="sendMsg"
+      style="
+        padding: 6px 12px;
+        margin-left: 8px;
+        color: #ffffff;
+        font-size: 25px;
+      "
+    >
+      <i class="fa-solid fa-paper-plane"></i>
+    </a>
+    <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+    <script>
+      /* ============================= */
+      /*         SUPABASE INIT         */
+      /* ============================= */
+
+      const supabaseClient = supabase.createClient(
+        "https://mqvmxqzwvpasdytbpbke.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM",
+      );
+
+      const params = new URLSearchParams(window.location.search);
+      const hotelId = params.get("id");
+
+      let currentSlide = 0;
+
+      /* ============================= */
+      /*          LOAD HOTEL           */
+      /* ============================= */
+
+      async function loadHotel() {
+        if (!hotelId) return;
+
+        try {
+          const { data, error } = await supabaseClient
+            .from("hotels")
+            .select("*")
+            .eq("id", hotelId)
+            .single();
+
+          if (error || !data) {
+            document.body.innerHTML = "❌ الفندق غير موجود";
+            return;
+          }
+
+          // الاسم والسعر
+          document.getElementById("hotelName").textContent = data.hotel_name;
+          document.getElementById("hotelPrice").textContent =
+            data.price_per_night + " " + i18next.t("hotel.price");
+
+          document.getElementById("hotelDesc").textContent =
+            data.description || "";
+
+          /* ====== IMAGES ====== */
+
+          /* ============================= */
+/* ====== SLIDER - الحل النهائي ====== */
+async function createSlides(imagesArray) {
+  const slidesContainer = document.getElementById('slides');
+  const dotsContainer = document.getElementById('dots');
+  
+  if (!slidesContainer || !dotsContainer) return;
+  
+  slidesContainer.innerHTML = '';
+  dotsContainer.innerHTML = '';
+  currentSlide = 0;
+  
+  imagesArray.forEach((imgSrc, index) => {
+    // Slide container
+    const slide = document.createElement('div');
+    slide.className = 'slide';
+    
+    // Image
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = `صورة ${index + 1}`;
+    img.loading = 'lazy';
+    
+    // Loading state
+    img.onload = () => {
+      slide.classList.add('loaded');
+      initSlider(); // إعادة تهيئة بعد تحميل الصورة
+    };
+    
+    img.onerror = () => {
+      console.warn('فشل تحميل الصورة:', imgSrc);
+      img.src = 'https://via.placeholder.com/900x500/1a1a24/ffffff?text=لا+توجد+صورة';
+      slide.classList.add('loaded');
+    };
+    
+    slide.appendChild(img);
+    slidesContainer.appendChild(slide);
+    
+    // Dot
+    const dot = document.createElement('span');
+    dot.dataset.slide = index;
+    if (index === 0) dot.classList.add('active');
+    
+    dot.addEventListener('click', () => goToSlide(index));
+    dotsContainer.appendChild(dot);
+  });
+  
+  totalSlides = imagesArray.length;
+  setTimeout(initSlider, 300);
+}
+
+          // لو طلع Array جاهز
+          if (Array.isArray(data.photo_urls)) {
+            imagesArray = data.photo_urls;
+          }
+
+          if (imagesArray.length > 0) {
+            imagesArray.forEach((img, index) => {
+              const image = document.createElement("img");
+
+              // لو رابط كامل
+              if (img.startsWith("http")) {
+                image.src = img;
+              } else {
+                // لو اسم ملف داخل bucket
+                const { data: publicUrlData } = supabaseClient.storage
+                  .from("hotel-photos") // 👈 تأكد ده اسم الـ bucket عندك
+                  .getPublicUrl(img);
+
+                image.src = publicUrlData.publicUrl;
+              }
+
+              image.loading = "lazy";
+
+              image.onerror = () => {
+                console.log("❌ Image failed:", img);
+              };
+
+              slides.appendChild(image);
+
+              const dot = document.createElement("span");
+              if (index === 0) dot.classList.add("active");
+
+              dot.addEventListener("click", () => {
+                currentSlide = index;
+                updateSlider();
+              });
+
+              dots.appendChild(dot);
+            });
+
+            updateSlider();
+          } else {
+            slides.innerHTML = "<p>لا توجد صور لهذا الفندق</p>";
+          }
+
+          /* ====== AMENITIES ====== */
+
+          const amenitiesBox = document.getElementById("amenities");
+          amenitiesBox.innerHTML = "";
+
+          let amenitiesArray = [];
+
+          if (
+            typeof data.amenities === "string" &&
+            data.amenities.trim() !== ""
+          ) {
+            amenitiesArray = data.amenities.split(",").map((a) => a.trim());
+          }
+
+          if (amenitiesArray.length > 0) {
+            amenitiesArray.forEach((item) => {
+              const span = document.createElement("span");
+              span.className = "amenity";
+              span.textContent = item;
+              amenitiesBox.appendChild(span);
+            });
+          } else {
+            amenitiesBox.innerHTML = `<p>${i18next.t("hotel.noAmenities")}</p>`;
+          }
+
+          /* ====== MAP ====== */
+
+          const mapBtn = document.getElementById("mapLink");
+
+          if (data.map_link && data.map_link.trim() !== "") {
+            mapBtn.href = data.map_link;
+            mapBtn.style.pointerEvents = "auto";
+            mapBtn.style.opacity = "1";
+          } else {
+            mapBtn.textContent = i18next.t("hotel.mapUnavailable");
+            mapBtn.style.pointerEvents = "none";
+            mapBtn.style.opacity = "0.5";
+          }
+        } catch (err) {
+          console.error("Load hotel error:", err);
+        }
+      }
+
+      /* ============================= */
+      /*          SLIDER LOGIC         */
+      /* ============================= */
+
+      function updateSlider() {
+        const slidesEl = document.getElementById("slides");
+        const dotsEl = document.querySelectorAll("#dots span");
+
+        slidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+        dotsEl.forEach((dot, i) => {
+          dot.classList.toggle("active", i === currentSlide);
+        });
+      }
+
+      document.querySelector(".nav.next")?.addEventListener("click", () => {
+        const total = document.querySelectorAll("#slides img").length;
+        if (!total) return;
+        currentSlide = (currentSlide + 1) % total;
+        updateSlider();
+      });
+
+      document.querySelector(".nav.prev")?.addEventListener("click", () => {
+        const total = document.querySelectorAll("#slides img").length;
+        if (!total) return;
+        currentSlide = (currentSlide - 1 + total) % total;
+        updateSlider();
+      });
+      async function loadMessages() {
+        if (!hotelId) return;
+
+        const { data, error } = await supabaseClient
+          .from("hotel_messages")
+          .select("*")
+          .eq("hotel_id", hotelId)
+          .order("created_at", { ascending: true });
+
+        if (error || !data) return;
+
+        const box = document.getElementById("chatBox");
+        box.innerHTML = "";
+
+        data.forEach((msg) => {
+          const p = document.createElement("p");
+
+          const senderText =
+            msg.sender_type === "hotel"
+              ? i18next.t("chat.hotel")
+              : i18next.t("chat.you");
+
+          p.textContent = senderText + " " + msg.message;
+
+          p.style.textAlign = msg.sender_type === "hotel" ? "left" : "right";
+
+          box.appendChild(p);
+        });
+
+        box.scrollTop = box.scrollHeight;
+      }
+
+      /* ============================= */
+      /*          INIT                 */
+      /* ============================= */
+      function updateContent() {
+        // ترجمة النصوص
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          el.innerHTML = i18next.t(el.dataset.i18n);
+        });
+
+        // ترجمة placeholder
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          el.placeholder = i18next.t(el.dataset.i18nPlaceholder);
+        });
+
+        // تغيير اتجاه الصفحة
+        document.documentElement.lang = i18next.language;
+        document.documentElement.dir =
+          i18next.language === "ar" ? "rtl" : "ltr";
+      }
+
+      i18next.init(
+        {
+          lng: localStorage.getItem("lang") || "ar",
+          fallbackLng: "en",
+          resources: {
+            // نفس resources بتاعتك زي ما هي
+            ar: {
+              translation: {
+                hotel: {
+                  price: "جنيه / ليلة",
+                  details: "عرض التفاصيل",
+                  amenities: "المرافق",
+                  map: "عرض الموقع على الخريطة",
+                  mapUnavailable: "الموقع غير متوفر",
+                  noHotels: "لا توجد فنادق حالياً",
+                  noAmenities: "لا توجد مرافق مسجلة",
+                },
+                chat: {
+                  title: "الدردشة مع الفندق",
+                  placeholder: "اكتب رسالتك...",
+                  send: "إرسال",
+                  you: " أنت:",
+                  hotel: " الفندق:",
+                },
+              },
+            },
+
+            en: {
+              translation: {
+                hotel: {
+                  price: "EGP / night",
+                  details: "View details",
+                  amenities: "Amenities",
+                  map: "View on map",
+                  mapUnavailable: "Location not available",
+                  noHotels: "No hotels available",
+                  noAmenities: "No amenities available",
+                },
+                chat: {
+                  title: "Chat with the hotel",
+                  placeholder: "Type your message...",
+                  send: "Send",
+                  you: " You:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            fr: {
+              translation: {
+                hotel: {
+                  price: "EGP / nuit",
+                  details: "Voir les détails",
+                  amenities: "Équipements",
+                  map: "Voir sur la carte",
+                  mapUnavailable: "Emplacement non disponible",
+                  noHotels: "Aucun hôtel disponible",
+                  noAmenities: "Aucun équipement disponible",
+                },
+                chat: {
+                  title: "Discussion avec l'hôtel",
+                  placeholder: "Écrivez votre message...",
+                  send: "Envoyer",
+                  you: " Vous:",
+                  hotel: " Hôtel:",
+                },
+              },
+            },
+
+            de: {
+              translation: {
+                hotel: {
+                  price: "EGP / Nacht",
+                  details: "Details anzeigen",
+                  amenities: "Ausstattung",
+                  map: "Auf der Karte anzeigen",
+                  mapUnavailable: "Standort nicht verfügbar",
+                  noHotels: "Keine Hotels verfügbar",
+                  noAmenities: "Keine Ausstattung verfügbar",
+                },
+                chat: {
+                  title: "Mit dem Hotel chatten",
+                  placeholder: "Nachricht eingeben...",
+                  send: "Senden",
+                  you: " Sie:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            es: {
+              translation: {
+                hotel: {
+                  price: "EGP / noche",
+                  details: "Ver detalles",
+                  amenities: "Servicios",
+                  map: "Ver en el mapa",
+                  mapUnavailable: "Ubicación no disponible",
+                  noHotels: "No hay hoteles disponibles",
+                  noAmenities: "No hay servicios disponibles",
+                },
+                chat: {
+                  title: "Chat con el hotel",
+                  placeholder: "Escribe tu mensaje...",
+                  send: "Enviar",
+                  you: " Tú:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            it: {
+              translation: {
+                hotel: {
+                  price: "EGP / notte",
+                  details: "Visualizza dettagli",
+                  amenities: "Servizi",
+                  map: "Visualizza sulla mappa",
+                  mapUnavailable: "Posizione non disponibile",
+                  noHotels: "Nessun hotel disponibile",
+                  noAmenities: "Nessun servizio disponibile",
+                },
+                chat: {
+                  title: "Chat con l'hotel",
+                  placeholder: "Scrivi il tuo messaggio...",
+                  send: "Invia",
+                  you: " Tu:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            ru: {
+              translation: {
+                hotel: {
+                  price: "EGP / ночь",
+                  details: "Подробнее",
+                  amenities: "Удобства",
+                  map: "Показать на карте",
+                  mapUnavailable: "Местоположение недоступно",
+                  noHotels: "Нет доступных отелей",
+                  noAmenities: "Нет удобств",
+                },
+                chat: {
+                  title: "Чат с отелем",
+                  placeholder: "Введите сообщение...",
+                  send: "Отправить",
+                  you: " Вы:",
+                  hotel: " Отель:",
+                },
+              },
+            },
+
+            tr: {
+              translation: {
+                hotel: {
+                  price: "EGP / gece",
+                  details: "Detayları gör",
+                  amenities: "Olanaklar",
+                  map: "Haritada görüntüle",
+                  mapUnavailable: "Konum mevcut değil",
+                  noHotels: "Oteller bulunamadı",
+                  noAmenities: "Olanak yok",
+                },
+                chat: {
+                  title: "Otel ile sohbet",
+                  placeholder: "Mesajınızı yazın...",
+                  send: "Gönder",
+                  you: " Siz:",
+                  hotel: " Otel:",
+                },
+              },
+            },
+
+            pt: {
+              translation: {
+                hotel: {
+                  price: "EGP / noite",
+                  details: "Ver detalhes",
+                  amenities: "Comodidades",
+                  map: "Ver no mapa",
+                  mapUnavailable: "Localização indisponível",
+                  noHotels: "Nenhum hotel disponível",
+                  noAmenities: "Nenhuma comodidade disponível",
+                },
+                chat: {
+                  title: "Chat com o hotel",
+                  placeholder: "Digite sua mensagem...",
+                  send: "Enviar",
+                  you: " Você:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            nl: {
+              translation: {
+                hotel: {
+                  price: "EGP / nacht",
+                  details: "Bekijk details",
+                  amenities: "Voorzieningen",
+                  map: "Bekijk op de kaart",
+                  mapUnavailable: "Locatie niet beschikbaar",
+                  noHotels: "Geen hotels beschikbaar",
+                  noAmenities: "Geen voorzieningen beschikbaar",
+                },
+                chat: {
+                  title: "Chat met het hotel",
+                  placeholder: "Typ je bericht...",
+                  send: "Versturen",
+                  you: " Jij:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            pl: {
+              translation: {
+                hotel: {
+                  price: "EGP / noc",
+                  details: "Zobacz szczegóły",
+                  amenities: "Udogodnienia",
+                  map: "Zobacz na mapie",
+                  mapUnavailable: "Lokalizacja niedostępna",
+                  noHotels: "Brak dostępnych hoteli",
+                  noAmenities: "Brak udogodnień",
+                },
+                chat: {
+                  title: "Czat z hotelem",
+                  placeholder: "Wpisz wiadomość...",
+                  send: "Wyślij",
+                  you: " Ty:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            ja: {
+              translation: {
+                hotel: {
+                  price: "EGP / 泊",
+                  details: "詳細を見る",
+                  amenities: "設備",
+                  map: "地図で表示",
+                  mapUnavailable: "場所は利用できません",
+                  noHotels: "利用可能なホテルはありません",
+                  noAmenities: "設備はありません",
+                },
+                chat: {
+                  title: "ホテルとチャット",
+                  placeholder: "メッセージを入力...",
+                  send: "送信",
+                  you: " あなた:",
+                  hotel: " ホテル:",
+                },
+              },
+            },
+
+            ko: {
+              translation: {
+                hotel: {
+                  price: "EGP / 박",
+                  details: "자세히 보기",
+                  amenities: "편의 시설",
+                  map: "지도에서 보기",
+                  mapUnavailable: "위치를 사용할 수 없습니다",
+                  noHotels: "이용 가능한 호텔이 없습니다",
+                  noAmenities: "편의 시설 없음",
+                },
+                chat: {
+                  title: "호텔과 채팅",
+                  placeholder: "메시지를 입력하세요...",
+                  send: "전송",
+                  you: " 당신:",
+                  hotel: " 호텔:",
+                },
+              },
+            },
+
+            zh: {
+              translation: {
+                hotel: {
+                  price: "EGP / 晚",
+                  details: "查看详情",
+                  amenities: "设施",
+                  map: "在地图上查看",
+                  mapUnavailable: "位置不可用",
+                  noHotels: "暂无酒店",
+                  noAmenities: "暂无设施",
+                },
+                chat: {
+                  title: "与酒店聊天",
+                  placeholder: "输入您的消息...",
+                  send: "发送",
+                  you: " 你:",
+                  hotel: " 酒店:",
+                },
+              },
+            },
+          },
+        },
+        function () {
+          updateContent(); // 👈 مهم جداً
+
+          loadHotel();
+          loadMessages();
+          setInterval(loadMessages, 3000);
+        },
+      );
+
+      // دالة إرسال رسالة
+      async function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+        if (!msg || !hotelId) return;
+
+        // جلب بيانات المستخدم
+        const { data: userData } = await supabaseClient.auth.getUser();
+        if (!userData.user) return alert("يجب تسجيل الدخول");
+
+        // إدخال الرسالة في جدول hotel_messages
+        const { error } = await supabaseClient.from("hotel_messages").insert([
+          {
+            hotel_id: hotelId,
+            hotel_name: document.getElementById("hotelName").textContent,
+            user_id: userData.user.id,
+            message: msg,
+            sender_type: "user",
+          },
+        ]);
+
+        if (error) {
+          console.error("حدث خطأ أثناء إرسال الرسالة:", error);
+          return;
+        }
+
+        input.value = ""; // مسح الصندوق
+        loadMessages(); // إعادة تحميل الرسائل فوراً
+      }
+
+      // ربط الزر بإرسال الرسالة
+      document.getElementById("sendMsg").addEventListener("click", sendMessage);
+
+      // إرسال رسالة عند الضغط على Enter
+      document.getElementById("chatInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+    <script>
+      document.getElementById("sendMsg").addEventListener("click", async () => {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+
+        if (!msg) return;
+
+        try {
+          // جلب بيانات المستخدم
+          const { data: userData } = await supabaseClient.auth.getUser();
+          if (!userData.user) {
+            alert("يجب تسجيل الدخول لإرسال رسالة");
+            return;
+          }
+
+          // إرسال الرسالة للجدول الصحيح
+          const { data, error } = await supabaseClient
+            .from("hotel_messages")
+            .insert([
+              {
+                hotel_id: hotelId,
+                message: msg,
+                sender_name: userData.user.user_metadata?.full_name || "مستخدم",
+                sender_type: "user",
+              },
+            ])
+            .select();
+
+          if (error) {
+            console.error("حدث خطأ أثناء إرسال الرسالة:", error);
+            return;
+          }
+
+          // مسح صندوق الإدخال
+          input.value = "";
+
+          // إعادة تحميل الرسائل
+          loadMessages();
+        } catch (err) {
+          console.error("حدث خطأ أثناء إرسال الرسالة:", err);
+        }
+      });
+    </script>
+    <script>
+      const selectedHotelId = hotelId; // أو أي id ثابت
+document.getElementById("bookNowBtn").addEventListener("click", () => {
+  window.location.href = `booking.html?id=${selectedHotelId}`;
+});
+
+     
+    </script>
+  </body>
+</html>
