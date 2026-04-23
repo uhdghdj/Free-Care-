@@ -32,13 +32,13 @@ export const handler = async (event) => {
 
     const API_KEY =
       process.env.PAYMOB_API_KEY ||
-      "PUT_YOUR_API_KEY_HERE";
+      "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTmpBeE9UUXlNamN1TXpBNU1UZ3pJbjAuODdYUkRfenRZSWp6YkhrbWZvLXlpMmh2dDZlZEloMzBwSjctUE9GSkItRzdVMUc1NzhBeVRacGFfVXI3VHVlRnZ4VDYxSklxUDFTQzBSV2N4eHRKcHc=";
 
     // 1️⃣ Auth
     const authRes = await fetch("https://accept.paymob.com/api/auth/tokens", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ api_key: API_KEY }),
+      body: JSON.stringify({ api_key: ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTmpBeE9UUXlNamN1TXpBNU1UZ3pJbjAuODdYUkRfenRZSWp6YkhrbWZvLXlpMmh2dDZlZEloMzBwSjctUE9GSkItRzdVMUc1NzhBeVRacGFfVXI3VHVlRnZ4VDYxSklxUDFTQzBSV2N4eHRKcHc= }),
     });
 
     const authData = await authRes.json();
