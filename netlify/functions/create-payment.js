@@ -1,4 +1,3 @@
-
 export const handler = async (event) => {
   try {
     const body = JSON.parse(event.body || "{}");
@@ -30,15 +29,8 @@ export const handler = async (event) => {
 
     const amount_cents = Math.round(amount * 100);
 
-    // 🔥 API KEY (هنا تحطه)
-    const API_KEY = process.env.PAYMOB_API_KEY;
-
-    if (!API_KEY) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "API KEY مش موجود في env" }),
-      };
-    }
+    // 🔥 API KEY محطوط مباشرة (للتجربة فقط)
+    const API_KEY = "ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmpiR0Z6Y3lJNklrMWxjbU5vWVc1MElpd2ljSEp2Wm1sc1pWOXdheUk2TVRBM01EYzRPU3dpYm1GdFpTSTZJakUzTmpBeE9UUXlNamN1TXpBNU1UZ3pJbjAuODdYUkRfenRZSWp6YkhrbWZvLXlpMmh2dDZlZEloMzBwSjctUE9GSkItRzdVMUc1NzhBeVRacGFfVXI3VHVlRnZ4VDYxSklxUDFTQzBSV2N4eHRKcHc=";
 
     // 1️⃣ Auth
     const authRes = await fetch("https://accept.paymob.com/api/auth/tokens", {
@@ -67,6 +59,7 @@ export const handler = async (event) => {
     );
 
     const orderData = await orderRes.json();
+    if (!orderData.id) throw new Error("Order failed");
 
     // 3️⃣ Payment Key
     const payRes = await fetch(
@@ -101,7 +94,6 @@ export const handler = async (event) => {
     );
 
     const payData = await payRes.json();
-
     if (!payData.token) throw new Error("Payment key فشل");
 
     // 4️⃣ Kiosk
