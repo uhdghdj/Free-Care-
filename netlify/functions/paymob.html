@@ -340,7 +340,7 @@ if (!bookingData) {
 
 /* عرض السعر */
 document.getElementById("price").textContent =
-  "المبلغ المطلوب: " + bookingData.totalPrice + " جنيه";
+  "المبلغ المطلوب: " + bookingData.amountToPay + " جنيه";
 
 /* =========================
    2. إنشاء الدفع
@@ -349,13 +349,13 @@ async function createPayment(type) {
 
   const bookingData = JSON.parse(localStorage.getItem("bookingData"));
 
-  console.log("bookingData:", bookingData); // 🔍 للتأكد
+  console.log("bookingData:", bookingData); // للتأكد
 
   const res = await fetch("/.netlify/functions/create-payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      amount: bookingData.totalPrice,   // 👈 هنا التصحيح
+      amount: bookingData.amountToPay, // ✅ هنا الصح
       integration_type: type
     })
   });
