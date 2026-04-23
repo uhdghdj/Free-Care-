@@ -340,16 +340,22 @@ if (!bookingData) {
 
 /* عرض السعر */
 document.getElementById("price").textContent =
-  "المبلغ المطلوب: " + bookingData.amountToPay + " جنيه";
+  "المبلغ المطلوب: " + bookingData.totalPrice + " جنيه";
+
+/* =========================
+   2. إنشاء الدفع
+========================= */
 async function createPayment(type) {
 
   const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+
+  console.log("bookingData:", bookingData); // 🔍 للتأكد
 
   const res = await fetch("/.netlify/functions/create-payment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      amount: bookingData.total,
+      amount: bookingData.totalPrice,   // 👈 هنا التصحيح
       integration_type: type
     })
   });
@@ -358,14 +364,17 @@ async function createPayment(type) {
 
   if (data.payment_url) {
     window.location.href = data.payment_url;
-  } else if (data.method === "kiosk") {
-    document.getElementById("kioskCode").textContent = data.bill_reference;
+  } 
+  else if (data.method === "kiosk") {
+    document.getElementById("kioskCode").textContent =
+      data.bill_reference || "----";
+
     document.getElementById("kioskBox").style.display = "block";
-  } else {
+  } 
+  else {
     alert("خطأ: " + JSON.stringify(data));
   }
 }
-
 </script>
 
 </body>
