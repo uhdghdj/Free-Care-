@@ -3,9 +3,9 @@ export const handler = async (event) => {
     const body = JSON.parse(event.body || "{}");
 
     const CONFIG = {
-      card: { integration_id:5245183 , iframe_id: 952327 },
+      card: { integration_id:5245183 , iframe_id: 952326  },
       wallet: { integration_id:5245282 , iframe_id:972789  },
-      kiosk: { integration_id: 5345183 },
+    
     };
 
     const integrationType = body.integration_type || "card";
