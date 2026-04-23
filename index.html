@@ -1,8 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title> Paymob</title>
+  <title>الدفع</title>
+
   <style>
     body {
       font-family: "Cairo", sans-serif;
@@ -11,20 +13,36 @@
       text-align: center;
       padding-top: 60px;
     }
+
+    h1 { margin-bottom: 10px; }
+
+    .box {
+      background: #fff;
+      color: #000;
+      width: 90%;
+      max-width: 420px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
     button {
       margin: 10px;
-      padding: 15px 25px;
+      padding: 14px 20px;
       border: none;
       border-radius: 12px;
-      background: #fff;
-      color: #0b6df0;
-      font-size: 18px;
+      background: #0b6df0;
+      color: #fff;
+      font-size: 16px;
       cursor: pointer;
       transition: 0.3s;
     }
-    button:hover { background: #eee; }
 
-    /* ===== كارت كود الكيوسك ===== */
+    button:hover {
+      background: #084fc7;
+    }
+
     .kiosk-box {
       display: none;
       background: #fff;
@@ -32,121 +50,119 @@
       width: 90%;
       max-width: 420px;
       margin: 40px auto;
-      padding: 28px;
+      padding: 25px;
       border-radius: 18px;
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15);
-      font-family: "Cairo", sans-serif;
       text-align: center;
-      animation: fadeIn 0.4s ease-in-out;
     }
-    .paymob-logo {
-      width: 100px;
-      margin-bottom: 15px;
-    }
-    .kiosk-box h2 {
-      font-size: 22px;
-      margin-bottom: 8px;
-      color: #0b6df0;
-    }
-    .kiosk-message {
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
+
     .kiosk-code {
-      background: #f4f6fb;
-      color: #000;
-      font-size: 36px;
+      font-size: 32px;
       font-weight: bold;
-      letter-spacing: 2px;
-      padding: 14px;
-      border-radius: 10px;
+      background: #f3f3f3;
+      padding: 12px;
       margin: 15px 0;
-    }
-    .kiosk-note {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
-    .kiosk-actions {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-    .copy-btn, .close-btn {
-      border: none;
       border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 15px;
-      cursor: pointer;
-      font-weight: 600;
     }
-    .copy-btn { background: #0b6df0; color: white; }
-    .close-btn { background: #eef2ff; color: #0b6df0; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .small {
+      font-size: 14px;
+      color: #555;
     }
   </style>
 </head>
+
 <body>
 
-  <h1>اختار طريقة الدفع</h1>
-  <button onclick="createPayment('card')">بطاقة</button>
-  <button onclick="createPayment('wallet')"> محفظة</button>
-  <button onclick="createPayment('kiosk')"> كيوسك</button>
+<h1>💳 اختر طريقة الدفع</h1>
 
-  <!-- واجهة كود الكيوسك -->
-  <div id="kioskBox" class="kiosk-box">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Paymob_logo.png" alt="Paymob" class="paymob-logo">
-    <h2>✅ تم إنشاء الطلب بنجاح</h2>
-    <p class="kiosk-message">ادفع الآن باستخدام كود الكيوسك التالي:</p>
-    <p id="kioskCode" class="kiosk-code">------</p>
-    <p class="kiosk-note">يمكنك الدفع بهذا الكود في أي منفذ <strong>فوري</strong> أو <strong>مصاري</strong>.</p>
-    <div class="kiosk-actions">
-      <button onclick="copyKioskCode()" class="copy-btn">📋 نسخ الكود</button>
-      <button onclick="closeKiosk()" class="close-btn">✖ إغلاق</button>
-    </div>
-  </div>
+<div class="box">
+  <h2 id="price"></h2>
 
-  <script>
-    async function createPayment(type) {
-      try {
-        const res = await fetch("/.netlify/functions/create-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ integration_type: type })
-        });
-        const data = await res.json();
-        console.log("Response:", data);
+  <button onclick="createPayment('card')">💳 بطاقة</button>
+  <button onclick="createPayment('wallet')">📱 محفظة</button>
+  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
+</div>
 
-        // 💳 أو 📱 التحويل العادي
-        if (data.ok && data.payment_url) {
-          window.location.href = data.payment_url;
-        }
-        // 🏧 كيوسك: عرض الكود في واجهة أنيقة
-        else if (data.ok && data.method === "kiosk") {
-          document.getElementById("kioskCode").textContent = data.bill_reference || "—";
-          document.getElementById("kioskBox").style.display = "block";
-        }
-        else {
-          alert("خطأ أثناء إنشاء الرابط:\n" + JSON.stringify(data));
-        }
-      } catch (err) {
-        alert("حدث خطأ في الاتصال: " + err.message);
-      }
+<!-- Kiosk -->
+<div id="kioskBox" class="kiosk-box">
+  <h2>تم إنشاء الكود</h2>
+  <p class="small">ادفع في فوري أو مصاري بالكود التالي:</p>
+
+  <div id="kioskCode" class="kiosk-code">------</div>
+
+  <button onclick="copyCode()">📋 نسخ الكود</button>
+  <button onclick="closeBox()">إغلاق</button>
+</div>
+
+<script>
+/* =========================
+   1. جلب بيانات الحجز
+========================= */
+const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+
+if (!bookingData) {
+  alert("لا توجد بيانات حجز");
+  window.location.href = "/";
+}
+
+/* عرض السعر */
+document.getElementById("price").textContent =
+  "المبلغ المطلوب: " + bookingData.amountToPay + " جنيه";
+
+/* =========================
+   2. إنشاء الدفع
+========================= */
+async function createPayment(type) {
+  try {
+    const res = await fetch("/.netlify/functions/create-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...bookingData,
+        integration_type: type
+      })
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    // 💳 تحويل مباشر
+    if (data.payment_url) {
+      window.location.href = data.payment_url;
     }
 
-    function copyKioskCode() {
-      const code = document.getElementById("kioskCode").textContent;
-      navigator.clipboard.writeText(code);
-      alert("✅ تم نسخ الكود بنجاح!");
+    // 🏧 كيوسك
+    else if (data.method === "kiosk") {
+      document.getElementById("kioskCode").textContent =
+        data.bill_reference || "----";
+
+      document.getElementById("kioskBox").style.display = "block";
     }
 
-    function closeKiosk() {
-      document.getElementById("kioskBox").style.display = "none";
+    else {
+      alert("خطأ: " + JSON.stringify(data));
     }
-  </script>
+
+  } catch (err) {
+    alert("خطأ في الاتصال: " + err.message);
+  }
+}
+
+/* =========================
+   3. نسخ كود الكيوسك
+========================= */
+function copyCode() {
+  const code = document.getElementById("kioskCode").textContent;
+  navigator.clipboard.writeText(code);
+  alert("تم النسخ");
+}
+
+/* إغلاق */
+function closeBox() {
+  document.getElementById("kioskBox").style.display = "none";
+}
+</script>
 
 </body>
-    </html>
+</html>
