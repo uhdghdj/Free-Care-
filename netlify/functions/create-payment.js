@@ -4,8 +4,8 @@ export const handler = async (event) => {
     const body = JSON.parse(event.body || "{}");
 
     const CONFIG = {
-      card: { integration_id: 5369099, iframe_id: 972116 },
-      wallet: { integration_id: 5371332, iframe_id: 972117 },
+      card: { integration_id: 5245183, iframe_id:  952327 },
+      wallet: { integration_id:5245282 , iframe_id: 952340 },
       kiosk: { integration_id: 5369208 },
     };
 
