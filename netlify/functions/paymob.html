@@ -338,9 +338,15 @@ if (!bookingData) {
   window.location.href = "/";
 }
 
-/* عرض السعر */
+/* =========================
+   عرض الأسعار
+========================= */
 document.getElementById("price").textContent =
-  "المبلغ المطلوب: " + bookingData.amountToPay + " جنيه";
+  "المبلغ المطلوب (5%): " + bookingData.amountToPay + " جنيه";
+
+/* عرض الباقي */
+document.getElementById("remaining").textContent =
+  "المتبقي للدفع في الفندق: " + bookingData.remaining + " جنيه";
 
 /* =========================
    2. إنشاء الدفع
@@ -349,30 +355,44 @@ async function createPayment(type) {
 
   const bookingData = JSON.parse(localStorage.getItem("bookingData"));
 
-  console.log("bookingData:", bookingData); // للتأكد
+  console.log("bookingData:", bookingData);
 
-  const res = await fetch("/.netlify/functions/create-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      amount: bookingData.amountToPay, // ✅ هنا الصح
-      integration_type: type
-    })
-  });
+  // 🔥 حماية إضافية
+  if (!bookingData.amountToPay || bookingData.amountToPay <= 0) {
+    alert("خطأ في المبلغ");
+    return;
+  }
 
-  const data = await res.json();
+  try {
+    const res = await fetch("/.netlify/functions/create-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: bookingData.amountToPay, // 👈 5% بس
+        integration_type: type
+      })
+    });
 
-  if (data.payment_url) {
-    window.location.href = data.payment_url;
-  } 
-  else if (data.method === "kiosk") {
-    document.getElementById("kioskCode").textContent =
-      data.bill_reference || "----";
+    const data = await res.json();
 
-    document.getElementById("kioskBox").style.display = "block";
-  } 
-  else {
-    alert("خطأ: " + JSON.stringify(data));
+    console.log("Paymob response:", data); // 🔍 مهم
+
+    if (data.payment_url) {
+      window.location.href = data.payment_url;
+    } 
+    else if (data.method === "kiosk") {
+      document.getElementById("kioskCode").textContent =
+        data.bill_reference || "----";
+
+      document.getElementById("kioskBox").style.display = "block";
+    } 
+    else {
+      alert("خطأ: " + JSON.stringify(data));
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("حصل خطأ في الاتصال بالسيرفر");
   }
 }
 </script>
