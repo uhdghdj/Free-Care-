@@ -407,7 +407,15 @@ function calculateTotal() {
   }
 
   const price = Number(roomPrices[selectedRoomId] || 0);
-  const total = price * nights;
+ const total = price * nights;
+
+// إضافة 5%
+const final = Math.round(total * 1.05);
+
+document.getElementById("totalPrice").textContent =
+  "السعر الإجمالي: " + final + " جنيه (شامل رسوم الدفع)";
+
+return total; // نخليها ترجع الأساسي عشان نحسب عليه
 
   document.getElementById("totalPrice").textContent =
     "السعر الإجمالي: " + total + " جنيه";
@@ -511,8 +519,10 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
   if (!selectedRoomId) {
     return alert("اختر غرفة");
   }
+const total = calculateTotal();
 
-  const total = calculateTotal();
+// إضافة 5%
+const finalAmount = Math.round(total * 1.05);
 
   if (total <= 0) {
     return alert("السعر غير صحيح");
@@ -547,13 +557,13 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
   /* =========================
      SAVE FOR PAYMENT PAGE
   ========================= */
-  localStorage.setItem("bookingData", JSON.stringify({
-    hotelId,
-    roomId: selectedRoomId,
-    checkIn,
-    checkOut,
-    amountToPay: total
-  }));
+ localStorage.setItem("bookingData", JSON.stringify({
+  hotelId,
+  roomId: selectedRoomId,
+  checkIn,
+  checkOut,
+  amountToPay: finalAmount // ✅ ده اللي هيروح لباي موب
+}));
 
   /* =========================
      REDIRECT
