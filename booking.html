@@ -409,11 +409,11 @@ function calculateTotal() {
   const price = Number(roomPrices[selectedRoomId] || 0);
  const total = price * nights;
 
-// إضافة 5%
-const final = Math.round(total * 1.05);
+const deposit = Math.round(total * 0.05); // 5% فقط
 
 document.getElementById("totalPrice").textContent =
-  "السعر الإجمالي: " + final + " جنيه (شامل رسوم الدفع)";
+  "المقدم (5%): " + deposit + " جنيه";
+
 
 return total; // نخليها ترجع الأساسي عشان نحسب عليه
 
@@ -557,12 +557,15 @@ const finalAmount = Math.round(total * 1.05);
   /* =========================
      SAVE FOR PAYMENT PAGE
   ========================= */
- localStorage.setItem("bookingData", JSON.stringify({
+const deposit = Math.round(total * 0.05);
+
+localStorage.setItem("bookingData", JSON.stringify({
   hotelId,
   roomId: selectedRoomId,
   checkIn,
   checkOut,
-  amountToPay: finalAmount // ✅ ده اللي هيروح لباي موب
+  amountToPay: deposit,   // 👈 العميل يدفع 5% بس
+  remaining: total - deposit
 }));
 
   /* =========================
