@@ -568,13 +568,15 @@ button:hover {
     >
       احجز الآن
     </button>
-    <!-- SLIDER (صور الفندق) -->
-    <div class="slider">
-      <button class="nav prev">‹</button>
-      <div class="slides" id="slides"></div>
-      <button class="nav next">›</button>
-    </div>
-    <div class="dots" id="dots"></div>
+  <div class="slider">
+  <button class="nav prev">‹</button>
+
+  <div class="slides" id="slides"></div>
+
+  <button class="nav next">›</button>
+</div>
+
+<div class="dots" id="dots"></div>
 
     <!-- المرافق -->
     <h3 data-i18n="hotel.amenities">المرافق</h3>
@@ -625,6 +627,7 @@ button:hover {
       <i class="fa-solid fa-paper-plane"></i>
     </a>
     <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  
     <script>
       /* ============================= */
       /*         SUPABASE INIT         */
@@ -1133,6 +1136,44 @@ setTimeout(initSlider, 300);
         if (e.key === "Enter") sendMessage();
       });
     </script>
+      <script>
+let currentSlide = 0;
+
+function updateSlider() {
+  const slidesEl = document.getElementById("slides");
+  const slides = document.querySelectorAll("#slides .slide");
+  const dots = document.querySelectorAll("#dots span");
+
+  const total = slides.length;
+  if (total === 0) return;
+
+  slidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+  dots.forEach((d, i) => {
+    d.classList.toggle("active", i === currentSlide);
+  });
+}
+
+function initSlider() {
+  const slides = document.querySelectorAll("#slides .slide");
+
+  if (!slides.length) return;
+
+  document.querySelector(".nav.next").onclick = () => {
+    const total = slides.length;
+    currentSlide = (currentSlide + 1) % total;
+    updateSlider();
+  };
+
+  document.querySelector(".nav.prev").onclick = () => {
+    const total = slides.length;
+    currentSlide = (currentSlide - 1 + total) % total;
+    updateSlider();
+  };
+
+  updateSlider();
+}
+</script>
     <script>
       document.getElementById("sendMsg").addEventListener("click", async () => {
         const input = document.getElementById("chatInput");
