@@ -409,7 +409,30 @@ body::before {
   from { transform: translateY(0px) rotate(0deg); }
   to { transform: translateY(-100px) rotate(360deg); }
 }
+.pass-wrapper {
+  position: relative;
+  width: 100%;
+}
 
+.pass-wrapper input {
+  padding-right: 60px;
+}
+
+.pass-wrapper button {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.pass-wrapper button:hover {
+  color: var(--accent);
+}
   </style>
   <body>
     <div class="card">
@@ -427,6 +450,7 @@ body::before {
     placeholder="البريد الإلكتروني"
     required
   />
+  <div class="pass-wrapper">
   <input
     id="password"
     type="password"
@@ -434,6 +458,9 @@ body::before {
     placeholder="كلمة المرور"
     required
   />
+
+  <button type="button" id="togglePass">👁</button>
+</div>
   <button type="submit" data-i18n="login">تسجيل الدخول</button>
 </form>
 <div id="msg"></div>
@@ -762,6 +789,16 @@ function changeLanguage(lang) {
   });
 }
 </script>
+<script>
+  const toggleBtn = document.getElementById("togglePass");
+const passwordInput = document.getElementById("password");
 
+toggleBtn.addEventListener("click", () => {
+  const isHidden = passwordInput.type === "password";
+
+  passwordInput.type = isHidden ? "text" : "password";
+  toggleBtn.textContent = isHidden ? "🙈" : "👁";
+});
+</script>
   </body>
 </html>
