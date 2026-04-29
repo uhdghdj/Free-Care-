@@ -112,34 +112,11 @@ html[dir="rtl"] {
   z-index: 1;
 }
 
-/* ================== SLIDER SECTION ================== */
-.slider-section {
-  padding: 30px 5% 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.slider {
-  position: relative;
-  max-width: 100%;
-  height: 450px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  background: var(--surface);
-}
-
-.slides {
-  display: flex;
-  height: 100%;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
 .slides img {
+  flex: 0 0 100%;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  flex-shrink: 0;
 }
 
 .nav {
