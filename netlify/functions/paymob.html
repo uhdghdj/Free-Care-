@@ -306,26 +306,15 @@ button:disabled {
 
 <body>
 
-<h1>💳 اختر طريقة الدفع</h1>
+
 
 <div class="box">
   <h2 id="price"></h2>
 
-  <button onclick="createPayment('card')">💳 بطاقة</button>
-  <button onclick="createPayment('wallet')">📱 محفظة</button>
-  <button onclick="createPayment('kiosk')">🏧 كيوسك</button>
+  <button onclick="createPayment('card')">تاكيد الحجز</button>
+ 
 </div>
 
-<!-- Kiosk -->
-<div id="kioskBox" class="kiosk-box">
-  <h2>تم إنشاء الكود</h2>
-  <p class="small">ادفع في فوري أو مصاري بالكود التالي:</p>
-
-  <div id="kioskCode" class="kiosk-code">------</div>
-
-  <button onclick="copyCode()">📋 نسخ الكود</button>
-  <button onclick="closeBox()">إغلاق</button>
-</div>
 
 <script>
 /* =========================
