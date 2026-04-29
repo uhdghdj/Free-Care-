@@ -666,119 +666,44 @@ button:hover {
 
           document.getElementById("hotelDesc").textContent =
             data.description || "";
+const imagesArray = data.photo_urls || [];
 
-          /* ====== IMAGES ====== */
+const slidesContainer = document.getElementById("slides");
+const dotsContainer = document.getElementById("dots");
 
-          /* ============================= */
-/* ====== SLIDER - الحل النهائي ====== */
-async function createSlides(imagesArray) {
-  const slidesContainer = document.getElementById('slides');
-  const dotsContainer = document.getElementById('dots');
-  
-  if (!slidesContainer || !dotsContainer) return;
-  
-  slidesContainer.innerHTML = '';
-  dotsContainer.innerHTML = '';
-  currentSlide = 0;
-  
-  imagesArray.forEach((imgSrc, index) => {
-    // Slide container
-    const slide = document.createElement('div');
-    slide.className = 'slide';
-    
-    // Image
-    const img = document.createElement('img');
-    img.src = imgSrc;
-    img.alt = `صورة ${index + 1}`;
-    img.loading = 'lazy';
-    
-    // Loading state
-    img.onload = () => {
-      slide.classList.add('loaded');
-      initSlider(); // إعادة تهيئة بعد تحميل الصورة
-    };
-    
-    img.onerror = () => {
-      console.warn('فشل تحميل الصورة:', imgSrc);
-      img.src = 'https://via.placeholder.com/900x500/1a1a24/ffffff?text=لا+توجد+صورة';
-      slide.classList.add('loaded');
-    };
-    
-    slide.appendChild(img);
-    slidesContainer.appendChild(slide);
-    
-    // Dot
-    const dot = document.createElement('span');
-    dot.dataset.slide = index;
-    if (index === 0) dot.classList.add('active');
-    
-    dot.addEventListener('click', () => goToSlide(index));
-    dotsContainer.appendChild(dot);
-  });
-  
-  totalSlides = imagesArray.length;
-  setTimeout(initSlider, 300);
-}
+slidesContainer.innerHTML = "";
+dotsContainer.innerHTML = "";
 
-          // لو طلع Array جاهز
-          if (Array.isArray(data.photo_urls)) {
-            imagesArray = data.photo_urls;
-          }
+imagesArray.forEach((img, index) => {
 
-          if (imagesArray.length > 0) {
-            imagesArray.forEach((img, index) => {
-              const image = document.createElement("img");
+  const slide = document.createElement("div");
+  slide.className = "slide";
 
-              // لو رابط كامل
-              if (img.startsWith("http")) {
-                image.src = img;
-              } else {
-                // لو اسم ملف داخل bucket
-                const { data: publicUrlData } = supabaseClient.storage
-                  .from("hotel-photos") // 👈 تأكد ده اسم الـ bucket عندك
-                  .getPublicUrl(img);
+  const image = document.createElement("img");
 
-                image.src = publicUrlData.publicUrl;
-              }
+  if (img.startsWith("http")) {
+    image.src = img;
+  } else {
+    const { data: urlData } = supabaseClient.storage
+      .from("hotel-photos")
+      .getPublicUrl(img);
 
-              image.loading = "lazy";
+    image.src = urlData.publicUrl;
+  }
 
-              image.onerror = () => {
-                console.log("❌ Image failed:", img);
-              };
+  image.loading = "lazy";
 
-              slides.appendChild(image);
+  slide.appendChild(image);
+  slidesContainer.appendChild(slide);
 
-              const dot = document.createElement("span");
-              if (index === 0) dot.classList.add("active");
+  const dot = document.createElement("span");
+  if (index === 0) dot.classList.add("active");
 
-              dot.addEventListener("click", () => {
-                currentSlide = index;
-                updateSlider();
-              });
+  dot.onclick = () => goToSlide(index);
+  dotsContainer.appendChild(dot);
+});
 
-              dots.appendChild(dot);
-            });
-
-            updateSlider();
-          } else {
-            slides.innerHTML = "<p>لا توجد صور لهذا الفندق</p>";
-          }
-
-          /* ====== AMENITIES ====== */
-
-          const amenitiesBox = document.getElementById("amenities");
-          amenitiesBox.innerHTML = "";
-
-          let amenitiesArray = [];
-
-          if (
-            typeof data.amenities === "string" &&
-            data.amenities.trim() !== ""
-          ) {
-            amenitiesArray = data.amenities.split(",").map((a) => a.trim());
-          }
-
+setTimeout(initSlider, 300);
           if (amenitiesArray.length > 0) {
             amenitiesArray.forEach((item) => {
               const span = document.createElement("span");
@@ -808,34 +733,6 @@ async function createSlides(imagesArray) {
         }
       }
 
-      /* ============================= */
-      /*          SLIDER LOGIC         */
-      /* ============================= */
-
-      function updateSlider() {
-        const slidesEl = document.getElementById("slides");
-        const dotsEl = document.querySelectorAll("#dots span");
-
-        slidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-        dotsEl.forEach((dot, i) => {
-          dot.classList.toggle("active", i === currentSlide);
-        });
-      }
-
-      document.querySelector(".nav.next")?.addEventListener("click", () => {
-        const total = document.querySelectorAll("#slides img").length;
-        if (!total) return;
-        currentSlide = (currentSlide + 1) % total;
-        updateSlider();
-      });
-
-      document.querySelector(".nav.prev")?.addEventListener("click", () => {
-        const total = document.querySelectorAll("#slides img").length;
-        if (!total) return;
-        currentSlide = (currentSlide - 1 + total) % total;
-        updateSlider();
-      });
       async function loadMessages() {
         if (!hotelId) return;
 
@@ -1287,5 +1184,42 @@ document.getElementById("bookNowBtn").addEventListener("click", () => {
 
      
     </script>
+    <script>
+let currentSlide = 0;
+let totalSlides = 0;
+
+function updateSlider() {
+  const slidesEl = document.getElementById("slides");
+  const dots = document.querySelectorAll("#dots span");
+
+  slidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+  dots.forEach((d, i) => {
+    d.classList.toggle("active", i === currentSlide);
+  });
+}
+
+function goToSlide(index) {
+  currentSlide = index;
+  updateSlider();
+}
+
+function initSlider() {
+  const slides = document.querySelectorAll("#slides .slide");
+  totalSlides = slides.length;
+
+  document.querySelector(".nav.next").onclick = () => {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+  };
+
+  document.querySelector(".nav.prev").onclick = () => {
+    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    updateSlider();
+  };
+
+  updateSlider();
+}
+</script>
   </body>
 </html>
