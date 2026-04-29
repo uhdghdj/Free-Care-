@@ -11,6 +11,588 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
   </head>
+  <style >
+/* ================== HOTEL DETAILS - SUNGET.COM ================== */
+
+/* ---------- THEME VARIABLES (مستوردة من الستايل الأساسي) ---------- */
+:root,
+[data-theme="dark"] {
+  --bg: #0b0b0f;
+  --bg-2: #14141c;
+  --surface: #1a1a24;
+  --surface-2: #20202c;
+  --text: #ffffff;
+  --text-muted: #b8b8c4;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ffb400;
+  --accent-2: #ff7a00;
+  --danger: #e63946;
+  --success: #27b82e;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --radius: 14px;
+  --header-h: 80px;
+}
+
+[data-theme="light"] {
+  --bg: #f7f7fb;
+  --bg-2: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f1f7;
+  --text: #1a1a24;
+  --text-muted: #555566;
+  --border: rgba(0, 0, 0, 0.08);
+  --accent: #ff8a00;
+  --accent-2: #ff5e00;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- RESET & BASE ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Cairo", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ================== HOTEL HEADER ================== */
+.hotel-header {
+  background: linear-gradient(135deg, rgba(11, 11, 15, 0.95), rgba(26, 26, 36, 0.95));
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 25px 5%;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow);
+}
+
+.hotel-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.hotel-header h1 {
+  font-size: clamp(28px, 6vw, 42px);
+  font-weight: 800;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.hotel-header .price {
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 700;
+  color: var(--accent);
+  position: relative;
+  z-index: 1;
+}
+
+/* ================== SLIDER SECTION ================== */
+.slider-section {
+  padding: 30px 5% 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.slider {
+  position: relative;
+  max-width: 100%;
+  height: 450px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--surface);
+}
+
+.slides {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slides img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav.prev {
+  left: 20px;
+}
+
+.nav.next {
+  right: 20px;
+}
+
+.nav:hover {
+  background: var(--accent);
+  color: #000;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dots span.active,
+.dots span:hover {
+  background: var(--accent);
+  transform: scale(1.2);
+}
+
+/* ================== BOOK NOW BUTTON ================== */
+.book-wrap {
+  padding: 0 5%;
+  margin: 20px 0 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.book-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 16px 40px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(255, 180, 0, 0.35);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.book-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(255, 180, 0, 0.45);
+}
+
+/* ================== HOTEL INFO ================== */
+.hotel-info {
+  max-width: 900px;
+  margin: 0 auto 60px;
+  padding: 0 5%;
+}
+
+.hotel-info h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.hotel-info h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.hotel-info p {
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ================== AMENITIES ================== */
+.amenities-section {
+  max-width: 900px;
+  margin: 0 auto 60px;
+  padding: 0 5%;
+}
+
+.amenities-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+  position: relative;
+}
+
+.amenities-section h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.amenities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 20px 0;
+}
+
+.amenity {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.amenity:hover {
+  background: var(--surface-2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent);
+}
+
+/* ================== MAP SECTION ================== */
+.map-section {
+  max-width: 900px;
+  margin: 0 auto 60px;
+  padding: 0 5%;
+  text-align: center;
+}
+
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 16px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  border: 2px solid var(--border);
+  transition: all 0.3s ease;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.map-btn:hover {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 180, 0, 0.35);
+  border-color: var(--accent);
+}
+
+.map-btn i {
+  font-size: 20px;
+}
+
+/* ================== CHAT SECTION ================== */
+.chat-section {
+  max-width: 700px;
+  margin: 0 auto 80px;
+  padding: 0 5%;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.chat-section h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-align: center;
+  position: relative;
+}
+
+.chat-section h2::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.chat-box {
+  background: var(--surface-2);
+  border-radius: 16px;
+  height: 400px;
+  padding: 20px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+
+.chat-box p {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  max-width: 75%;
+  font-size: 15px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  animation: messageSlide 0.3s ease;
+}
+
+.chat-box p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-box p[style*="text-align: right"] {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  margin-left: auto;
+}
+
+.chat-box p[style*="text-align: left"] {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.chat-input-wrap {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+#chatInput {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  padding: 14px 20px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+#chatInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 180, 0, 0.15);
+}
+
+#sendMsg {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  font-weight: 700;
+  padding: 14px 24px;
+  border-radius: 25px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+#sendMsg:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 180, 0, 0.35);
+}
+
+/* ================== SCROLLBAR ================== */
+.chat-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* ================== RESPONSIVE ================== */
+@media (max-width: 768px) {
+  .slider {
+    height: 350px;
+  }
+  
+  .nav {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  
+  .nav.prev {
+    left: 15px;
+  }
+  
+  .nav.next {
+    right: 15px;
+  }
+  
+  .hotel-header {
+    padding: 20px 4%;
+  }
+  
+  .book-btn {
+    padding: 14px 30px;
+    font-size: 16px;
+  }
+  
+  .amenities {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+  }
+  
+  .chat-section {
+    margin-bottom: 40px;
+    padding: 30px 20px;
+  }
+  
+  .chat-box {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .slider {
+    height: 280px;
+    border-radius: 12px;
+  }
+  
+  .hotel-header h1 {
+    font-size: 24px;
+  }
+  
+  .hotel-header .price {
+    font-size: 20px;
+  }
+  
+  .book-btn {
+    padding: 12px 24px;
+    font-size: 15px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .amenities {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .amenity {
+    padding: 14px 10px;
+    font-size: 13px;
+  }
+  
+  .chat-input-wrap {
+    flex-direction: column;
+  }
+  
+  #sendMsg {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .chat-section {
+    padding: 25px 15px;
+  }
+}
+    
+  </style>
   <body>
     <!-- ===== HEADER ===== -->
     <header class="hotel-header">
