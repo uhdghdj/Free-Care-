@@ -355,7 +355,6 @@ button:disabled {
   <button id="confirmBooking">تأكيد الحجز</button>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 /* =========================
    SUPABASE INIT
@@ -489,7 +488,7 @@ async function loadHotel() {
 }
 
 /* =========================
-   BOOKING (NO ONLINE PAYMENT)
+   BOOKING + ONLINE PAYMENT
 ========================= */
 document.getElementById("confirmBooking").addEventListener("click", async () => {
 
@@ -516,7 +515,10 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
     return alert("يجب تسجيل الدخول");
   }
 
-  const { error } = await supabaseClient
+  /* =========================
+     SAVE BOOKING (pending)
+  ========================= */
+  const { data: booking, error } = await supabaseClient
     .from("bookings")
     .insert([{
       user_id: userData.user.id,
@@ -524,16 +526,37 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
       room_id: selectedRoomId,
       check_in: checkIn,
       check_out: checkOut,
-      status: "confirmed",
+      status: "pending",
       total_price: total
-    }]);
+    }])
+    .select()
+    .single();
 
   if (error) {
     console.log(error);
     return alert("خطأ في الحجز");
   }
 
-  alert("تم الحجز بنجاح ✅\nالدفع عند الوصول للفندق");
+  /* =========================
+     PREPARE PAYMENT (5%)
+  ========================= */
+  const deposit = Math.round(total * 0.05);
+
+  localStorage.setItem("bookingData", JSON.stringify({
+    bookingId: booking.id,
+    hotelId,
+    roomId: selectedRoomId,
+    checkIn,
+    checkOut,
+    amountToPay: deposit,
+    remaining: total - deposit
+  }));
+
+  /* =========================
+     REDIRECT TO PAYMOB
+  ========================= */
+  window.location.href = "netlify/functions/paymob.html";
+
 });
 
 /* =========================
@@ -541,5 +564,6 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
 ========================= */
 loadHotel();
 </script>
+
 </body>
 </html>
