@@ -407,15 +407,7 @@ function calculateTotal() {
   }
 
   const price = Number(roomPrices[selectedRoomId] || 0);
- const total = price * nights;
-
-const deposit = Math.round(total * 0.05); // 5% فقط
-
-document.getElementById("totalPrice").textContent =
-  "المقدم (5%): " + deposit + " جنيه";
-
-
-return total; // نخليها ترجع الأساسي عشان نحسب عليه
+  const total = price * nights;
 
   document.getElementById("totalPrice").textContent =
     "السعر الإجمالي: " + total + " جنيه";
@@ -484,9 +476,6 @@ async function loadHotel() {
 
     selectedRoomId = roomSelect.value;
 
-    /* =========================
-       EVENTS
-    ========================= */
     roomSelect.addEventListener("change", (e) => {
       selectedRoomId = e.target.value;
       calculateTotal();
@@ -504,13 +493,12 @@ async function loadHotel() {
 }
 
 /* =========================
-   BOOKING + PAYMENT
+   BOOKING (NO ONLINE PAYMENT)
 ========================= */
 document.getElementById("confirmBooking").addEventListener("click", async () => {
 
   const checkIn = document.getElementById("checkIn").value;
   const checkOut = document.getElementById("checkOut").value;
-  const paymentMethod = document.getElementById("paymentMethod").value;
 
   if (!checkIn || !checkOut) {
     return alert("اختر التواريخ");
@@ -519,10 +507,8 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
   if (!selectedRoomId) {
     return alert("اختر غرفة");
   }
-const total = calculateTotal();
 
-// إضافة 5%
-const finalAmount = Math.round(total * 1.05);
+  const total = calculateTotal();
 
   if (total <= 0) {
     return alert("السعر غير صحيح");
@@ -534,9 +520,6 @@ const finalAmount = Math.round(total * 1.05);
     return alert("يجب تسجيل الدخول");
   }
 
-  /* =========================
-     SAVE BOOKING
-  ========================= */
   const { error } = await supabaseClient
     .from("bookings")
     .insert([{
@@ -545,7 +528,7 @@ const finalAmount = Math.round(total * 1.05);
       room_id: selectedRoomId,
       check_in: checkIn,
       check_out: checkOut,
-      status: "pending",
+      status: "confirmed",
       total_price: total
     }]);
 
@@ -554,30 +537,7 @@ const finalAmount = Math.round(total * 1.05);
     return alert("خطأ في الحجز");
   }
 
-  /* =========================
-     SAVE FOR PAYMENT PAGE
-  ========================= */
-const deposit = Math.round(total * 0.05);
-
-localStorage.setItem("bookingData", JSON.stringify({
-  hotelId,
-  roomId: selectedRoomId,
-  checkIn,
-  checkOut,
-  amountToPay: deposit,   // 👈 العميل يدفع 5% بس
-  remaining: total - deposit
-}));
-
-  /* =========================
-     REDIRECT
-  ========================= */
-  if (paymentMethod === "paymob") {
-    window.location.href =
-      "netlify/functions/paymob.html";
-  } else {
-    alert("تم الحجز والدفع عند الوصول");
-  }
-
+  alert("تم الحجز بنجاح ✅\nالدفع عند الوصول للفندق");
 });
 
 /* =========================
