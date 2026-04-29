@@ -1,207 +1,743 @@
 
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8" />
-<title>تفاصيل الفندق</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <title>تفاصيل الفندق</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href=" https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+  
+  
+    
+    
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
-
-<style>
-/* ===== اختصار: خليت جزء CSS زي ما هو عندك بدون تغيير كبير ===== */
-body{font-family:Cairo,sans-serif;background:#111;color:#fff;padding:20px}
-.slider{position:relative;overflow:hidden;border-radius:15px}
-.slides{display:flex;transition:0.5s}
-.slide{min-width:100%}
-.slide img{width:100%;height:300px;object-fit:cover}
-.nav{position:absolute;top:50%;transform:translateY(-50%);cursor:pointer;font-size:30px}
-.prev{right:10px}
-.next{left:10px}
-.dots{text-align:center;margin-top:10px}
-.dots span{display:inline-block;width:10px;height:10px;background:#555;border-radius:50%;margin:3px;cursor:pointer}
-.dots .active{background:#fff}
-.amenity{display:inline-block;background:#333;padding:5px 10px;margin:5px;border-radius:20px}
-</style>
-</head>
-
-<body>
-
-<h1 id="hotelName"></h1>
-<p id="hotelDesc"></p>
-<h3 id="hotelPrice"></h3>
-
-<button id="bookNowBtn">احجز الآن</button>
-
-<!-- Slider -->
-<div class="slider">
-  <div class="nav prev">›</div>
-  <div class="slides" id="slides"></div>
-  <div class="nav next">‹</div>
-</div>
-<div class="dots" id="dots"></div>
-
-<h3>المرافق</h3>
-<div id="amenities"></div>
-
-<a id="mapLink" target="_blank">عرض الموقع على الخريطة</a>
-
-<hr>
-
-<h3>الدردشة</h3>
-<div id="chatBox" style="height:200px;overflow:auto;background:#222;padding:10px"></div>
-
-<input id="chatInput" placeholder="اكتب رسالتك..." />
-<button id="sendMsg"><i class="fa-solid fa-paper-plane"></i></button>
-
-<script>
-const supabaseClient = supabase.createClient(
-"https://mqvmxqzwvpasdytbpbke.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM"
-);
-
-const hotelId = new URLSearchParams(location.search).get("id");
-
-let currentSlide = 0;
-
-/* ================= LOAD HOTEL ================= */
-async function loadHotel() {
-const { data } = await supabaseClient.from("hotels").select("*").eq("id", hotelId).single();
-
-if (!data) return;
-
-document.getElementById("hotelName").textContent = data.hotel_name;
-document.getElementById("hotelDesc").textContent = data.description;
-document.getElementById("hotelPrice").textContent = data.price_per_night + " جنيه";
+    
+    
 
 
-// ===== images =====
-const slides = document.getElementById("slides");
-const dots = document.getElementById("dots");
 
-slides.innerHTML = "";
-dots.innerHTML = "";
 
-(data.photo_urls || []).forEach((img, i) => {
-const div = document.createElement("div");
-div.className = "slide";
-div.innerHTML = `<img src="${img}" />`;
-slides.appendChild(div);
 
-const dot = document.createElement("span");
-dot.onclick = () => goTo(i);
-if(i === 0) dot.classList.add("active");
-dots.appendChild(dot);
-});
+    
+    
+    
+    
+      احجز الآن
+    
+    
+    
 
-// ===== amenities (FIXED) =====
-const amenitiesBox = document.getElementById("amenities");
-amenitiesBox.innerHTML = "";
 
-const amenitiesArray = data.amenities || [];
+      ‹
+      
 
-if (amenitiesArray.length) {
-amenitiesArray.forEach(a => {
-const s = document.createElement("span");
-s.className = "amenity";
-s.textContent = a;
-amenitiesBox.appendChild(s);
-});
-} else {
-amenitiesBox.textContent = "لا يوجد مرافق";
+
+      ›
+    
+
+
+    
+
+    
+    
+
+المرافق
+
+
+    
+
+    
+    
+      عرض الموقع على الخريطة
+    
+
+    
+
+    
+    
+
+الدردشة مع الفندق
+
+
+    
+
+    
+    
+      
+    
+    @23.10.1/dist/umd/i18next.min.js"></script>
+    <script>
+      / ============================= /
+      /         SUPABASE INIT         /
+      / ============================= /
+
+      const supabaseClient = supabase.createClient(
+        "https://mqvmxqzwvpasdytbpbke.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM",
+      );
+
+      const params = new URLSearchParams(window.location.search);
+      const hotelId = params.get("id");
+
+      let currentSlide = 0;
+
+      / ============================= /
+      /          LOAD HOTEL           /
+      / ============================= /
+
+      async function loadHotel() {
+        if (!hotelId) return;
+
+        try {
+          const { data, error } = await supabaseClient
+            .from("hotels")
+            .select("*")
+            .eq("id", hotelId)
+            .single();
+
+          if (error || !data) {
+            document.body.innerHTML = "❌ الفندق غير موجود";
+            return;
+          }
+
+          // الاسم والسعر
+          document.getElementById("hotelName").textContent = data.hotel_name;
+          document.getElementById("hotelPrice").textContent =
+            data.price_per_night + " " + i18next.t("hotel.price");
+
+          document.getElementById("hotelDesc").textContent =
+            data.description || "";
+
+          / ====== IMAGES ====== /
+
+          / ============================= /
+/ ====== SLIDER - الحل النهائي ====== /
+async function createSlides(imagesArray) {
+  const slidesContainer = document.getElementById('slides');
+  const dotsContainer = document.getElementById('dots');
+  
+  if (!slidesContainer || !dotsContainer) return;
+  
+  slidesContainer.innerHTML = '';
+  dotsContainer.innerHTML = '';
+  currentSlide = 0;
+  
+  imagesArray.forEach((imgSrc, index) => {
+    // Slide container
+    const slide = document.createElement('div');
+    slide.className = 'slide';
+    
+    // Image
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = `صورة ${index + 1}`;
+    img.loading = 'lazy';
+    
+    // Loading state
+    img.onload = () => {
+      slide.classList.add('loaded');
+      initSlider(); // إعادة تهيئة بعد تحميل الصورة
+    };
+    
+    img.onerror = () => {
+      console.warn('فشل تحميل الصورة:', imgSrc);
+      img.src = 'https://via.placeholder.com/900x500/1a1a24/ffffff?text=لا+توجد+صورة';
+      slide.classList.add('loaded');
+    };
+    
+    slide.appendChild(img);
+    slidesContainer.appendChild(slide);
+    
+    // Dot
+    const dot = document.createElement('span');
+    dot.dataset.slide = index;
+    if (index === 0) dot.classList.add('active');
+    
+    dot.addEventListener('click', () => goToSlide(index));
+    dotsContainer.appendChild(dot);
+  });
+  
+  totalSlides = imagesArray.length;
+  setTimeout(initSlider, 300);
 }
 
-// map
-const map = document.getElementById("mapLink");
-if (data.map_link) map.href = data.map_link;
-}
+          // لو طلع Array جاهز
+          if (Array.isArray(data.photo_urls)) {
+            imagesArray = data.photo_urls;
+          }
 
-/* ================= SLIDER ================= */
-function updateSlider() {
-document.getElementById("slides").style.transform =
-`translateX(-${currentSlide * 100}%)`;
+          if (imagesArray.length > 0) {
+            imagesArray.forEach((img, index) => {
+              const image = document.createElement("img");
 
-document.querySelectorAll("#dots span").forEach((d,i)=>{
-d.classList.toggle("active", i===currentSlide);
+              // لو رابط كامل
+              if (img.startsWith("http")) {
+                image.src = img;
+              } else {
+                // لو اسم ملف داخل bucket
+                const { data: publicUrlData } = supabaseClient.storage
+                  .from("hotel-photos") // 👈 تأكد ده اسم الـ bucket عندك
+                  .getPublicUrl(img);
+
+                image.src = publicUrlData.publicUrl;
+              }
+
+              image.loading = "lazy";
+
+              image.onerror = () => {
+                console.log("❌ Image failed:", img);
+              };
+
+              slides.appendChild(image);
+
+              const dot = document.createElement("span");
+              if (index === 0) dot.classList.add("active");
+
+              dot.addEventListener("click", () => {
+                currentSlide = index;
+                updateSlider();
+              });
+
+              dots.appendChild(dot);
+            });
+
+            updateSlider();
+          } else {
+            slides.innerHTML = "<p>لا توجد صور لهذا الفندق</p>";
+          }
+
+          / ====== AMENITIES ====== /
+
+          const amenitiesBox = document.getElementById("amenities");
+          amenitiesBox.innerHTML = "";
+
+          let amenitiesArray = [];
+
+          if (
+            typeof data.amenities === "string" &&
+            data.amenities.trim() !== ""
+          ) {
+            amenitiesArray = data.amenities.split(",").map((a) => a.trim());
+          }
+
+          if (amenitiesArray.length > 0) {
+            amenitiesArray.forEach((item) => {
+              const span = document.createElement("span");
+              span.className = "amenity";
+              span.textContent = item;
+              amenitiesBox.appendChild(span);
+            });
+          } else {
+            amenitiesBox.innerHTML = `<p>${i18next.t("hotel.noAmenities")}</p>`;
+          }
+
+          / ====== MAP ====== /
+
+          const mapBtn = document.getElementById("mapLink");
+
+          if (data.map_link && data.map_link.trim() !== "") {
+            mapBtn.href = data.map_link;
+            mapBtn.style.pointerEvents = "auto";
+            mapBtn.style.opacity = "1";
+          } else {
+            mapBtn.textContent = i18next.t("hotel.mapUnavailable");
+            mapBtn.style.pointerEvents = "none";
+            mapBtn.style.opacity = "0.5";
+          }
+        } catch (err) {
+          console.error("Load hotel error:", err);
+        }
+      }
+
+      / ============================= /
+      /          SLIDER LOGIC         /
+      / ============================= /
+
+      function updateSlider() {
+        const slidesEl = document.getElementById("slides");
+        const dotsEl = document.querySelectorAll("#dots span");
+
+        slidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+        dotsEl.forEach((dot, i) => {
+          dot.classList.toggle("active", i === currentSlide);
+        });
+      }
+
+      document.querySelector(".nav.next")?.addEventListener("click", () => {
+        const total = document.querySelectorAll("#slides img").length;
+        if (!total) return;
+        currentSlide = (currentSlide + 1) % total;
+        updateSlider();
+      });
+
+      document.querySelector(".nav.prev")?.addEventListener("click", () => {
+        const total = document.querySelectorAll("#slides img").length;
+        if (!total) return;
+        currentSlide = (currentSlide - 1 + total) % total;
+        updateSlider();
+      });
+      async function loadMessages() {
+        if (!hotelId) return;
+
+        const { data, error } = await supabaseClient
+          .from("hotel_messages")
+          .select("*")
+          .eq("hotel_id", hotelId)
+          .order("created_at", { ascending: true });
+
+        if (error || !data) return;
+
+        const box = document.getElementById("chatBox");
+        box.innerHTML = "";
+
+        data.forEach((msg) => {
+          const p = document.createElement("p");
+
+          const senderText =
+            msg.sender_type === "hotel"
+              ? i18next.t("chat.hotel")
+              : i18next.t("chat.you");
+
+          p.textContent = senderText + " " + msg.message;
+
+          p.style.textAlign = msg.sender_type === "hotel" ? "left" : "right";
+
+          box.appendChild(p);
+        });
+
+        box.scrollTop = box.scrollHeight;
+      }
+
+      / ============================= /
+      /          INIT                 /
+      / ============================= /
+      function updateContent() {
+        // ترجمة النصوص
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          el.innerHTML = i18next.t(el.dataset.i18n);
+        });
+
+        // ترجمة placeholder
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          el.placeholder = i18next.t(el.dataset.i18nPlaceholder);
+        });
+
+        // تغيير اتجاه الصفحة
+        document.documentElement.lang = i18next.language;
+        document.documentElement.dir =
+          i18next.language === "ar" ? "rtl" : "ltr";
+      }
+
+      i18next.init(
+        {
+          lng: localStorage.getItem("lang") || "ar",
+          fallbackLng: "en",
+          resources: {
+            // نفس resources بتاعتك زي ما هي
+            ar: {
+              translation: {
+                hotel: {
+                  price: "جنيه / ليلة",
+                  details: "عرض التفاصيل",
+                  amenities: "المرافق",
+                  map: "عرض الموقع على الخريطة",
+                  mapUnavailable: "الموقع غير متوفر",
+                  noHotels: "لا توجد فنادق حالياً",
+                  noAmenities: "لا توجد مرافق مسجلة",
+                },
+                chat: {
+                  title: "الدردشة مع الفندق",
+                  placeholder: "اكتب رسالتك...",
+                  send: "إرسال",
+                  you: " أنت:",
+                  hotel: " الفندق:",
+                },
+              },
+            },
+
+            en: {
+              translation: {
+                hotel: {
+                  price: "EGP / night",
+                  details: "View details",
+                  amenities: "Amenities",
+                  map: "View on map",
+                  mapUnavailable: "Location not available",
+                  noHotels: "No hotels available",
+                  noAmenities: "No amenities available",
+                },
+                chat: {
+                  title: "Chat with the hotel",
+                  placeholder: "Type your message...",
+                  send: "Send",
+                  you: " You:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            fr: {
+              translation: {
+                hotel: {
+                  price: "EGP / nuit",
+                  details: "Voir les détails",
+                  amenities: "Équipements",
+                  map: "Voir sur la carte",
+                  mapUnavailable: "Emplacement non disponible",
+                  noHotels: "Aucun hôtel disponible",
+                  noAmenities: "Aucun équipement disponible",
+                },
+                chat: {
+                  title: "Discussion avec l'hôtel",
+                  placeholder: "Écrivez votre message...",
+                  send: "Envoyer",
+                  you: " Vous:",
+                  hotel: " Hôtel:",
+                },
+              },
+            },
+
+            de: {
+              translation: {
+                hotel: {
+                  price: "EGP / Nacht",
+                  details: "Details anzeigen",
+                  amenities: "Ausstattung",
+                  map: "Auf der Karte anzeigen",
+                  mapUnavailable: "Standort nicht verfügbar",
+                  noHotels: "Keine Hotels verfügbar",
+                  noAmenities: "Keine Ausstattung verfügbar",
+                },
+                chat: {
+                  title: "Mit dem Hotel chatten",
+                  placeholder: "Nachricht eingeben...",
+                  send: "Senden",
+                  you: " Sie:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            es: {
+              translation: {
+                hotel: {
+                  price: "EGP / noche",
+                  details: "Ver detalles",
+                  amenities: "Servicios",
+                  map: "Ver en el mapa",
+                  mapUnavailable: "Ubicación no disponible",
+                  noHotels: "No hay hoteles disponibles",
+                  noAmenities: "No hay servicios disponibles",
+                },
+                chat: {
+                  title: "Chat con el hotel",
+                  placeholder: "Escribe tu mensaje...",
+                  send: "Enviar",
+                  you: " Tú:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            it: {
+              translation: {
+                hotel: {
+                  price: "EGP / notte",
+                  details: "Visualizza dettagli",
+                  amenities: "Servizi",
+                  map: "Visualizza sulla mappa",
+                  mapUnavailable: "Posizione non disponibile",
+                  noHotels: "Nessun hotel disponibile",
+                  noAmenities: "Nessun servizio disponibile",
+                },
+                chat: {
+                  title: "Chat con l'hotel",
+                  placeholder: "Scrivi il tuo messaggio...",
+                  send: "Invia",
+                  you: " Tu:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            ru: {
+              translation: {
+                hotel: {
+                  price: "EGP / ночь",
+                  details: "Подробнее",
+                  amenities: "Удобства",
+                  map: "Показать на карте",
+                  mapUnavailable: "Местоположение недоступно",
+                  noHotels: "Нет доступных отелей",
+                  noAmenities: "Нет удобств",
+                },
+                chat: {
+                  title: "Чат с отелем",
+                  placeholder: "Введите сообщение...",
+                  send: "Отправить",
+                  you: " Вы:",
+                  hotel: " Отель:",
+                },
+              },
+            },
+
+            tr: {
+              translation: {
+                hotel: {
+                  price: "EGP / gece",
+                  details: "Detayları gör",
+                  amenities: "Olanaklar",
+                  map: "Haritada görüntüle",
+                  mapUnavailable: "Konum mevcut değil",
+                  noHotels: "Oteller bulunamadı",
+                  noAmenities: "Olanak yok",
+                },
+                chat: {
+                  title: "Otel ile sohbet",
+                  placeholder: "Mesajınızı yazın...",
+                  send: "Gönder",
+                  you: " Siz:",
+                  hotel: " Otel:",
+                },
+              },
+            },
+
+            pt: {
+              translation: {
+                hotel: {
+                  price: "EGP / noite",
+                  details: "Ver detalhes",
+                  amenities: "Comodidades",
+                  map: "Ver no mapa",
+                  mapUnavailable: "Localização indisponível",
+                  noHotels: "Nenhum hotel disponível",
+                  noAmenities: "Nenhuma comodidade disponível",
+                },
+                chat: {
+                  title: "Chat com o hotel",
+                  placeholder: "Digite sua mensagem...",
+                  send: "Enviar",
+                  you: " Você:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            nl: {
+              translation: {
+                hotel: {
+                  price: "EGP / nacht",
+                  details: "Bekijk details",
+                  amenities: "Voorzieningen",
+                  map: "Bekijk op de kaart",
+                  mapUnavailable: "Locatie niet beschikbaar",
+                  noHotels: "Geen hotels beschikbaar",
+                  noAmenities: "Geen voorzieningen beschikbaar",
+                },
+                chat: {
+                  title: "Chat met het hotel",
+                  placeholder: "Typ je bericht...",
+                  send: "Versturen",
+                  you: " Jij:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            pl: {
+              translation: {
+                hotel: {
+                  price: "EGP / noc",
+                  details: "Zobacz szczegóły",
+                  amenities: "Udogodnienia",
+                  map: "Zobacz na mapie",
+                  mapUnavailable: "Lokalizacja niedostępna",
+                  noHotels: "Brak dostępnych hoteli",
+                  noAmenities: "Brak udogodnień",
+                },
+                chat: {
+                  title: "Czat z hotelem",
+                  placeholder: "Wpisz wiadomość...",
+                  send: "Wyślij",
+                  you: " Ty:",
+                  hotel: " Hotel:",
+                },
+              },
+            },
+
+            ja: {
+              translation: {
+                hotel: {
+                  price: "EGP / 泊",
+                  details: "詳細を見る",
+                  amenities: "設備",
+                  map: "地図で表示",
+                  mapUnavailable: "場所は利用できません",
+                  noHotels: "利用可能なホテルはありません",
+                  noAmenities: "設備はありません",
+                },
+                chat: {
+                  title: "ホテルとチャット",
+                  placeholder: "メッセージを入力...",
+                  send: "送信",
+                  you: " あなた:",
+                  hotel: " ホテル:",
+                },
+              },
+            },
+
+            ko: {
+              translation: {
+                hotel: {
+                  price: "EGP / 박",
+                  details: "자세히 보기",
+                  amenities: "편의 시설",
+                  map: "지도에서 보기",
+                  mapUnavailable: "위치를 사용할 수 없습니다",
+                  noHotels: "이용 가능한 호텔이 없습니다",
+                  noAmenities: "편의 시설 없음",
+                },
+                chat: {
+                  title: "호텔과 채팅",
+                  placeholder: "메시지를 입력하세요...",
+                  send: "전송",
+                  you: " 당신:",
+                  hotel: " 호텔:",
+                },
+              },
+            },
+
+            zh: {
+              translation: {
+                hotel: {
+                  price: "EGP / 晚",
+                  details: "查看详情",
+                  amenities: "设施",
+                  map: "在地图上查看",
+                  mapUnavailable: "位置不可用",
+                  noHotels: "暂无酒店",
+                  noAmenities: "暂无设施",
+                },
+                chat: {
+                  title: "与酒店聊天",
+                  placeholder: "输入您的消息...",
+                  send: "发送",
+                  you: " 你:",
+                  hotel: " 酒店:",
+                },
+              },
+            },
+          },
+        },
+        function () {
+          updateContent(); // 👈 مهم جداً
+
+          loadHotel();
+          loadMessages();
+          setInterval(loadMessages, 3000);
+        },
+      );
+
+      // دالة إرسال رسالة
+      async function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+        if (!msg || !hotelId) return;
+
+        // جلب بيانات المستخدم
+        const { data: userData } = await supabaseClient.auth.getUser();
+        if (!userData.user) return alert("يجب تسجيل الدخول");
+
+        // إدخال الرسالة في جدول hotel_messages
+        const { error } = await supabaseClient.from("hotel_messages").insert([
+          {
+            hotel_id: hotelId,
+            hotel_name: document.getElementById("hotelName").textContent,
+            user_id: userData.user.id,
+            message: msg,
+            sender_type: "user",
+          },
+        ]);
+
+        if (error) {
+          console.error("حدث خطأ أثناء إرسال الرسالة:", error);
+          return;
+        }
+
+        input.value = ""; // مسح الصندوق
+        loadMessages(); // إعادة تحميل الرسائل فوراً
+      }
+
+      // ربط الزر بإرسال الرسالة
+      document.getElementById("sendMsg").addEventListener("click", sendMessage);
+
+      // إرسال رسالة عند الضغط على Enter
+      document.getElementById("chatInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+    <script>
+      document.getElementById("sendMsg").addEventListener("click", async () => {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+
+        if (!msg) return;
+
+        try {
+          // جلب بيانات المستخدم
+          const { data: userData } = await supabaseClient.auth.getUser();
+          if (!userData.user) {
+            alert("يجب تسجيل الدخول لإرسال رسالة");
+            return;
+          }
+
+          // إرسال الرسالة للجدول الصحيح
+          const { data, error } = await supabaseClient
+            .from("hotel_messages")
+            .insert([
+              {
+                hotel_id: hotelId,
+                message: msg,
+                sender_name: userData.user.user_metadata?.full_name || "مستخدم",
+                sender_type: "user",
+              },
+            ])
+            .select();
+
+          if (error) {
+            console.error("حدث خطأ أثناء إرسال الرسالة:", error);
+            return;
+          }
+
+          // مسح صندوق الإدخال
+          input.value = "";
+
+          // إعادة تحميل الرسائل
+          loadMessages();
+        } catch (err) {
+          console.error("حدث خطأ أثناء إرسال الرسالة:", err);
+        }
+      });
+    </script>
+    <script>
+      const selectedHotelId = hotelId; // أو أي id ثابت
+document.getElementById("bookNowBtn").addEventListener("click", () => {
+  window.location.href = `booking.html?id=${selectedHotelId}`;
 });
-}
 
-function initSlider() {
-const total = document.querySelectorAll(".slide").length;
-
-document.querySelector(".next").onclick = () => {
-currentSlide = (currentSlide + 1) % total;
-updateSlider();
-};
-
-document.querySelector(".prev").onclick = () => {
-currentSlide = (currentSlide - 1 + total) % total;
-updateSlider();
-};
-
-updateSlider();
-}
-
-/* ================= CHAT ================= */
-async function loadMessages() {
-const { data } = await supabaseClient
-.from("hotel_messages")
-.select("*")
-.eq("hotel_id", hotelId)
-.order("created_at", { ascending: true });
-
-const box = document.getElementById("chatBox");
-box.innerHTML = "";
-
-(data || []).forEach(m => {
-const p = document.createElement("p");
-p.textContent = (m.sender_type === "hotel" ? "الفندق: " : "أنت: ") + m.message;
-box.appendChild(p);
-});
-
-box.scrollTop = box.scrollHeight;
-}
-
-async function sendMessage() {
-const input = document.getElementById("chatInput");
-const msg = input.value.trim();
-if(!msg) return;
-
-const { data: user } = await supabaseClient.auth.getUser();
-if(!user.user) return alert("سجل دخول أولاً");
-
-await supabaseClient.from("hotel_messages").insert([{
-hotel_id: hotelId,
-message: msg,
-sender_type: "user"
-}]);
-
-input.value = "";
-loadMessages();
-}
-
-/* ================= EVENTS ================= */
-document.getElementById("sendMsg").onclick = sendMessage;
-
-document.getElementById("chatInput").addEventListener("keydown", e=>{
-if(e.key==="Enter") sendMessage();
-});
-
-document.getElementById("bookNowBtn").onclick = () => {
-location.href = `booking.html?id=${hotelId}`;
-};
-
-/* ================= INIT ================= */
-loadHotel().then(()=>{
-setTimeout(initSlider, 500);
-loadMessages();
-setInterval(loadMessages, 3000);
-});
-</script>
-
-</body>
+     
+    </script>
+  </body>
 </html>
+لدا معلش
