@@ -1225,14 +1225,18 @@ document.getElementById("bookNowBtn").addEventListener("click", () => {
 
      
     </script>
-    <script>
+  <script>
 let currentSlide = 0;
-let totalSlides = 0;
 
 function updateSlider() {
   const slidesEl = document.getElementById("slides");
+  const slides = document.querySelectorAll("#slides .slide");
   const dots = document.querySelectorAll("#dots span");
 
+  if (!slidesEl || slides.length === 0) return;
+
+  slidesEl.style.display = "flex";
+  slidesEl.style.transition = "transform 0.5s ease-in-out";
   slidesEl.style.transform = `translateX(-${currentSlide * 100}%)`;
 
   dots.forEach((d, i) => {
@@ -1240,22 +1244,19 @@ function updateSlider() {
   });
 }
 
-function goToSlide(index) {
-  currentSlide = index;
-  updateSlider();
-}
-
 function initSlider() {
   const slides = document.querySelectorAll("#slides .slide");
-  totalSlides = slides.length;
+  const total = slides.length;
+
+  if (total === 0) return;
 
   document.querySelector(".nav.next").onclick = () => {
-    currentSlide = (currentSlide + 1) % totalSlides;
+    currentSlide = (currentSlide + 1) % total;
     updateSlider();
   };
 
   document.querySelector(".nav.prev").onclick = () => {
-    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    currentSlide = (currentSlide - 1 + total) % total;
     updateSlider();
   };
 
