@@ -490,27 +490,47 @@ async function loadNotifications() {
   if (count) count.innerText = unread;
 }
 
-/* ================= MESSAGES ================= */
+// ================= MESSAGE COUNT ================= /
 async function loadMessagesBox() {
   if (!userId) return;
 
   const { data } = await supabaseClient
     .from("hotel_messages")
     .select("*")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
 
   const box = document.getElementById("msgBox");
+  const countEl = document.getElementById("msgCount");
+  
   if (!box) return;
 
   box.innerHTML = "";
+  let unreadCount = 0;
 
   (data || []).forEach(m => {
+    const isUnread = !m.read; // افترض إن في حقل read
+    if (isUnread) unreadCount++;
+
     box.innerHTML += `
-      <div onclick="openChat('${m.hotel_id}')">
-        ${m.message}
+      <div onclick="openChat('${m.hotel_id}')" 
+           style="padding:15px; border-bottom:1px solid #eee; cursor:pointer; ${isUnread ? 'background:#e3f2fd' : ''}">
+        <strong>${m.hotel_name || 'فندق'}</strong><br>
+        ${m.message}<br>
+        <small>${new Date(m.created_at).toLocaleString('ar-EG')}</small>
       </div>
     `;
   });
+
+  // تحديث العداد
+  if (countEl) {
+    if (unreadCount > 0) {
+      countEl.textContent = unreadCount;
+      countEl.style.display = "block";
+    } else {
+      countEl.style.display = "none";
+    }
+  }
 }
 
 /* ================= BOOKINGS ================= */
