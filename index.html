@@ -461,35 +461,42 @@ async function loadFavorites() {
   favorites = (data || []).map(f => Number(f.hotel_id));
 }
 
-
-/* ================= NOTIFICATIONS ================= */
 async function loadNotifications() {
   if (!userId) return;
 
   const { data } = await supabaseClient
     .from("notifications")
     .select("*")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
 
   const box = document.getElementById("notifBox");
-  const count = document.getElementById("notifCount");
+  const countEl = document.getElementById("notifCount");
 
   if (!box) return;
 
-  let unread = 0;
+  let unreadCount = 0;
   box.innerHTML = "";
 
   (data || []).forEach(n => {
-    if (!n.read) unread++;
+    const isUnread = !n.read;
+    if (isUnread) unreadCount++;
 
     box.innerHTML += `
-      <div>🔔 ${n.title}<br><small>${n.message}</small></div>
+      <div style="padding:15px; border-bottom:1px solid #eee; ${isUnread ? 'background:#fff3e0' : ''}">
+        🔔 <strong>${n.title}</strong><br>
+        ${n.message}<br>
+        <small>${new Date(n.created_at).toLocaleString('ar-EG')}</small>
+      </div>
     `;
   });
 
-  if (count) count.innerText = unread;
+  // تحديث العداد
+  if (countEl) {
+    countEl.textContent = unreadCount;
+    countEl.style.display = unreadCount > 0 ? "block" : "none";
+  }
 }
-
 // ================= MESSAGE COUNT ================= /
 async function loadMessagesBox() {
   if (!userId) return;
