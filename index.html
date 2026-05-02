@@ -133,28 +133,7 @@
     <span onclick="closeChat()" style="cursor:pointer">✖</span>
   </div>
 
-  <!-- الرسائل -->
-  <div id="chatBox" style="
-    flex:1;
-    padding:10px;
-    overflow-y:auto;
-    font-size:14px;
-  "></div>
-
-  <!-- الإدخال -->
-  <div style="display:flex;border-top:1px solid #333;">
-    <input id="chatInput" placeholder="اكتب رسالة..."
-      style="flex:1;padding:8px;border:none;outline:none;background:#000;color:#fff;">
-    <button onclick="sendMessage()" style="
-      padding:8px 12px;
-      background:#fff;
-      border:none;
-      cursor:pointer;
-    ">إرسال</button>
-  </div>
-
-</div>
-
+  
     <section class="hero">
       <div class="hero-content">
 <div class="search-box">
@@ -519,7 +498,7 @@ async function loadMessagesBox() {
     if (isUnread) unreadCount++;
 
     box.innerHTML += `
-      <div onclick="goToHotelChat('${m.hotel_id}')"
+     <div onclick="goToHotelChat('${m.hotel_id}')"
            style="padding:15px; border-bottom:1px solid #eee; cursor:pointer; ${isUnread ? 'background:#e3f2fd' : ''}">
         <strong>${m.hotel_name || 'فندق'}</strong><br>
         ${m.message}<br>
