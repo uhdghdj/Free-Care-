@@ -497,7 +497,6 @@ async function loadNotifications() {
     countEl.style.display = unreadCount > 0 ? "block" : "none";
   }
 }
-// ================= MESSAGE COUNT ================= /
 async function loadMessagesBox() {
   if (!userId) return;
 
@@ -516,11 +515,11 @@ async function loadMessagesBox() {
   let unreadCount = 0;
 
   (data || []).forEach(m => {
-    const isUnread = !m.read; // افترض إن في حقل read
+    const isUnread = !m.read;
     if (isUnread) unreadCount++;
 
     box.innerHTML += `
-      <div onclick="openChat('${m.hotel_id}')" 
+      <div onclick="goToHotelChat('${m.hotel_id}')"
            style="padding:15px; border-bottom:1px solid #eee; cursor:pointer; ${isUnread ? 'background:#e3f2fd' : ''}">
         <strong>${m.hotel_name || 'فندق'}</strong><br>
         ${m.message}<br>
@@ -529,7 +528,6 @@ async function loadMessagesBox() {
     `;
   });
 
-  // تحديث العداد
   if (countEl) {
     if (unreadCount > 0) {
       countEl.textContent = unreadCount;
