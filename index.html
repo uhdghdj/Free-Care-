@@ -830,5 +830,94 @@ async function searchHotels(scroll = false) {
 
 
 </script>
+
+    <script >
+
+
+/* ================= COUNTERS ================= */
+
+// إشعارات: يعد الـ unread
+async function loadNotifications() {
+  if (!userId) return;
+
+  const { data } = await supabaseClient
+    .from("notifications")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  const box = document.getElementById("notifBox");
+  const count = document.getElementById("notifCount");
+
+  let unread = 0;
+  if (box) box.innerHTML = `<span class="close-box" onclick="closeAllBoxes()">✖</span>`;
+
+  (data || []).forEach(n => {
+    if (!n.read) unread++;
+    if (box) {
+      box.innerHTML += `<div>🔔 ${n.title}<br><small>${n.message}</small></div>`;
+    }
+  });
+
+  updateBadge(count, unread);
+}
+
+// رسايل: يعد بس الجاية من الفندق واللي لسه متقريتش
+async function loadMessagesBox() {
+  if (!userId) return;
+
+  const { data } = await supabaseClient
+    .from("hotel_messages")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("sender_type", "hotel")     // 👈 بس الجاية من الفندق
+    .order("created_at", { ascending: false });
+
+  const box = document.getElementById("msgBox");
+  const count = document.getElementById("msgCount");
+
+  let unread = 0;
+  if (box) box.innerHTML = `<span class="close-box" onclick="closeAllBoxes()">✖</span>`;
+
+  (data || []).forEach(m => {
+    if (!m.is_read) unread++;        // 👈 لو لسه متقريتش
+    if (box) {
+      box.innerHTML += `
+        <div onclick="openChat('${m.hotel_id}')" 
+             style="${!m.is_read ? 'font-weight:700;background:rgba(255,180,0,0.08);' : ''}">
+          ${m.message}
+        </div>`;
+    }
+  });
+
+  updateBadge(count, unread);
+}
+
+// helper للبادج
+function updateBadge(el, n) {
+  if (!el) return;
+  el.innerText = n > 99 ? "99+" : n;
+  el.classList.toggle("show", n > 0);
+}
+
+// لما تفتح الشات، علّم الرسايل الجاية من الفندق إنها اتقريت
+async function openChat(hotelId) {
+  currentHotelId = hotelId;
+  document.getElementById("chatModal").style.display = "block";
+
+  await supabaseClient
+    .from("hotel_messages")
+    .update({ is_read: true })
+    .eq("user_id", userId)
+    .eq("hotel_id", hotelId)
+    .eq("sender_type", "hotel");
+
+  loadChatMessages();
+  loadMessagesBox();   // يحدّث العداد فوراً
+}
+
+
+      
+    </script>
   </body>
 </html>      
