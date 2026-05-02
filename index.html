@@ -476,10 +476,16 @@ async function loadNotifications() {
     countEl.style.display = unreadCount > 0 ? "block" : "none";
   }
 }
+// ===== تحويل للشات =====
+function goToHotelChat(hotelId) {
+  window.location.href = `hotel.html?id=${hotelId}&openChat=1`;
+}
+
+// ===== الرسائل =====
 async function loadMessagesBox() {
   if (!userId) return;
 
-  const { data } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("hotel_messages")
     .select("*")
     .eq("user_id", userId)
@@ -487,26 +493,46 @@ async function loadMessagesBox() {
 
   const box = document.getElementById("msgBox");
   const countEl = document.getElementById("msgCount");
-  
+
   if (!box) return;
+
+  if (error) {
+    console.log(error);
+    return;
+  }
 
   box.innerHTML = "";
   let unreadCount = 0;
 
-  (data || []).forEach(m => {
+  if (!data || data.length === 0) {
+    box.innerHTML = `<div style="padding:10px">لا توجد رسائل</div>`;
+  }
+
+  data.forEach(m => {
     const isUnread = !m.read;
     if (isUnread) unreadCount++;
 
-    box.innerHTML += `
-     <div onclick="goToHotelChat('${m.hotel_id}')"
-           style="padding:15px; border-bottom:1px solid #eee; cursor:pointer; ${isUnread ? 'background:#e3f2fd' : ''}">
-        <strong>${m.hotel_name || 'فندق'}</strong><br>
-        ${m.message}<br>
-        <small>${new Date(m.created_at).toLocaleString('ar-EG')}</small>
-      </div>
+    const div = document.createElement("div");
+    div.style.cssText = `
+      padding:15px;
+      border-bottom:1px solid #eee;
+      cursor:pointer;
+      ${isUnread ? 'background:#e3f2fd' : ''}
     `;
+
+    div.innerHTML = `
+      <strong>${m.hotel_name || 'فندق'}</strong><br>
+      ${m.message}<br>
+      <small>${new Date(m.created_at).toLocaleString('ar-EG')}</small>
+    `;
+
+    // 👇 مهم: بدل onclick في HTML
+    div.onclick = () => goToHotelChat(m.hotel_id);
+
+    box.appendChild(div);
   });
 
+  // ===== العداد =====
   if (countEl) {
     if (unreadCount > 0) {
       countEl.textContent = unreadCount;
@@ -516,7 +542,6 @@ async function loadMessagesBox() {
     }
   }
 }
-
 /* ================= BOOKINGS ================= */
 async function loadBookings() {
   if (!userId) return;
