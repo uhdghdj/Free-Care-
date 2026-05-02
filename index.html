@@ -56,14 +56,20 @@
   </div>
 </div>
 </div>
+<!-- في الهيدر جنب أيقونة الإشعارات والرسايل -->
+<i class="fa-solid fa-bell" onclick="openBox('notifBox')">
+  <span id="notifCount" class="badge">0</span>
+   <span class="close-box" onclick="closeAllBoxes()">✖</span>
+</i>
 
-<div id="notifBox" class="popup-box">
-  <span class="close-box" onclick="closeAllBoxes()">✖</span>
-</div>
+<i class="fa-solid fa-envelope" onclick="openBox('msgBox')">
+  <span id="msgCount" class="badge">0</span>
+ 
+ <span class="close-box" onclick="closeAllBoxes()">✖</span>
+  
+</i>
 
-<div id="msgBox" class="popup-box">
-  <span class="close-box" onclick="closeAllBoxes()">✖</span>
-</div>
+
 <div id="favBox" class="popup-box">
   <span class="close-box" onclick="closeAllBoxes()">✖</span>
 </div>
