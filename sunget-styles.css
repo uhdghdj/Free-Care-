@@ -1,3 +1,4 @@
+
 /* ================== SUNGET.COM STYLESHEET ================== */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -981,4 +982,269 @@ header {
     padding: 5px 8px;
     font-size: 10px;
   }
+}
+
+/* ===== Hide default Google bar ===== */
+.goog-te-banner-frame,
+.skiptranslate { display: none !important; }
+body { top: 0 !important; }
+.goog-te-gadget { font-size: 0 !important; }
+.goog-te-gadget .goog-te-combo { display: none; }
+#google_translate_element { display: none; }
+
+/* ===== Language Switcher (matches Sunget theme) ===== */
+.lang-switcher {
+  position: relative;
+  display: inline-block;
+  font-family: "Cairo", sans-serif;
+  z-index: 1200;
+}
+
+/* الزرار */
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .25s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,.15);
+}
+
+.lang-btn:hover {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255,138,0,.30);
+  border-color: transparent;
+}
+
+.lang-btn i,
+.lang-btn .chev {
+  font-size: 13px;
+  transition: transform .3s ease;
+}
+
+.lang-switcher.open .lang-btn .chev {
+  transform: rotate(180deg);
+}
+
+/* القائمة */
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  inset-inline-end: 0;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  min-width: 200px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity .25s ease, transform .25s ease;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.lang-menu.open {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  animation: popIn .25s ease;
+}
+
+.lang-menu li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 2px 0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.lang-menu li:hover {
+  background: var(--surface-2);
+  transform: translateX(-3px);
+}
+
+.lang-menu li.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  font-weight: 700;
+}
+
+.lang-menu li img,
+.lang-menu li .flag {
+  width: 22px;
+  height: 16px;
+  border-radius: 3px;
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+/* Scrollbar داخل القائمة */
+.lang-menu::-webkit-scrollbar { width: 6px; }
+.lang-menu::-webkit-scrollbar-thumb {
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+.lang-menu::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  .lang-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 20px;
+  }
+  .lang-btn .lang-label {
+    display: none; /* نخلي بس العلم/الأيقونة على الموبايل */
+  }
+  .lang-menu {
+    min-width: 170px;
+    max-height: 60vh;
+    font-size: 13px;
+  }
+  .lang-menu li {
+    padding: 9px 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .lang-btn { padding: 5px 8px; font-size: 11px; }
+  .lang-menu { min-width: 150px; }
+}
+/* ================== THEME VARIABLES ================== */
+
+/* الدارك مود (الافتراضي) */
+:root,
+[data-theme="dark"] {
+  --bg: #0b0b0f;
+  --bg-2: #14141c;
+  --surface: #1a1a24;
+  --surface-2: #20202c;
+  --text: #ffffff;
+  --text-muted: #b8b8c4;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ffb400;
+  --accent-2: #ff7a00;
+  --danger: #e63946;
+  --success: #27b82e;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --radius: 14px;
+  --header-h: 80px;
+}
+
+/* اللايت مود */
+[data-theme="light"] {
+  --bg: #f7f7fb;
+  --bg-2: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f1f7;
+  --text: #1a1a24;
+  --text-muted: #555566;
+  --border: rgba(0, 0, 0, 0.08);
+  --accent: #ff8a00;
+  --accent-2: #ff5e00;
+  --danger: #e63946;
+  --success: #1ea52a;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* تطبيق المتغيرات على الجسم + ترانزيشن ناعم */
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+/* الهيدر بيتغير لونه حسب الثيم */
+header {
+  background: rgba(11, 11, 15, 0.85);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+[data-theme="light"] header {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ================== THEME TOGGLE BUTTON ================== */
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  transform: rotate(20deg) scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 138, 0, 0.35);
+}
+
+/* أيقونتين جوا الزرار (شمس + قمر) مع أنيميشن تبديل */
+.theme-toggle i {
+  position: absolute;
+  transition: transform 0.5s ease, opacity 0.4s ease;
+}
+
+.theme-toggle .icon-sun {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+.theme-toggle .icon-moon {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+[data-theme="light"] .theme-toggle .icon-sun {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+[data-theme="light"] .theme-toggle .icon-moon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+/* ترانزيشن عام لكل العناصر اللي بتتأثر بالثيم */
+header,
+.hotel-card,
+.about-box,
+.contact-card,
+.popup-box,
+.side-menu,
+.settings-menu,
+.footer,
+.lang-btn,
+.lang-menu {
+  transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
 }
