@@ -1,4 +1,3 @@
-     
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
@@ -80,6 +79,17 @@
     <button class="login-btn">تسجيل الدخول</button>
   </a>
 </div>
+<!-- زر تبديل اللغة -->
+<div class="lang-switcher">
+  <button class="lang-btn" id="langBtn">
+    <span id="langFlag">🇸🇦</span>
+    <span id="langName">العربية</span>
+    <span>▾</span>
+  </button>
+  <ul class="lang-menu" id="langMenu"></ul>
+</div>
+
+<div id="google_translate_element"></div>
 
       <i id="menu-icon" class="fa-solid fa-align-left"  onclick="openMenu()" style="font-size: 26px;
         cursor: pointer;
@@ -802,46 +812,92 @@ async function searchHotels(scroll = false) {
 });
 </script>
 <script>
-
-
 (function () {
-  const STORAGE_KEY = "sunget-theme";
   const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme') || 'dark';
+  root.setAttribute('data-theme', saved);
 
-  function getSystemTheme() {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  }
-
-  function applyTheme(theme) {
-    root.setAttribute("data-theme", theme);
-    const btn = document.getElementById("themeToggle");
-    if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
-  }
-
-  // أول تحميل: لو المستخدم اختار قبل كده استخدمه، وإلا اتبع النظام
-  const saved = localStorage.getItem(STORAGE_KEY);
-  applyTheme(saved || getSystemTheme());
-
-  // تبديل يدوي
-  document.addEventListener("click", (e) => {
-    if (e.target && e.target.id === "themeToggle") {
-      const current = root.getAttribute("data-theme") || getSystemTheme();
-      const next = current === "dark" ? "light" : "dark";
-      localStorage.setItem(STORAGE_KEY, next);
-      applyTheme(next);
-    }
-  });
-
-  // متابعة تغيّر النظام لو المستخدم لسه ما اختارش يدوياً
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-    if (!localStorage.getItem(STORAGE_KEY)) {
-      applyTheme(e.matches ? "dark" : "light");
-    }
+  btn?.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
   });
 })();
-
-
 </script>
+
+
+<script>
+  const LANGS = [
+    { code: 'ar', name: 'العربية',    flag: '🇸🇦', rtl: true  },
+    { code: 'en', name: 'English',    flag: '🇬🇧', rtl: false },
+    { code: 'fr', name: 'Français',   flag: '🇫🇷', rtl: false },
+    { code: 'de', name: 'Deutsch',    flag: '🇩🇪', rtl: false },
+    { code: 'es', name: 'Español',    flag: '🇪🇸', rtl: false },
+    { code: 'it', name: 'Italiano',   flag: '🇮🇹', rtl: false },
+    { code: 'pt', name: 'Português',  flag: '🇵🇹', rtl: false },
+    { code: 'ru', name: 'Русский',    flag: '🇷🇺', rtl: false },
+    { code: 'tr', name: 'Türkçe',     flag: '🇹🇷', rtl: false },
+    { code: 'zh-CN', name: '中文',     flag: '🇨🇳', rtl: false },
+    { code: 'ja', name: '日本語',      flag: '🇯🇵', rtl: false },
+    { code: 'ko', name: '한국어',      flag: '🇰🇷', rtl: false },
+    { code: 'hi', name: 'हिन्दी',     flag: '🇮🇳', rtl: false },
+    { code: 'ur', name: 'اردو',       flag: '🇵🇰', rtl: true  },
+    { code: 'fa', name: 'فارسی',      flag: '🇮🇷', rtl: true  },
+  ];
+
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'ar',
+      includedLanguages: LANGS.map(l => l.code).join(','),
+      autoDisplay: false,
+    }, 'google_translate_element');
+  }
+
+  // بناء قائمة اللغات
+  const menu = document.getElementById('langMenu');
+  const btn  = document.getElementById('langBtn');
+  const current = localStorage.getItem('lang') || 'ar';
+
+  LANGS.forEach(l => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${l.flag}</span><span>${l.name}</span>`;
+    if (l.code === current) li.classList.add('active');
+    li.onclick = () => setLang(l.code);
+    menu.appendChild(li);
+  });
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('open');
+  };
+  document.addEventListener('click', () => menu.classList.remove('open'));
+
+  function setLang(code) {
+    localStorage.setItem('lang', code);
+    setCookie('googtrans', `/ar/${code}`);
+    location.reload();
+  }
+
+  function setCookie(name, value) {
+    const host = location.hostname;
+    document.cookie = `${name}=${value};path=/`;
+    document.cookie = `${name}=${value};path=/;domain=${host}`;
+    document.cookie = `${name}=${value};path=/;domain=.${host}`;
+  }
+
+  // تطبيق RTL/LTR وتحديث الزر
+  (function applyOnLoad() {
+    const lang = LANGS.find(l => l.code === current) || LANGS[0];
+    document.getElementById('langFlag').textContent = lang.flag;
+    document.getElementById('langName').textContent = lang.name;
+    document.documentElement.lang = lang.code;
+    document.documentElement.dir  = lang.rtl ? 'rtl' : 'ltr';
+    if (current !== 'ar') setCookie('googtrans', `/ar/${current}`);
+  })();
+</script>
+
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
   </body>
 </html>      
