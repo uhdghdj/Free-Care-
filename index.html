@@ -132,97 +132,102 @@
     <span>💬 المحادثة</span>
     <span onclick="closeChat()" style="cursor:pointer">✖</span>
   </div>
+<section class="hero">
+  <div class="hero-content">
 
-  
-    <section class="hero">
-      <div class="hero-content">
-<div class="search-box">
-  <input
-    id="searchInput"
-    type="text"
-    placeholder="ابحث عن فندق..."
-  />
+    <div class="search-box">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="ابحث عن فندق..."
+      />
 
-  <button onclick="searchHotels(true)">
-    <i class="fa-solid fa-magnifying-glass"></i>
-  </button>
-</div>
-        <h2>اكتشف سحر الأهرام</h2>
+      <button onclick="searchHotels(true)">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </div>
 
-        <p>فنادق فاخرة بجوار الأهرامات</p>
+    <h2>اكتشف سحر الأهرام</h2>
+    <p>فنادق فاخرة بجوار الأهرامات</p>
+    <p>بوابة التاريخ والحضارة</p>
 
-        <p>بوابة التاريخ والحضارة</p>
-      </div>
-    </section>
+  </div>
+</section>
 
-    <div id="hotels-list" class="hotels-list"></div>
-    <section id="about" class="section about-section">
-      <div class="container">
-        <h2 class="section-title">من نحن</h2>
+<div id="hotels-list" class="hotels-list"></div>
 
-        <div class="about-box">
-          <p class="section-text">
-            SUNGET.COM هي منصة سياحية متخصصة في حجز الفنادق بجوار الأهرامات و
-            المتحف المصري الجديد, هدفنا هو تسهيل تجربة السفر من خلال توفير أفضل
-            الخيارات بأفضل الأسعار.
-          </p>
+<!-- ================= ABOUT ================= -->
+<section id="about" class="section about-section">
+  <div class="container">
+    <h2 class="section-title">من نحن</h2>
 
-          <br />
+    <div class="about-box">
+      <p class="section-text">
+        SUNGET.COM هي منصة سياحية متخصصة في حجز الفنادق بجوار الأهرامات و
+        المتحف المصري الجديد، هدفنا هو تسهيل تجربة السفر من خلال توفير أفضل
+        الخيارات بأفضل الأسعار.
+      </p>
 
-          <p class="section-text">
-            نعمل على ربط العملاء بالفنادق مباشرة مع نظام شات فوري، لضمان تواصل
-            سريع وآمن وتجربة حجز مريحة وسلسة.
-          </p>
+      <p class="section-text">
+        نعمل على ربط العملاء بالفنادق مباشرة مع نظام شات فوري، لضمان تواصل
+        سريع وآمن وتجربة حجز مريحة وسلسة.
+      </p>
 
-          <br />
+      <p class="section-text">
+        رؤيتنا هي أن نكون أفضل منصة سياحية في مصر والعالم العربي.
+      </p>
+    </div>
+  </div>
+</section>
 
-          <p class="section-text">
-            رؤيتنا هي أن نكون أفضل منصة سياحية في مصر والعالم العربي.
-          </p>
+<!-- ================= CONTACT ================= -->
+<section id="contact" class="section contact-section">
+  <div class="container">
+    <h2 class="section-title">تواصل معنا</h2>
+
+    <p class="section-text">
+      يمكنك التواصل معنا في أي وقت وسنرد عليك في أسرع وقت ممكن
+    </p>
+
+    <div class="contact-card">
+
+      <form class="contact-form">
+        <input type="text" placeholder="الاسم" required />
+        <input type="email" placeholder="البريد الإلكتروني" required />
+        <textarea rows="5" placeholder="اكتب رسالتك" required></textarea>
+
+        <button type="submit" class="send-btn">إرسال الرسالة</button>
+      </form>
+
+      <div class="contact-info">
+
+        <div class="contact-item">
+          <a href="https://wa.me/201016745433" target="_blank">
+            واتساب
+            <i class="fa-brands fa-whatsapp" style="color:#27b82e;"></i>
+          </a>
         </div>
-      </div>
-    </section>
-    <!-- ================= CONTACT ================= -->
 
-    <section id="contact" class="section contact-section">
-      <div class="container">
-        <h2 class="section-title">تواصل معنا</h2>
-
-        <p class="section-text">
-          يمكنك التواصل معنا في أي وقت وسنرد عليك في أسرع وقت ممكن
-        </p>
-
-        <div class="contact-card">
-          <form class="contact-form">
-            <input type="text" placeholder="الاسم" required />
-
-            <input type="email" placeholder="البريد الإلكتروني" required />
-
-            <textarea rows="5" placeholder="اكتب رسالتك" required></textarea>
-
-            <button type="submit" class="send-btn">إرسال الرسالة</button>
-          </form>
-
-          <div class="contact-info">
-            <div class="contact-item">
-              <a href="https://wa.me/201016745433">
-                واتساب  <i class="fa-brands fa-whatsapp" style="color: #27b82e;"></i>
-              </a>
-            </div>
-            <br />
-            <div class="contact-item1">
-              info@sunget.com <i class="fa-regular fa-envelope"></i>
-            </div>
-            <br /><br />
-            <div class="contact-item1">
-              القاهرة - مصر <i class="fa-solid fa-location-dot"></i>
-            </div>
-            <br /><br />
-          </div>
+        <div class="contact-item1">
+          <a href="mailto:info@sunget.com">
+            info@sunget.com
+            <i class="fa-regular fa-envelope"></i>
+          </a>
         </div>
+
+        <div class="contact-item1">
+          القاهرة - مصر
+          <i class="fa-solid fa-location-dot"></i>
+        </div>
+
       </div>
-    </section>
-    <footer class="footer">
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
   <div class="footer-container">
 
     <!-- اللوجو -->
@@ -246,7 +251,7 @@
     <div class="footer-links">
       <strong>تواصل</strong>
       <a href="mailto:info@sunget.com">info@sunget.com</a>
-      <a href="https://wa.me/201016745433">واتساب</a>
+      <a href="https://wa.me/201016745433" target="_blank">واتساب</a>
       <a href="#">القاهرة - مصر</a>
     </div>
 
@@ -254,22 +259,29 @@
     <div>
       <strong>تابعنا</strong>
       <div class="footer-social">
-        <i id="fa1" class="fa-brands fa-facebook"></i>
-        <i id="fa2" class="fa-brands fa-instagram"></i>
-        <i id="fa3"class="fa-brands fa-whatsapp" ></i>
+
+        <a href="https://facebook.com" target="_blank">
+          <i class="fa-brands fa-facebook"></i>
+        </a>
+
+        <a href="https://instagram.com" target="_blank">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+
+        <a href="https://wa.me/201016745433" target="_blank">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+
       </div>
     </div>
 
   </div>
 
-</div>
-
-  
-</div>
   <div class="footer-bottom">
     © 2026 SUNGET.COM - All Rights Reserved
   </div>
 </footer>
+  
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
