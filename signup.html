@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ar">
   <head>
@@ -125,82 +126,120 @@
     el.innerHTML = `<div class="${type === "success" ? "success" : "error"}">${txt}</div>`;
   }
 
-  /* ============================= */
-  /*        USER REGISTER          */
-  /* ============================= */
-  document.getElementById("form-user").addEventListener("submit", async (e) => {
-    e.preventDefault();
+ document.getElementById("form-user").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const name = document.getElementById("u_name").value.trim();
-    const phone = document.getElementById("u_phone").value.trim();
-    const email = document.getElementById("u_email").value.trim();
-    const password = document.getElementById("u_pass").value;
-    const msgEl = document.getElementById("user-msg");
+  const btn = e.target.querySelector("button");
+  btn.disabled = true;
 
-    try {
-      // تسجيل المستخدم في Supabase Auth
-      const { data, error } = await sup.auth.signUp({
-        email,
-        password,
-        options: { data: { role: "user" } },
-      });
+  const name = document.getElementById("u_name").value.trim();
+  const phone = document.getElementById("u_phone").value.trim();
+  const email = document.getElementById("u_email").value.trim();
+  const password = document.getElementById("u_pass").value;
+  const msgEl = document.getElementById("user-msg");
 
-      if (error) {
-        showMsg(msgEl, "❌ " + error.message, "error");
-        return;
-      }
+  try {
+    // check email
+    const { data: existing } = await sup
+      .from("profiles")
+      .select("email")
+      .eq("email", email)
+      .maybeSingle();
 
-      // إضافة بيانات المستخدم في جدول users
-      await sup.from("users").insert([
-        { auth_id: data.user.id, full_name: name, email, phone },
+    if (existing) {
+      showMsg(msgEl, "❌ هذا الإيميل مستخدم بالفعل", "error");
+      btn.disabled = false;
+      return;
+    }
+
+    // auth signup
+    const { data, error } = await sup.auth.signUp({
+      email,
+      password,
+      options: { data: { role: "user" } },
+    });
+
+    if (error) throw error;
+
+    // IMPORTANT: profile insert (المهم عندك)
+    const { error: profileError } = await sup
+      .from("profiles")
+      .insert([
+        {
+          auth_id: data.user.id,
+          full_name: name,
+          email,
+          phone,
+          role: "user"
+        },
       ]);
 
-      showMsg(msgEl, "✅ تم إنشاء حساب المستخدم بنجاح!");
-      setTimeout(() => (window.location.href = "index.html"), 2000);
+    if (profileError) throw profileError;
 
-    } catch (err) {
-      showMsg(msgEl, "❌ حدث خطأ غير متوقع", "error");
-      console.error(err);
-    }
-  });
+    showMsg(msgEl, "✅ تم إنشاء الحساب بنجاح!");
+    setTimeout(() => (window.location.href = "index.html"), 1500);
 
-  /* ============================= */
-  /*       PROVIDER REGISTER       */
+  } catch (err) {
+    showMsg(msgEl, "❌ " + err.message, "error");
+    console.log(err);
+  }
+
+  btn.disabled = false;
+});
   /* ============================= */
   document.getElementById("form-hotel").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const hotel_name = document.getElementById("h_name").value.trim();
-    const owner_name = document.getElementById("h_owner").value.trim();
-    const phone = document.getElementById("h_phone").value.trim();
-    const email = document.getElementById("h_email").value.trim();
-    const password = document.getElementById("h_pass").value;
-    const msgEl = document.getElementById("hotel-msg");
+  const btn = e.target.querySelector("button");
+  btn.disabled = true;
 
-    try {
-      // تسجيل المزود في Supabase Auth
-      const { data, error } = await sup.auth.signUp({
-        email,
-        password,
-        options: { data: { role: "provider" } },
-      });
+  const hotel_name = document.getElementById("h_name").value.trim();
+  const owner_name = document.getElementById("h_owner").value.trim();
+  const phone = document.getElementById("h_phone").value.trim();
+  const email = document.getElementById("h_email").value.trim();
+  const password = document.getElementById("h_pass").value;
+  const msgEl = document.getElementById("hotel-msg");
 
-      if (error) throw error;
+  try {
+    const { data: existing } = await sup
+      .from("providers")
+      .select("email")
+      .eq("email", email)
+      .maybeSingle();
 
-      // إضافة بيانات المزود في جدول providers
-      await sup.from("providers").insert([
-        { auth_id: data.user.id, hotel_name, owner_name, phone, email },
-      ]);
-
-      showMsg(msgEl, "✅ تم إنشاء حساب مالك الفندق بنجاح!");
-      setTimeout(() => (window.location.href = "تسجيل الفندق.html"), 1500);
-
-    } catch (err) {
-      showMsg(msgEl, "❌ " + (err.message || err), "error");
-      console.error(err);
+    if (existing) {
+      showMsg(msgEl, "❌ هذا الإيميل مستخدم بالفعل", "error");
+      btn.disabled = false;
+      return;
     }
-  });
 
+    const { data, error } = await sup.auth.signUp({
+      email,
+      password,
+      options: { data: { role: "provider" } },
+    });
+
+    if (error) throw error;
+
+    await sup.from("providers").insert([
+      {
+        auth_id: data.user.id,
+        hotel_name,
+        owner_name,
+        phone,
+        email,
+      },
+    ]);
+
+    showMsg(msgEl, "✅ تم إنشاء الحساب بنجاح!");
+    setTimeout(() => (window.location.href = "تسجيل الفندق.html"), 1500);
+
+  } catch (err) {
+    showMsg(msgEl, "❌ " + err.message, "error");
+  }
+
+  btn.disabled = false;
+});
   /* ============================= */
   /*   CHECK USER ON INDEX PAGE     */
   /* ============================= */
