@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
@@ -14,7 +15,7 @@
   <style >
 /* ================== HOTEL DETAILS - SUNGET.COM ================== */
 
-/* ---------- THEME VARIABLES (مستوردة من الستايل الأساسي) ---------- */
+/* ---------- THEME VARIABLES ---------- */
 :root,
 [data-theme="dark"] {
   --bg: #0b0b0f;
@@ -82,10 +83,7 @@ html[dir="rtl"] {
 .hotel-header::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   opacity: 0.1;
   z-index: 0;
@@ -112,26 +110,41 @@ html[dir="rtl"] {
   z-index: 1;
 }
 
+/* ================== SLIDER (FIXED) ================== */
+.slider-wrap {
+  max-width: 1100px;
+  margin: 30px auto 0;
+  padding: 0 5%;
+}
+
 .slider {
   position: relative;
   overflow: hidden;
   height: 450px;
   border-radius: var(--radius);
+  /* مهم جدًا: السلايدر يشتغل LTR حتى لو الصفحة RTL */
+  direction: ltr;
 }
 
 .slides {
   display: flex;
+  flex-wrap: nowrap;
   height: 100%;
+  width: 100%;
   transition: transform 0.5s ease;
+  will-change: transform;
 }
 
 .slides img {
   width: 100%;
-  min-width: 100%;
   height: 100%;
-  object-fit: cover; /* أهم سطر */
-  flex-shrink: 0;
+  flex: 0 0 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
+
 .nav {
   position: absolute;
   top: 50%;
@@ -139,11 +152,11 @@ html[dir="rtl"] {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 22px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -153,13 +166,8 @@ html[dir="rtl"] {
   justify-content: center;
 }
 
-.nav.prev {
-  left: 20px;
-}
-
-.nav.next {
-  right: 20px;
-}
+.nav.prev { left: 15px; }
+.nav.next { right: 15px; }
 
 .nav:hover {
   background: var(--accent);
@@ -171,7 +179,7 @@ html[dir="rtl"] {
   display: flex;
   gap: 8px;
   justify-content: center;
-  padding: 20px 0;
+  padding: 18px 0 4px;
 }
 
 .dots span {
@@ -181,6 +189,7 @@ html[dir="rtl"] {
   background: rgba(255, 255, 255, 0.3);
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-block;
 }
 
 .dots span.active,
@@ -225,7 +234,9 @@ html[dir="rtl"] {
   padding: 0 5%;
 }
 
-.hotel-info h2 {
+.hotel-info h2,
+.amenities-section h2,
+.chat-section h2 {
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 20px;
@@ -233,7 +244,9 @@ html[dir="rtl"] {
   position: relative;
 }
 
-.hotel-info h2::after {
+.hotel-info h2::after,
+.amenities-section h2::after,
+.chat-section h2::after {
   content: "";
   display: block;
   width: 60px;
@@ -258,24 +271,6 @@ html[dir="rtl"] {
   max-width: 900px;
   margin: 0 auto 60px;
   padding: 0 5%;
-}
-
-.amenities-section h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 30px;
-  text-align: center;
-  position: relative;
-}
-
-.amenities-section h2::after {
-  content: "";
-  display: block;
-  width: 60px;
-  height: 4px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  border-radius: 2px;
-  margin: 10px auto 0;
 }
 
 .amenities {
@@ -324,8 +319,6 @@ html[dir="rtl"] {
   font-size: 16px;
   border: 2px solid var(--border);
   transition: all 0.3s ease;
-  max-width: 300px;
-  margin: 0 auto;
 }
 
 .map-btn:hover {
@@ -336,38 +329,15 @@ html[dir="rtl"] {
   border-color: var(--accent);
 }
 
-.map-btn i {
-  font-size: 20px;
-}
-
 /* ================== CHAT SECTION ================== */
 .chat-section {
   max-width: 700px;
   margin: 0 auto 80px;
-  padding: 0 5%;
   background: var(--surface);
   border-radius: var(--radius);
   padding: 40px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-}
-
-.chat-section h2 {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 25px;
-  text-align: center;
-  position: relative;
-}
-
-.chat-section h2::after {
-  content: "";
-  display: block;
-  width: 50px;
-  height: 3px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  border-radius: 2px;
-  margin: 10px auto 0;
 }
 
 .chat-box {
@@ -391,19 +361,9 @@ html[dir="rtl"] {
   animation: messageSlide 0.3s ease;
 }
 
-.chat-box p:last-child {
-  margin-bottom: 0;
-}
-
 @keyframes messageSlide {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .chat-box p[style*="text-align: right"] {
@@ -450,6 +410,7 @@ html[dir="rtl"] {
   border-radius: 25px;
   font-size: 15px;
   cursor: pointer;
+  border: none;
   transition: all 0.3s ease;
   white-space: nowrap;
 }
@@ -460,128 +421,45 @@ html[dir="rtl"] {
 }
 
 /* ================== SCROLLBAR ================== */
-.chat-box::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-box::-webkit-scrollbar-track {
-  background: transparent;
-}
-
+.chat-box::-webkit-scrollbar { width: 6px; }
+.chat-box::-webkit-scrollbar-track { background: transparent; }
 .chat-box::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
 }
+.chat-box::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-.chat-box::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--surface-2);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 /* ================== RESPONSIVE ================== */
 @media (max-width: 768px) {
-  .slider {
-    height: 350px;
-  }
-  
-  .nav {
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
-  }
-  
-  .nav.prev {
-    left: 15px;
-  }
-  
-  .nav.next {
-    right: 15px;
-  }
-  
-  .hotel-header {
-    padding: 20px 4%;
-  }
-  
-  .book-btn {
-    padding: 14px 30px;
-    font-size: 16px;
-  }
-  
-  .amenities {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
-  }
-  
-  .chat-section {
-    margin-bottom: 40px;
-    padding: 30px 20px;
-  }
-  
-  .chat-box {
-    height: 300px;
-  }
+  .slider { height: 350px; }
+  .nav { width: 42px; height: 42px; font-size: 18px; }
+  .hotel-header { padding: 20px 4%; }
+  .book-btn { padding: 14px 30px; font-size: 16px; }
+  .amenities { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+  .chat-section { margin-bottom: 40px; padding: 30px 20px; }
+  .chat-box { height: 300px; }
 }
 
 @media (max-width: 480px) {
-  .slider {
-    height: 280px;
-    border-radius: 12px;
-  }
-  
-  .hotel-header h1 {
-    font-size: 24px;
-  }
-  
-  .hotel-header .price {
-    font-size: 20px;
-  }
-  
-  .book-btn {
-    padding: 12px 24px;
-    font-size: 15px;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .amenities {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .amenity {
-    padding: 14px 10px;
-    font-size: 13px;
-  }
-  
-  .chat-input-wrap {
-    flex-direction: column;
-  }
-  
-  #sendMsg {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .chat-section {
-    padding: 25px 15px;
-  }
+  .slider { height: 240px; border-radius: 12px; }
+  .nav { width: 38px; height: 38px; font-size: 16px; }
+  .nav.prev { left: 8px; }
+  .nav.next { right: 8px; }
+  .hotel-header h1 { font-size: 24px; }
+  .hotel-header .price { font-size: 20px; }
+  .book-btn { padding: 12px 24px; font-size: 15px; }
+  .amenities { grid-template-columns: 1fr 1fr; }
+  .amenity { padding: 14px 10px; font-size: 13px; }
+  .chat-input-wrap { flex-direction: column; }
+  #sendMsg { width: 100%; }
+  .chat-section { padding: 25px 15px; }
 }
-    
+
   </style>
   <body>
     <!-- ===== HEADER ===== -->
