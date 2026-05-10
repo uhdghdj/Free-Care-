@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -486,10 +487,6 @@ async function loadHotel() {
     alert("حدث خطأ في تحميل الصفحة");
   }
 }
-
-/* =========================
-   BOOKING + ONLINE PAYMENT
-========================= */
 document.getElementById("confirmBooking").addEventListener("click", async () => {
 
   const checkIn = document.getElementById("checkIn").value;
@@ -499,36 +496,42 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
     return alert("اختر التواريخ");
   }
 
-  if (!selectedRoomId) {
-    return alert("اختر غرفة");
-  }
-
   const total = calculateTotal();
 
   if (total <= 0) {
     return alert("السعر غير صحيح");
   }
 
-  const { data: userData } = await supabaseClient.auth.getUser();
+  const { data: userData, error: userError } =
+    await supabaseClient.auth.getUser();
 
-  if (!userData?.user) {
+  if (userError || !userData?.user) {
     return alert("يجب تسجيل الدخول");
   }
 
-  /* =========================
-     SAVE BOOKING (pending)
-  ========================= */
+  const { data: profile, error: profileError } = await supabaseClient
+    .from("profiles")
+    .select("id")
+    .eq("auth_id", userData.user.id)
+    .single();
+
+  if (profileError || !profile) {
+    return alert("مفيش profile للمستخدم");
+  }
+
   const { data: booking, error } = await supabaseClient
     .from("bookings")
-    .insert([{
-      user_id: userData.user.id,
-      hotel_id: hotelId,
-      room_id: selectedRoomId,
-      check_in: checkIn,
-      check_out: checkOut,
-      status: "pending",
-      total_price: total
-    }])
+    .insert([
+      {
+        user_id: profile.id,
+        hotel_id: hotelId,
+        room_id: selectedRoomId,
+        check_in: checkIn,
+        check_out: checkOut,
+        status: "pending",
+        total_price: total,
+      },
+    ])
     .select()
     .single();
 
@@ -537,31 +540,25 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
     return alert("خطأ في الحجز");
   }
 
-  /* =========================
-     PREPARE PAYMENT (5%)
-  ========================= */
+  // ✅ الدفع هنا جوه نفس الدالة
   const deposit = Math.round(total * 0.05);
 
-  localStorage.setItem("bookingData", JSON.stringify({
-    bookingId: booking.id,
-    hotelId,
-    roomId: selectedRoomId,
-    checkIn,
-    checkOut,
-    amountToPay: deposit,
-    remaining: total - deposit
-  }));
+  localStorage.setItem(
+    "bookingData",
+    JSON.stringify({
+      bookingId: booking.id,
+      hotelId,
+      roomId: selectedRoomId,
+      checkIn,
+      checkOut,
+      amountToPay: deposit,
+      remaining: total - deposit,
+    })
+  );
 
-  /* =========================
-     REDIRECT TO PAYMOB
-  ========================= */
   window.location.href = "netlify/functions/paymob.html";
 
 });
-
-/* =========================
-   START
-========================= */
 loadHotel();
 </script>
 
