@@ -462,10 +462,13 @@ body::before {
   <button type="button" id="togglePass">👁</button>
 </div>
   <button type="submit" data-i18n="login">تسجيل الدخول</button>
+ 
 </form>
 <div id="msg"></div>
 
+ <button id="googleLogin">تسجيل بجوجل</button>
 
+<button id="facebookLogin">تسجيل بفيسبوك</button>
 
 
 
@@ -544,7 +547,35 @@ body::before {
     });
   }
 </script>
+<script>
+const supabaseUrl = "https://mqvmxqzwvpasdytbpbke.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
 
+const supabaseClient = supabase.createClient(
+  supabaseUrl,
+  supabaseKey
+);
+
+// Google
+document.getElementById("googleLogin").onclick = async () => {
+  await supabaseClient.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+};
+
+// Facebook
+document.getElementById("facebookLogin").onclick = async () => {
+  await supabaseClient.auth.signInWithOAuth({
+    provider: "facebook",
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+};
+</script>
 
     <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
 <script>
