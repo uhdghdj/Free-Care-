@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
@@ -645,82 +644,38 @@ body::before {
 
 
 
-
-<!-- تحميل مكتبة Supabase مرة واحدة -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-  // 1️⃣ إنشاء عميل Supabase
-  const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
+const supabaseClient = supabase.createClient(
+  "https://mqvmxqzwvpasdytbpbke.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM"
+);
 
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// 1. login
+document.getElementById("login-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  // 2️⃣ دالة لإظهار الرسائل
-  function show(el, text, type = "error") {
-    if (!el) return;
-    el.innerHTML = `<div class="${type}">${text}</div>`;
-  }
+  const email = email.value;
+  const password = password.value;
 
-  // 3️⃣ التعامل مع نموذج تسجيل الدخول
-  const loginForm = document.getElementById("login-form");
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
 
-      const emailEl = document.getElementById("email");
-      const passwordEl = document.getElementById("password");
-      const msgEl = document.getElementById("msg");
+  if (error) return console.log(error);
 
-      if (!emailEl || !passwordEl || !msgEl) return;
+  window.location.href = "index.html";
+});
 
-      const email = emailEl.value.trim();
-      const password = passwordEl.value;
-
-      show(msgEl, "جارٍ تسجيل الدخول...", "success");
-
-      try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-
-        if (error) {
-          show(msgEl, "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة");
-          return;
-        }
-
-        if (!data.user) {
-          show(msgEl, "❌ حدث خطأ: المستخدم غير موجود");
-          return;
-        }
-
-        console.log("User:", data.user);
-        console.log("Metadata:", data.user.user_metadata);
-
-        const role = data.user.user_metadata?.role;
-
-        if (role === "user") {
-          show(msgEl, "✅ تم تسجيل الدخول كمستخدم", "success");
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
-          return;
-        }
-
-        if (role === "provider") {
-          show(msgEl, "✅ تم تسجيل الدخول كمزود خدمة", "success");
-          setTimeout(() => {
-            window.location.href = "تسجيل الفندق.html";
-          }, 1000);
-          return;
-        }
-
-        show(msgEl, "❌ نوع الحساب غير محدد");
-
-      } catch (err) {
-        console.error("Login Error:", err);
-        show(msgEl, "❌ حدث خطأ غير متوقع");
-      }
-    });
-  }
+// 2. session check
+(async () => {
+  const { data } = await supabaseClient.auth.getSession();
+  if (data.session) window.location.href = "index.html";
+})();
 </script>
+
 <script>
 async function checkUserSession() {
   const { data, error } = await supabaseClient.auth.getSession();
@@ -746,23 +701,18 @@ async function checkUserSession() {
 checkUserSession();
 </script>
 <script>
-const supabaseUrl = "https://mqvmxqzwvpasdytbpbke.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
 
-const supabaseClient = supabase.createClient(
-  supabaseUrl,
-  supabaseKey
-);
 
-// Google
 document.getElementById("googleLogin").onclick = async () => {
-  await supabaseClient.auth.signInWithOAuth({
+  const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin
+      redirectTo: window.location.origin + "/index.html"
     }
   });
+  if (error) alert("خطأ: " + error.message);
 };
+
 
 // Facebook
 document.getElementById("facebookLogin").onclick = async () => {
