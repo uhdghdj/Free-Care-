@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
@@ -719,6 +720,30 @@ body::before {
       }
     });
   }
+</script>
+<script>
+async function checkUserSession() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  const session = data.session;
+
+  if (!session) {
+    console.log("لا يوجد مستخدم");
+    return;
+  }
+
+  console.log("المستخدم مسجل:", session.user);
+
+  // تحويل تلقائي بعد تسجيل الدخول
+  window.location.href = "index.html";
+}
+
+checkUserSession();
 </script>
 <script>
 const supabaseUrl = "https://mqvmxqzwvpasdytbpbke.supabase.co";
