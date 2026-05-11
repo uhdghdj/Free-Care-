@@ -50,6 +50,10 @@
         <input id="u_pass" type="password" minlength="6" required />
       </div>
       <button class="btn" type="submit" data-i18n="submit_user">سجّل كمستخدم</button>
+      <div style="display:flex; gap:10px; margin-bottom:15px">
+  <button type="button" id="google-login" class="btn">تسجيل بجوجل</button>
+  <button type="button" id="facebook-login" class="btn ghost">فيسبوك</button>
+</div>
       <div id="user-msg" style="margin-top: 10px"></div>
     </form>
   </section>
@@ -79,6 +83,10 @@
         <input id="h_pass" type="password" minlength="6" required />
       </div>
       <button class="btn" type="submit" data-i18n="submit_hotel">سجّل كمالك فندق</button>
+      <div style="display:flex; gap:10px; margin-bottom:15px">
+  <button type="button" id="google-login" class="btn">تسجيل بجوجل</button>
+  <button type="button" id="facebook-login" class="btn ghost">فيسبوك</button>
+</div>
       <div id="hotel-msg" style="margin-top: 10px"></div>
     </form>
   </section>
@@ -626,7 +634,33 @@ checkUserRole();
 
 
 </script>
+<script>
 
+// تسجيل دخول Google
+document.getElementById("google-login").onclick = async () => {
+  const { data, error } = await sup.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin + "/index.html"
+    }
+  });
+
+  if (error) console.log(error.message);
+};
+
+// تسجيل دخول Facebook
+document.getElementById("facebook-login").onclick = async () => {
+  const { data, error } = await sup.auth.signInWithOAuth({
+    provider: "facebook",
+    options: {
+      redirectTo: window.location.origin + "/index.html"
+    }
+  });
+
+  if (error) console.log(error.message);
+};
+
+</script>
 
   </body>
 </html>
