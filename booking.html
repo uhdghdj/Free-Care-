@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -545,28 +544,9 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
     return alert("خطأ في الحجز");
   }
 
-  /* =========================
-     SAVE FOR PAYMENT PAGE
-  ========================= */
-  localStorage.setItem("bookingData", JSON.stringify({
-    hotelId,
-    roomId: selectedRoomId,
-    checkIn,
-    checkOut,
-    amountToPay: total
-  }));
-
-  /* =========================
-     REDIRECT
-  ========================= */
-  if (paymentMethod === "paymob") {
-    window.location.href =
-      "https://celebrated-moonbeam-c21cec.netlify.app/paymob.html";
-  } else {
-    alert("تم الحجز والدفع عند الوصول");
-  }
-
-});
+  // ✅ الدفع هنا جوه نفس الدالة 
+  
+   const deposit = Math.round(total * 0.05); localStorage.setItem( "bookingData", JSON.stringify({ bookingId: booking.id, hotelId, roomId: selectedRoomId, checkIn, checkOut, amountToPay: deposit, remaining: total - deposit, }) ); window.location.href = "netlify/functions/paymob.html"; }); loadHotel();
 
 /* =========================
    START
