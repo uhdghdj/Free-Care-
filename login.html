@@ -1,18 +1,13 @@
-
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="format-detection" content="telephone=no" />
     <title>SUNGET — تسجيل دخول</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="sunget-signup.css">
-  </head>
-  <style>
-/* sunget-login.css - نفس الستايل الداكن الاحترافي 🔥 */
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+     /* 🔥 Responsive Design محسّن لكل الأجهزة 🔥 */
 :root {
   --bg: #0b0b0f;
   --bg-2: #14141c;
@@ -38,6 +33,11 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Cairo', sans-serif;
   background: var(--bg);
@@ -46,18 +46,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: clamp(10px, 5vw, 30px);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Background Animation */
 body::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: 
     radial-gradient(circle at 10% 30%, rgba(255, 180, 0, 0.12) 0%, transparent 40%),
     radial-gradient(circle at 80% 70%, rgba(255, 122, 0, 0.08) 0%, transparent 40%),
@@ -72,20 +73,21 @@ body::before {
   66% { transform: scale(1.02) translateY(-10px); }
 }
 
-/* Main Card */
+/* Main Card - Responsive */
 .card {
   background: rgba(26, 26, 36, 0.95);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 60px 50px;
+  padding: clamp(30px, 8vw, 60px) clamp(25px, 6vw, 50px);
   width: 100%;
-  max-width: 480px;
+  max-width: clamp(350px, 90vw, 480px);
   box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
   animation: cardSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 20px auto;
 }
 
 @keyframes cardSlideIn {
@@ -110,22 +112,23 @@ body::before {
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
-/* Logo Section */
+/* Logo Section - Responsive */
 .logo {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: clamp(25px, 6vw, 40px);
   position: relative;
 }
 
 .logo-img {
-  width: 90px;
-  height: 90px;
+  width: clamp(70px, 18vw, 90px);
+  height: clamp(70px, 18vw, 90px);
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid rgba(255, 255, 255, 0.15);
-  margin: 0 auto 24px;
+  margin: 0 auto clamp(15px, 4vw, 24px);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
 }
 
 .logo-img:hover {
@@ -135,7 +138,7 @@ body::before {
 }
 
 .logo h3 {
-  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-size: clamp(1.6rem, 6vw, 2.8rem);
   font-weight: 800;
   background: var(--gradient);
   -webkit-background-clip: text;
@@ -143,31 +146,33 @@ body::before {
   background-clip: text;
   letter-spacing: -0.8px;
   margin-bottom: 8px;
+  line-height: 1.2;
 }
 
 .logo h3:nth-of-type(2) {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.3rem, 4vw, 2.2rem);
   font-weight: 700;
   color: var(--text);
   background: none;
   -webkit-text-fill-color: var(--text);
   margin-top: 4px;
   opacity: 0.9;
+  line-height: 1.3;
 }
 
-/* Form */
+/* Form - Responsive */
 #login-form {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: clamp(20px, 5vw, 28px);
 }
 
 #login-form input {
   width: 100%;
-  padding: 24px 28px;
+  padding: clamp(18px, 5vw, 24px) clamp(20px, 6vw, 28px);
   border: 2px solid var(--border);
   border-radius: 16px;
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 4vw, 1.1rem);
   font-family: inherit;
   background: var(--surface);
   backdrop-filter: blur(20px);
@@ -175,6 +180,7 @@ body::before {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text);
   font-weight: 500;
+  min-height: 56px;
 }
 
 #login-form input::placeholder {
@@ -192,12 +198,69 @@ body::before {
   background: var(--surface-2);
 }
 
-/* Submit Button */
-#login-form button {
-  padding: 24px 36px;
+/* Password Wrapper */
+.pass-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.pass-wrapper input {
+  padding-right: clamp(60px, 15vw, 60px);
+}
+
+/* ================== GOOGLE TRANSLATE - COMPLETE HIDE ================== */
+#google_translate_element,
+.goog-te-banner-frame,
+.goog-te-menu-frame,
+.goog-te-balloon-frame,
+.goog-te-gadget,
+.goog-logo-link,
+.goog-te-gadget span,
+.skiptranslate,
+.goog-te-combo,
+.VIpgJd-ZVi9od-ORHb-OEVmkb svg,
+[aria-label*="Google"],
+[title*="Google"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  z-index: -9999 !important;
+}
+.pass-wrapper button {
+  position: absolute;
+  left: clamp(12px, 3vw, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: clamp(16px, 4vw, 18px);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pass-wrapper button:hover {
+  color: var(--accent);
+  background: rgba(255, 180, 0, 0.1);
+}
+
+/* Submit Button - Responsive */
+#login-form button[type="submit"] {
+  padding: clamp(20px, 5vw, 24px) clamp(32px, 8vw, 36px);
   border: none;
   border-radius: 50px;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 4vw, 1.2rem);
   font-weight: 800;
   cursor: pointer;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -214,10 +277,11 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow: var(--shadow);
-  margin-top: 12px;
+  margin-top: clamp(8px, 2vw, 12px);
+  min-height: 56px;
 }
 
-#login-form button::before {
+#login-form button[type="submit"]::before {
   content: '';
   position: absolute;
   top: 0;
@@ -228,47 +292,126 @@ body::before {
   transition: left 0.7s;
 }
 
-#login-form button:hover::before {
+#login-form button[type="submit"]:hover::before {
   left: 100%;
 }
 
-#login-form button:hover {
+#login-form button[type="submit"]:hover {
   transform: translateY(-8px) scale(1.03);
   box-shadow: 0 40px 60px -15px rgba(255, 180, 0, 0.45);
 }
 
-#login-form button:active {
+#login-form button[type="submit"]:active {
   transform: translateY(-4px) scale(1.02);
+}
+
+/* Social Login - Responsive */
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 3vw, 12px);
+  margin-top: clamp(20px, 5vw, 20px);
+}
+
+.social-login button {
+  padding: clamp(14px, 4vw, 16px) clamp(20px, 6vw, 24px);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(0.9rem, 3.5vw, 1rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  min-height: 52px;
+}
+
+.social-login button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.6s;
+}
+
+.social-login button:hover::before {
+  left: 100%;
+}
+
+.social-login button:hover {
+  border-color: var(--accent);
+  background: rgba(255, 180, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(255, 180, 0, 0.2);
+}
+
+/* Links Section - Responsive */
+.links-section {
+  margin-top: clamp(24px, 6vw, 32px);
+  padding-top: clamp(20px, 5vw, 28px);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.links-section .link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: clamp(0.85rem, 3vw, 0.95rem);
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin: clamp(4px, 1vw, 8px);
+  position: relative;
+  line-height: 1.5;
+}
+
+.links-section .link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.links-section .link:hover {
+  color: var(--accent);
+}
+
+.links-section .link:hover::after {
+  width: 100%;
 }
 
 /* Messages */
 #msg {
-  margin-top: 30px;
+  margin-top: clamp(20px, 5vw, 30px);
   min-height: 24px;
 }
 
 .success, .error {
-  padding: 20px 28px;
+  padding: clamp(16px, 4vw, 20px) clamp(24px, 6vw, 28px);
   border-radius: 16px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 3.5vw, 1rem);
   animation: msgSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(15px);
   border: 1px solid transparent;
   text-align: center;
   box-shadow: var(--shadow);
-}
-
-.success {
-  background: rgba(39, 184, 46, 0.18);
-  color: var(--success);
-  border-color: rgba(39, 184, 46, 0.35);
-}
-
-.error {
-  background: rgba(230, 57, 70, 0.18);
-  color: var(--danger);
-  border-color: rgba(230, 57, 70, 0.35);
+  line-height: 1.5;
 }
 
 @keyframes msgSlideIn {
@@ -283,17 +426,17 @@ body::before {
 }
 
 /* Loading State */
-#login-form button.loading {
+#login-form button[type="submit"].loading {
   pointer-events: none;
   position: relative;
   color: #000;
 }
 
-#login-form button.loading::after {
+#login-form button[type="submit"].loading::after {
   content: '';
   position: absolute;
-  width: 28px;
-  height: 28px;
+  width: clamp(24px, 6vw, 28px);
+  height: clamp(24px, 6vw, 28px);
   margin: auto;
   border: 3px solid transparent;
   border-top-color: #000;
@@ -305,60 +448,96 @@ body::before {
   to { transform: rotate(360deg); }
 }
 
-/* Pulse Glow Animation */
-#login-form button {
+/* Animations */
+#login-form button[type="submit"] {
   animation: buttonPulse 3s ease-in-out infinite alternate;
 }
 
 @keyframes buttonPulse {
-  from {
-    box-shadow: var(--shadow);
+  from { box-shadow: var(--shadow); }
+  to { box-shadow: 0 0 50px rgba(255, 180, 0, 0.6); }
+}
+
+/* 🔥 Media Queries محسّنة لكل الأجهزة 🔥 */
+
+/* iPhone SE (320px) & Small Screens */
+@media (max-width: 375px) {
+  html { font-size: 15px; }
+  body { padding: 10px; }
+  .card { 
+    padding: 30px 25px; 
+    margin: 10px 0;
+    border-radius: 16px;
   }
-  to {
-    box-shadow: 0 0 50px rgba(255, 180, 0, 0.6);
+  .logo-img { 
+    width: 65px; 
+    height: 65px; 
+  }
+  .logo h3 { 
+    font-size: 1.6rem; 
+  }
+  .logo h3:nth-of-type(2) { 
+    font-size: 1.3rem; 
+  }
+  #login-form input { 
+    padding: 18px 20px; 
+    font-size: 0.95rem;
+    min-height: 52px;
+  }
+  .pass-wrapper input { padding-right: 55px; }
+  .pass-wrapper button { 
+    left: 10px; 
+    font-size: 16px;
+    min-width: 40px;
+    height: 40px;
   }
 }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-  .card {
-    padding: 50px 35px;
-    margin: 10px;
-    max-width: none;
-  }
-  
-  .logo-img {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .logo h3 {
-    font-size: 1.8rem;
-  }
-  
-  .logo h3:nth-of-type(2) {
-    font-size: 1.5rem;
-  }
-  
-  #login-form input {
-    padding: 22px 24px;
-    font-size: 1rem;
-  }
-  
-  #login-form button {
-    padding: 22px 32px;
-    font-size: 1.1rem;
+/* iPhone 12/13/14 (390px) */
+@media (max-width: 414px) {
+  .card { padding: 35px 28px; }
+  .links-section .link { 
+    display: block; 
+    margin: 6px 0; 
   }
 }
 
-@media (max-width: 400px) {
-  .card {
-    padding: 40px 28px;
+/* Tablets Portrait */
+@media (max-width: 768px) and (orientation: portrait) {
+  .card { 
+    max-width: 95vw; 
+    padding: 40px 30px; 
   }
-  
-  body {
-    padding: 10px;
+  body { 
+    padding: 15px; 
+    align-items: flex-start;
+    padding-top: 20px;
   }
+}
+
+/* Tablets Landscape */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .card { 
+    max-width: 450px; 
+    padding: 40px 35px; 
+  }
+  body { padding: 20px; }
+}
+
+/* Large Tablets & Small Laptops */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .card { max-width: 500px; }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .card { max-width: 500px; }
+  body { padding: 40px; }
+}
+
+/* Extra Large Screens */
+@media (min-width: 1440px) {
+  .card { max-width: 520px; }
 }
 
 /* Custom Scrollbar */
@@ -379,23 +558,19 @@ body::before {
   background: var(--accent);
 }
 
-/* RTL Support Enhancement */
-[dir="rtl"] .card {
-  text-align: center;
-}
+/* RTL & LTR Support */
+[dir="rtl"] input { text-align: right; }
+[dir="ltr"] input { text-align: left; }
+[dir="rtl"] .pass-wrapper button { left: auto; right: 12px; }
+[dir="ltr"] .pass-wrapper button { left: 12px; right: auto; }
+[dir="rtl"] .pass-wrapper input { padding-right: 28px; padding-left: 60px; }
+[dir="ltr"] .pass-wrapper input { padding-right: 60px; padding-left: 28px; }
 
-[dir="rtl"] input {
-  text-align: right;
-}
-
-/* Floating Particles Effect */
+/* Floating Particles */
 .card::after {
   content: '';
   position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  inset: 0;
   background-image: 
     radial-gradient(2px 2px at 20px 30px, rgba(255, 180, 0, 0.3), transparent),
     radial-gradient(2px 2px at 40px 70px, rgba(255, 122, 0, 0.25), transparent),
@@ -410,427 +585,188 @@ body::before {
   from { transform: translateY(0px) rotate(0deg); }
   to { transform: translateY(-100px) rotate(360deg); }
 }
-.pass-wrapper {
-  position: relative;
-  width: 100%;
+
+/* Prevent Zoom on iOS */
+input, button {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
 }
 
-.pass-wrapper input {
-  padding-right: 60px;
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .card {
+    border-width: 0.5px;
+  }
+  .logo-img {
+    border-width: 2px;
+  }
 }
-
-.pass-wrapper button {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.pass-wrapper button:hover {
-  color: var(--accent);
-}
-  </style>
+      /* باقي الـ CSS كما هو... */
+      /* (انسخ كل الـ CSS من الرد السابق هنا) */
+    </style>
+  </head>
   <body>
     <div class="card">
       <div class="logo">
+        <h3>SUNGET.COM</h3>
+        <h3>تسجيل دخول</h3>
+      </div>
+
+      <form id="login-form">
+        <input 
+          id="email" 
+          type="email" 
+          placeholder="البريد الإلكتروني" 
+          required 
+          autocomplete="email" 
+        />
+        <div class="pass-wrapper">
+          <input 
+            id="password" 
+            type="password" 
+            placeholder="كلمة المرور" 
+            required 
+            autocomplete="current-password" 
+          />
+          <button type="button" id="togglePass" aria-label="إظهار كلمة المرور">👁</button>
+        </div>
+        <button type="submit" id="loginBtn">تسجيل الدخول</button>
+      </form>
+
+      <div id="msg"></div>
+
+      <div class="social-login">
+        <button id="googleLogin">تسجيل دخول بجوجل</button>
+        <button id="facebookLogin">تسجيل دخول بفيسبوك</button>
+      </div>
+
+      <div class="links-section">
+        <a href="signup.html" class="link">ليس لديك حساب؟ إنشاء حساب جديد</a>
+        <a href="forgot_password.html" class="link">نسيت كلمة المرور؟</a>
+      </div>
+    </div>
+
+    <!-- 🔥 فقط Supabase (بدون i18next) 🔥 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+      // 🚀 كود مبسط بدون ترجمة
+      document.addEventListener('DOMContentLoaded', async function() {
         
-       <h3 data-i18n="brand_name">SUNGET.COM</h3>
+        // 1️⃣ Supabase
+        const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-<h3 data-i18n="title">تسجيل دخول</h3>
+        // 2️⃣ رسائل ثابتة (عربي فقط)
+        const messages = {
+          loading: "جارٍ تسجيل الدخول...",
+          user_success: "✅ تم تسجيل الدخول كمستخدم بنجاح",
+          provider_success: "✅ تم تسجيل الدخول كمزود خدمة بنجاح",
+          wrong: "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة",
+          no_account: "❌ لا يوجد حساب مرتبط بهذا البريد الإلكتروني",
+          error: "❌ حدث خطأ أثناء تسجيل الدخول",
+          required: "❌ يرجى إدخال البريد الإلكتروني وكلمة المرور",
+          unknown_role: "❌ نوع الحساب غير محدد"
+        };
 
-<form id="login-form">
-  <input
-    id="email"
-    type="email"
-    data-i18n-placeholder="email"
-    placeholder="البريد الإلكتروني"
-    required
-  />
-  <div class="pass-wrapper">
-  <input
-    id="password"
-    type="password"
-    data-i18n-placeholder="password"
-    placeholder="كلمة المرور"
-    required
-  />
-
-  <button type="button" id="togglePass">👁</button>
-</div>
-  <button type="submit" data-i18n="login">تسجيل الدخول</button>
- 
-</form>
-<div id="msg"></div>
-
- <button id="googleLogin">تسجيل بجوجل</button>
-
-<button id="facebookLogin">تسجيل بفيسبوك</button>
-
-
-
-<!-- تحميل مكتبة Supabase مرة واحدة -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // 1️⃣ إنشاء عميل Supabase
-  const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
-
-  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // 2️⃣ دالة لإظهار الرسائل
-  function show(el, text, type = "error") {
-    if (!el) return;
-    el.innerHTML = `<div class="${type}">${text}</div>`;
-  }
-
-  // 3️⃣ التعامل مع نموذج تسجيل الدخول
-  const loginForm = document.getElementById("login-form");
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const emailEl = document.getElementById("email");
-      const passwordEl = document.getElementById("password");
-      const msgEl = document.getElementById("msg");
-
-      if (!emailEl || !passwordEl || !msgEl) return;
-
-      const email = emailEl.value.trim();
-      const password = passwordEl.value;
-
-      show(msgEl, "جارٍ تسجيل الدخول...", "success");
-
-      try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-
-        if (error) {
-          show(msgEl, "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة");
-          return;
+        // 3️⃣ دالة الرسائل
+        function showMsg(el, text, type = "error") {
+          if (!el) return;
+          el.innerHTML = `<div class="${type}">${text}</div>`;
         }
 
-        if (!data.user) {
-          show(msgEl, "❌ حدث خطأ: المستخدم غير موجود");
-          return;
-        }
+        // 4️⃣ تسجيل الدخول
+        const loginForm = document.getElementById("login-form");
+        const loginBtn = document.getElementById("loginBtn");
+        const msgEl = document.getElementById("msg");
 
-        console.log("User:", data.user);
-        console.log("Metadata:", data.user.user_metadata);
+        loginForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-        const role = data.user.user_metadata?.role;
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
 
-        if (role === "user") {
-          show(msgEl, "✅ تم تسجيل الدخول كمستخدم", "success");
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
-          return;
-        }
+          if (!email || !password) {
+            showMsg(msgEl, messages.required);
+            return;
+          }
 
-        if (role === "provider") {
-          show(msgEl, "✅ تم تسجيل الدخول كمزود خدمة", "success");
-          setTimeout(() => {
-            window.location.href = "تسجيل الفندق.html";
-          }, 1000);
-          return;
-        }
+          loginBtn.classList.add("loading");
+          loginBtn.innerHTML = `<span>${messages.loading}</span>`;
 
-        show(msgEl, "❌ نوع الحساب غير محدد");
+          try {
+            const { data, error } = await sb.auth.signInWithPassword({ 
+              email, 
+              password 
+            });
 
-      } catch (err) {
-        console.error("Login Error:", err);
-        show(msgEl, "❌ حدث خطأ غير متوقع");
-      }
-    });
-  }
-</script>
-<script>
-const supabaseUrl = "https://mqvmxqzwvpasdytbpbke.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
+            if (error) {
+              showMsg(msgEl, messages.wrong);
+              return;
+            }
 
-const supabaseClient = supabase.createClient(
-  supabaseUrl,
-  supabaseKey
-);
+            if (!data.user) {
+              showMsg(msgEl, messages.no_account);
+              return;
+            }
 
-// Google
-document.getElementById("googleLogin").onclick = async () => {
-  await supabaseClient.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: window.location.origin
-    }
-  });
-};
+            console.log("✅ User logged in:", data.user);
+            console.log("Metadata:", data.user.user_metadata);
 
-// Facebook
-document.getElementById("facebookLogin").onclick = async () => {
-  await supabaseClient.auth.signInWithOAuth({
-    provider: "facebook",
-    options: {
-      redirectTo: window.location.origin
-    }
-  });
-};
-</script>
+            const role = data.user.user_metadata?.role;
 
-    <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
-<script>
-const resources = {
-  ar: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "تسجيل دخول",
-      email: "البريد الإلكتروني",
-      password: "كلمة المرور",
-      login: "تسجيل الدخول",
-      msg_loading: "جارٍ تسجيل الدخول...",
-      msg_user_success: "تم تسجيل الدخول كمستخدم",
-      msg_provider_success: "تم تسجيل الدخول كمزود خدمة",
-      msg_wrong: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-      msg_no_account: "لا يوجد حساب مرتبط بهذا البريد",
-      msg_error: "حدث خطأ أثناء تسجيل الدخول"
-    }
-  },
-  en: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Login",
-      email: "Email",
-      password: "Password",
-      login: "Log In",
-      msg_loading: "Logging in...",
-      msg_user_success: "Logged in as user",
-      msg_provider_success: "Logged in as provider",
-      msg_wrong: "Incorrect email or password",
-      msg_no_account: "No account associated with this email",
-      msg_error: "An error occurred during login"
-    }
-  },
-  fr: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Connexion",
-      email: "Email",
-      password: "Mot de passe",
-      login: "Se connecter",
-      msg_loading: "Connexion en cours...",
-      msg_user_success: "Connecté en tant qu'utilisateur",
-      msg_provider_success: "Connecté en tant que fournisseur",
-      msg_wrong: "Email ou mot de passe incorrect",
-      msg_no_account: "Aucun compte associé à cet email",
-      msg_error: "Une erreur est survenue lors de la connexion"
-    }
-  },
-  de: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Anmeldung",
-      email: "E-Mail",
-      password: "Passwort",
-      login: "Anmelden",
-      msg_loading: "Anmeldung läuft...",
-      msg_user_success: "Als Benutzer eingeloggt",
-      msg_provider_success: "Als Anbieter eingeloggt",
-      msg_wrong: "E-Mail oder Passwort falsch",
-      msg_no_account: "Kein Konto für diese E-Mail gefunden",
-      msg_error: "Fehler beim Anmelden"
-    }
-  },
-  es: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Iniciar sesión",
-      email: "Correo electrónico",
-      password: "Contraseña",
-      login: "Iniciar sesión",
-      msg_loading: "Iniciando sesión...",
-      msg_user_success: "Sesión iniciada como usuario",
-      msg_provider_success: "Sesión iniciada como proveedor",
-      msg_wrong: "Correo o contraseña incorrecta",
-      msg_no_account: "No hay cuenta asociada a este correo",
-      msg_error: "Error al iniciar sesión"
-    }
-  },
-  it: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Accesso",
-      email: "Email",
-      password: "Password",
-      login: "Accedi",
-      msg_loading: "Accesso in corso...",
-      msg_user_success: "Accesso effettuato come utente",
-      msg_provider_success: "Accesso effettuato come provider",
-      msg_wrong: "Email o password errata",
-      msg_no_account: "Nessun account associato a questa email",
-      msg_error: "Errore durante l'accesso"
-    }
-  },
-  ru: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Вход",
-      email: "Электронная почта",
-      password: "Пароль",
-      login: "Войти",
-      msg_loading: "Вход в систему...",
-      msg_user_success: "Вход выполнен как пользователь",
-      msg_provider_success: "Вход выполнен как поставщик",
-      msg_wrong: "Неверный email или пароль",
-      msg_no_account: "Нет аккаунта, связанного с этим email",
-      msg_error: "Произошла ошибка при входе"
-    }
-  },
-  tr: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Giriş",
-      email: "E-posta",
-      password: "Şifre",
-      login: "Giriş Yap",
-      msg_loading: "Giriş yapılıyor...",
-      msg_user_success: "Kullanıcı olarak giriş yapıldı",
-      msg_provider_success: "Sağlayıcı olarak giriş yapıldı",
-      msg_wrong: "E-posta veya şifre yanlış",
-      msg_no_account: "Bu e-postaya bağlı hesap yok",
-      msg_error: "Giriş sırasında hata oluştu"
-    }
-  },
-  pt: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Login",
-      email: "Email",
-      password: "Senha",
-      login: "Entrar",
-      msg_loading: "Entrando...",
-      msg_user_success: "Logado como usuário",
-      msg_provider_success: "Logado como provedor",
-      msg_wrong: "Email ou senha incorretos",
-      msg_no_account: "Nenhuma conta associada a este email",
-      msg_error: "Ocorreu um erro ao entrar"
-    }
-  },
-  nl: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Inloggen",
-      email: "E-mail",
-      password: "Wachtwoord",
-      login: "Inloggen",
-      msg_loading: "Bezig met inloggen...",
-      msg_user_success: "Ingelogd als gebruiker",
-      msg_provider_success: "Ingelogd als aanbieder",
-      msg_wrong: "Onjuiste e-mail of wachtwoord",
-      msg_no_account: "Geen account gekoppeld aan dit e-mailadres",
-      msg_error: "Er is een fout opgetreden bij het inloggen"
-    }
-  },
-  pl: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "Logowanie",
-      email: "Email",
-      password: "Hasło",
-      login: "Zaloguj się",
-      msg_loading: "Logowanie...",
-      msg_user_success: "Zalogowano jako użytkownik",
-      msg_provider_success: "Zalogowano jako dostawca",
-      msg_wrong: "Nieprawidłowy email lub hasło",
-      msg_no_account: "Brak konta powiązanego z tym emailem",
-      msg_error: "Wystąpił błąd podczas logowania"
-    }
-  },
-  ja: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "ログイン",
-      email: "メール",
-      password: "パスワード",
-      login: "ログイン",
-      msg_loading: "ログイン中...",
-      msg_user_success: "ユーザーとしてログインしました",
-      msg_provider_success: "プロバイダーとしてログインしました",
-      msg_wrong: "メールまたはパスワードが正しくありません",
-      msg_no_account: "このメールに関連するアカウントはありません",
-      msg_error: "ログイン中にエラーが発生しました"
-    }
-  },
-  ko: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "로그인",
-      email: "이메일",
-      password: "비밀번호",
-      login: "로그인",
-      msg_loading: "로그인 중...",
-      msg_user_success: "사용자로 로그인됨",
-      msg_provider_success: "제공자로 로그인됨",
-      msg_wrong: "이메일 또는 비밀번호가 올바르지 않습니다",
-      msg_no_account: "이 이메일과 연결된 계정이 없습니다",
-      msg_error: "로그인 중 오류 발생"
-    }
-  },
-  zh: {
-    translation: {
-      brand_name: "SUNGET.COM",
-      title: "登录",
-      email: "电子邮件",
-      password: "密码",
-      login: "登录",
-      msg_loading: "正在登录...",
-      msg_user_success: "以用户身份登录",
-      msg_provider_success: "以服务提供者身份登录",
-      msg_wrong: "邮箱或密码错误",
-      msg_no_account: "此邮箱没有关联账号",
-      msg_error: "登录时发生错误"
-    }
-  }
-};
+            if (role === "user") {
+              showMsg(msgEl, messages.user_success, "success");
+              setTimeout(() => window.location.href = "index.html", 1500);
+              return;
+            }
 
-// تهيئة i18next
-i18next.init({
-  lng: localStorage.getItem("lang") || "ar",
-  fallbackLng: "en",
-  debug: false,
-  resources
-}, function() {
-  updateContent();
-});
+            if (role === "provider") {
+              showMsg(msgEl, messages.provider_success, "success");
+              setTimeout(() => window.location.href = "تسجيل الفندق.html", 1500);
+              return;
+            }
 
-function updateContent() {
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    el.innerHTML = i18next.t(el.dataset.i18n);
-  });
-  document.querySelectorAll("input[data-i18n-placeholder]").forEach(el => {
-    el.placeholder = i18next.t(el.dataset.i18nPlaceholder);
-  });
-  document.documentElement.lang = i18next.language;
-  document.documentElement.dir = i18next.language === "ar" ? "rtl" : "ltr";
-}
+            showMsg(msgEl, messages.unknown_role);
 
-function changeLanguage(lang) {
-  i18next.changeLanguage(lang, () => {
-    localStorage.setItem("lang", lang);
-    updateContent();
-  });
-}
-</script>
-<script>
-  const toggleBtn = document.getElementById("togglePass");
-const passwordInput = document.getElementById("password");
+          } catch (err) {
+            console.error("❌ Login Error:", err);
+            showMsg(msgEl, messages.error);
+          } finally {
+            loginBtn.classList.remove("loading");
+            loginBtn.textContent = "تسجيل الدخول";
+          }
+        });
 
-toggleBtn.addEventListener("click", () => {
-  const isHidden = passwordInput.type === "password";
+        // 5️⃣ Google Login
+        document.getElementById("googleLogin").addEventListener("click", async () => {
+          await sb.auth.signInWithOAuth({
+            provider: "google",
+            options: { redirectTo: window.location.origin + "/index.html" }
+          });
+        });
 
-  passwordInput.type = isHidden ? "text" : "password";
-  toggleBtn.textContent = isHidden ? "🙈" : "👁";
-});
-</script>
+        // 6️⃣ Facebook Login
+        document.getElementById("facebookLogin").addEventListener("click", async () => {
+          await sb.auth.signInWithOAuth({
+            provider: "facebook",
+            options: { redirectTo: window.location.origin + "/index.html" }
+          });
+        });
+
+        // 7️⃣ Password Toggle
+        document.getElementById("togglePass").addEventListener("click", () => {
+          const passwordInput = document.getElementById("password");
+          const isHidden = passwordInput.type === "password";
+          passwordInput.type = isHidden ? "text" : "password";
+          event.target.textContent = isHidden ? "🙈" : "👁";
+        });
+
+        console.log("✅ Login page loaded perfectly!");
+      });
+    </script>
+  <script src="translate.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
-</html>  
+</html>
