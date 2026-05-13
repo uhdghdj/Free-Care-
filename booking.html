@@ -456,7 +456,7 @@ localStorage.setItem("bookingData", JSON.stringify(bookingData));
 if (paymentMethod === 'paymob') {
   showMessage('✅ تم الحجز! جارٍ تحويلك لصفحة الدفع...', 'success');
   setTimeout(() => {
-    window.location.href = "payment.html"; // ← صح
+    window.location.href = "paymob.html"; // ← صح
   }, 1500);
 } else {
   showMessage(`
