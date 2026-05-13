@@ -445,20 +445,24 @@ input:focus, select:focus {
 
         showMessage('✅ تم إنشاء الحجز بنجاح!', 'success');
 
-        // ✅ حفظ بيانات الحجز للدفع
-        const deposit = Math.round(total * 0.05);
-        localStorage.setItem("bookingData", JSON.stringify({
-          bookingId: booking.id,
-          hotelId: hotelId,
-          roomId: selectedRoomId,
-          checkIn,
-          checkOut,
-          total,
-          deposit,
-          remaining: total - deposit,
-          paymentMethod,
-          hotelName: hotelData.hotel_name
-        }));
+        // ✅ حساب العربون 5%
+const deposit = Math.round(total * 0.05);
+
+// ✅ حفظ بيانات الدفع
+localStorage.setItem(
+  "bookingData",
+  JSON.stringify({
+    bookingId: booking.id,
+    hotelId,
+    roomId: selectedRoomId,
+    checkIn,
+    checkOut,
+    total,
+    amountToPay: deposit,
+    remaining: total - deposit,
+    paymentMethod
+  })
+);
 
         // تحويل حسب طريقة الدفع
         if (paymentMethod === 'paymob') {
