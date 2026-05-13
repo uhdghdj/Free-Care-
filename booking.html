@@ -352,9 +352,15 @@ button:disabled {
   <input type="date" id="checkOut">
 
   <h3 id="totalPrice">السعر الإجمالي: 0</h3>
-
+<label>طريقة الدفع</label>
+<select id="paymentMethod">
+  <option value="paymob">💳 دفع أونلاين</option>
+  <option value="hotel">🏨 الدفع في الفندق</option>
+</select>
   <button id="confirmBooking">تأكيد الحجز</button>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 /* =========================
    SUPABASE INIT
@@ -415,6 +421,7 @@ function calculateTotal() {
 ========================= */
 async function loadHotel() {
   try {
+
     if (!hotelId) {
       alert("لم يتم تحديد الفندق");
       return;
@@ -470,6 +477,9 @@ async function loadHotel() {
 
     selectedRoomId = roomSelect.value;
 
+    /* =========================
+       EVENTS
+    ========================= */
     roomSelect.addEventListener("change", (e) => {
       selectedRoomId = e.target.value;
       calculateTotal();
@@ -487,71 +497,80 @@ async function loadHotel() {
 }
 
 /* =========================
-   CONFIRM BOOKING - بدون profile خالص
+   BOOKING + PAYMENT
 ========================= */
 document.getElementById("confirmBooking").addEventListener("click", async () => {
+
   const checkIn = document.getElementById("checkIn").value;
   const checkOut = document.getElementById("checkOut").value;
+  const paymentMethod = document.getElementById("paymentMethod").value;
 
   if (!checkIn || !checkOut) {
     return alert("اختر التواريخ");
   }
 
+  if (!selectedRoomId) {
+    return alert("اختر غرفة");
+  }
+
   const total = calculateTotal();
+
   if (total <= 0) {
     return alert("السعر غير صحيح");
   }
 
-  // ✅ خد اسم الضيف بس (اختياري)
-  const guestName = prompt("اسمك (اختياري):") || "ضيف";
+  const { data: userData } = await supabaseClient.auth.getUser();
 
-  try {
-    const { data: booking, error } = await supabaseClient
-      .from("bookings")
-      .insert([{
-        // 👈 مفيش user_id خالص!
-        user_id:userId,
-        hotel_id: hotelId,
-        room_id: selectedRoomId,
-        check_in: checkIn,
-        check_out: checkOut,
-        status: "pending",
-        total_price: total,
-      }])
-      .select()
-      .single();
-
-    if (error) {
-      console.log(error);
-      return alert("خطأ في الحجز: " + error.message);
-    }
-
-    // ✅ الدفع
-    const deposit = Math.round(total * 0.05);
-
-    localStorage.setItem(
-      "bookingData",
-      JSON.stringify({
-        bookingId: booking.id,
-        hotelId,
-        roomId: selectedRoomId,
-        checkIn,
-        checkOut,
-        amountToPay: deposit,
-        remaining: total - deposit,
-        guestName: guestName
-      })
-    );
-
-    alert("✅ تم الحجز بنجاح!");
-    window.location.href = "netlify/functions/paymob.html";
-
-  } catch (err) {
-    console.log(err);
-    alert("حدث خطأ أثناء الحجز");
+  if (!userData?.user) {
+    return alert("يجب تسجيل الدخول");
   }
+
+  /* =========================
+     SAVE BOOKING
+  ========================= */
+  const { error } = await supabaseClient
+    .from("bookings")
+    .insert([{
+      user_id: userData.user.id,
+      hotel_id: hotelId,
+      room_id: selectedRoomId,
+      check_in: checkIn,
+      check_out: checkOut,
+      status: "pending",
+      total_price: total
+    }]);
+
+  if (error) {
+    console.log(error);
+    return alert("خطأ في الحجز");
+  }
+
+  /* =========================
+     SAVE FOR PAYMENT PAGE
+  ========================= */
+  localStorage.setItem("bookingData", JSON.stringify({
+    hotelId,
+    roomId: selectedRoomId,
+    checkIn,
+    checkOut,
+    amountToPay: total
+  }));
+
+  /* =========================
+     REDIRECT
+  ========================= */
+  if (paymentMethod === "paymob") {
+    window.location.href =
+      "https://celebrated-moonbeam-c21cec.netlify.app/paymob.html";
+  } else {
+    alert("تم الحجز والدفع عند الوصول");
+  }
+
 });
 
+/* =========================
+   START
+========================= */
 loadHotel();
 </script>
 </body>
