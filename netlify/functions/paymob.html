@@ -401,9 +401,15 @@ document.getElementById("remaining").textContent =
 ========================= */
 async function createPayment(type) {
 
-  const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+ const bookingData =
+  JSON.parse(localStorage.getItem("bookingData")) || {};
 
-  console.log("bookingData:", bookingData);
+console.log("bookingData:", bookingData);
+
+document.getElementById("price").textContent =
+  "المبلغ المطلوب (5%): " +
+  bookingData.deposit +
+  " جنيه";
 
   // 🔥 حماية إضافية
   if (!bookingData.amountToPay || bookingData.amountToPay <= 0) {
