@@ -355,7 +355,6 @@ button:disabled {
 
   <button id="confirmBooking">تأكيد الحجز</button>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =========================
    SUPABASE INIT
@@ -373,12 +372,62 @@ let hotelData = null;
 let roomsArray = [];
 let roomPrices = {};
 let selectedRoomId = null;
+let currentUserId = null;
 
 /* =========================
    GET HOTEL ID FROM URL
 ========================= */
 const params = new URLSearchParams(window.location.search);
 hotelId = params.get("id");
+
+/* =========================
+   CHECK/GET USER ID
+========================= */
+async function getOrCreateUserId() {
+  // جرب أولاً localStorage
+  const savedUserId = localStorage.getItem('userId');
+  if (savedUserId) {
+    currentUserId = savedUserId;
+    return savedUserId;
+  }
+
+  // جرب الحصول على المستخدم المسجل دخول
+  const { data: userData, error: authError } = await supabaseClient.auth.getUser();
+  
+  if (userData?.user) {
+    currentUserId = userData.user.id;
+    localStorage.setItem('userId', currentUserId);
+    return currentUserId;
+  }
+
+  // إنشاء مستخدم ضيف جديد
+  const guestName = prompt("أدخل اسمك:");
+  if (!guestName) {
+    alert("يجب إدخال اسم");
+    return null;
+  }
+
+  const { data: newUser, error } = await supabaseClient
+    .from("users")
+    .insert([{
+      name: guestName,
+      email: `guest_${Date.now()}@hotel.com`,
+      phone: null,
+      is_guest: true
+    }])
+    .select()
+    .single();
+
+  if (error || !newUser) {
+    console.log(error);
+    alert("خطأ في إنشاء حساب الضيف");
+    return null;
+  }
+
+  currentUserId = newUser.id;
+  localStorage.setItem('userId', currentUserId);
+  return currentUserId;
+}
 
 /* =========================
    CALCULATE TOTAL PRICE
@@ -416,7 +465,6 @@ function calculateTotal() {
 ========================= */
 async function loadHotel() {
   try {
-
     if (!hotelId) {
       alert("لم يتم تحديد الفندق");
       return;
@@ -487,8 +535,11 @@ async function loadHotel() {
     alert("حدث خطأ في تحميل الصفحة");
   }
 }
-document.getElementById("confirmBooking").addEventListener("click", async () => {
 
+/* =========================
+   CONFIRM BOOKING
+========================= */
+document.getElementById("confirmBooking").addEventListener("click", async () => {
   const checkIn = document.getElementById("checkIn").value;
   const checkOut = document.getElementById("checkOut").value;
 
@@ -497,59 +548,61 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
   }
 
   const total = calculateTotal();
-
   if (total <= 0) {
     return alert("السعر غير صحيح");
   }
 
-  const { data: userData, error: userError } =
-    await supabaseClient.auth.getUser();
-
-  if (userError || !userData?.user) {
-    return alert("يجب تسجيل الدخول");
-  }
-const userId = userData.user.id;
-  const { data: booking, error } = await supabaseClient
-  .from("bookings")
-  .insert([
-    {
-      user_id: userId, // 👈 مهم جداً
-      hotel_id: hotelId,
-      room_id: selectedRoomId,
-      check_in: checkIn,
-      check_out: checkOut,
-      status: "pending",
-      total_price: total,
-    },
-  ])
-  .select()
-  .single();
- 
-    
-  if (error) {
-    console.log(error);
-    return alert("خطأ في الحجز");
+  // الحصول على/إنشاء user_id
+  const userId = await getOrCreateUserId();
+  if (!userId) {
+    return;
   }
 
-  // ✅ الدفع هنا جوه نفس الدالة
-  const deposit = Math.round(total * 0.05);
+  try {
+    const { data: booking, error } = await supabaseClient
+      .from("bookings")
+      .insert([{
+        user_id: userId, // 👈 user_id من localStorage أو ضيف جديد
+        hotel_id: hotelId,
+        room_id: selectedRoomId,
+        check_in: checkIn,
+        check_out: checkOut,
+        status: "pending",
+        total_price: total,
+      }])
+      .select()
+      .single();
 
-  localStorage.setItem(
-    "bookingData",
-    JSON.stringify({
-      bookingId: booking.id,
-      hotelId,
-      roomId: selectedRoomId,
-      checkIn,
-      checkOut,
-      amountToPay: deposit,
-      remaining: total - deposit,
-    })
-  );
+    if (error) {
+      console.log(error);
+      return alert("خطأ في الحجز: " + error.message);
+    }
 
-  window.location.href = "netlify/functions/paymob.html";
+    // ✅ الدفع
+    const deposit = Math.round(total * 0.05);
 
+    localStorage.setItem(
+      "bookingData",
+      JSON.stringify({
+        bookingId: booking.id,
+        hotelId,
+        roomId: selectedRoomId,
+        checkIn,
+        checkOut,
+        amountToPay: deposit,
+        remaining: total - deposit,
+        userId: userId
+      })
+    );
+
+    window.location.href = "netlify/functions/paymob.html";
+
+  } catch (err) {
+    console.log(err);
+    alert("حدث خطأ أثناء الحجز");
+  }
 });
+
 loadHotel();
 </script>
 
