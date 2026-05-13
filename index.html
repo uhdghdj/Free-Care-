@@ -22,118 +22,142 @@
  
   <body>
     <header>
-      
-        <div class="logo-text">SUN<span>GET</span>.COM</div>
-      </div>
- <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">🌙</button>
- <!-- زر تبديل اللغة -->
-<div class="lang-switcher">
-  <button class="lang-btn" id="langBtn">
-    <span id="langFlag">🇸🇦</span>
-    <span id="langName">العربية</span>
-    <span>▾</span>
-  </button>
-  <ul class="lang-menu" id="langMenu"></ul>
-</div>
 
-<div id="google_translate_element"></div>
-
-
-<div id="msgBox" class="popup-box">
-  <span class="close-box" onclick="closeAllBoxes()">✖</span>
-</div>
-<div id="notifBox" class="popup-box">
-  <span class="close-box" onclick="closeAllBoxes()">✖</span>
-</div>
-
-<div id="favBox" class="popup-box">
-  <span class="close-box" onclick="closeAllBoxes()">✖</span>
-</div>
-<div id="bookBox" class="popup-box">
-  <span class="close-box" onclick="closeAllBoxes()">✖</span>
-</div>
-   
-<div id="authButtons">
-  <a href="signup.html">
-    <button class="btn">تسجيل حساب</button>
-  </a>
-
-  <a href="login.html">
-    <button class="login-btn">تسجيل الدخول</button>
-  </a>
-</div>
-
-      <i id="menu-icon" class="fa-solid fa-align-left"  onclick="openMenu()" style="font-size: 26px;
-        cursor: pointer;
-        position: absolute;
-        right: 20px;
-        top: 25px;
-        z-index: 2000;"></i>
-
-      <div class="side-menu" id="sideMenu">
-        <i class="fa-solid fa-x" onclick="closeMenu()" style="font-size: 22px;
-        cursor: pointer;
-        color: rgb(255, 255, 255);"></i>
-
-        <div class="menu" id="menu" >
-  <div class="menu-button"style="margin-left: 300px;">
-<button onclick="event.stopPropagation(); openBox('notifBox')">
-  <i class="fa-solid fa-bell"></i>
- 
-  <span id="notifCount" class="badge"></span>
-</button>
-
-<button onclick="event.stopPropagation(); openBox('msgBox')">
-  <i class="fa-solid fa-comment-sms"></i>
- 
-  <span id="msgCount" class="badge"></span>
-</button>
-
-  
-  <button  onclick="event.stopPropagation(); openBox('bookBox')">
-    <i class="fa-solid fa-plane" style="color: #ffffff;"></i> 
-  </button>
-</div>
-<div class="settings-wrapper">
-  <i class="fa-solid fa-user-gear settings-icon" onclick="toggleSettings(event)"></i>
-
-  <div id="settingsMenu" class="settings-menu">
-    <div id="userName" style="padding:10px; border-bottom:1px solid #333;"><i class="fa-solid fa-circle-user"></i></div>
-
-    <div onclick="editName()"> <i class="fa-solid fa-user-pen"></i > تعديل الاسم</div>
-    <div onclick="logout()"><i class="fa-solid fa-arrow-right-to-bracket"></i> تسجيل خروج</div>
-    <div onclick="deleteAccount()" style="color:red;"><i class="fa-solid fa-trash"></i> حذف الحساب</div>
+  <div class="logo-text">
+    SUN<span>GET</span>.COM
   </div>
-</div>
-</div>
-        <a href="#">الرئيسية</a>
-        <a href="#hotels-list">حجز الفنادق</a>
-        <a href="#about">من نحن</a>
-        <a href="#contact">تواصل معنا</a>
-<button onclick="event.stopPropagation(); openBox('favBox')">
-  <i class="fa-solid fa-heart"></i><br>
-  المفضلة
-</button>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="تبديل الوضع">
+    🌙
+  </button>
+
+  <!-- زر تبديل اللغة -->
+  <div class="lang-switcher">
+    <button class="lang-btn" id="langBtn">
+      <span id="langFlag">🇸🇦</span>
+      <span id="langName">العربية</span>
+      <span>▾</span>
+    </button>
+    <ul class="lang-menu" id="langMenu"></ul>
+  </div>
+
+  <div id="google_translate_element"></div>
+
+  <!-- Popup Boxes -->
+  <div id="msgBox" class="popup-box">
+    <span class="close-box" onclick="closeAllBoxes()">✖</span>
+  </div>
+
+  <div id="notifBox" class="popup-box">
+    <span class="close-box" onclick="closeAllBoxes()">✖</span>
+  </div>
+
+  <div id="favBox" class="popup-box">
+    <span class="close-box" onclick="closeAllBoxes()">✖</span>
+  </div>
+
+  <div id="bookBox" class="popup-box">
+    <span class="close-box" onclick="closeAllBoxes()">✖</span>
+  </div>
+
+  <!-- Auth Buttons -->
+  <div id="authButtons">
+    <a href="signup.html">
+      <button class="btn">تسجيل حساب</button>
+    </a>
+
+    <a href="login.html">
+      <button class="login-btn">تسجيل الدخول</button>
+    </a>
+  </div>
+
+  <!-- Menu Icon -->
+  <i
+    id="menu-icon"
+    class="fa-solid fa-align-left"
+    onclick="openMenu()"
+    style="font-size:26px; cursor:pointer; position:absolute; right:20px; top:25px; z-index:2000;"
+  ></i>
+
+  <!-- Side Menu -->
+  <div class="side-menu" id="sideMenu">
+
+    <i
+      class="fa-solid fa-x"
+      onclick="closeMenu()"
+      style="font-size:22px; cursor:pointer; color:#fff;"
+    ></i>
+
+    <div class="menu" id="menu">
+
+      <!-- Menu Buttons -->
+      <div class="menu-button" style="margin-left:300px;">
+
+        <button onclick="event.stopPropagation(); openBox('notifBox')">
+          <i class="fa-solid fa-bell"></i>
+          <span id="notifCount" class="badge"></span>
+        </button>
+
+        <button onclick="event.stopPropagation(); openBox('msgBox')">
+          <i class="fa-solid fa-comment-sms"></i>
+          <span id="msgCount" class="badge"></span>
+        </button>
+
+        <button onclick="event.stopPropagation(); openBox('bookBox')">
+          <i class="fa-solid fa-plane"></i>
+        </button>
 
       </div>
-      
 
-    </header>
+      <!-- Settings -->
+      <div class="settings-wrapper">
+        <i class="fa-solid fa-user-gear settings-icon" onclick="toggleSettings(event)"></i>
+
+        <div id="settingsMenu" class="settings-menu">
+
+          <div id="userName" style="padding:10px; border-bottom:1px solid #333;">
+            <i class="fa-solid fa-circle-user"></i>
+          </div>
+
+          <div onclick="editName()">
+            <i class="fa-solid fa-user-pen"></i> تعديل الاسم
+          </div>
+
+          <div onclick="logout()">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> تسجيل خروج
+          </div>
+
+          <div onclick="deleteAccount()" style="color:red;">
+            <i class="fa-solid fa-trash"></i> حذف الحساب
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Links -->
+    <a href="#">الرئيسية</a>
+    <a href="#hotels-list">حجز الفنادق</a>
+    <a href="#about">من نحن</a>
+    <a href="#contact">تواصل معنا</a>
+
+    <button onclick="event.stopPropagation(); openBox('favBox')">
+      <i class="fa-solid fa-heart"></i><br />
+      المفضلة
+    </button>
+
+  </div>
+
+</header>
 
 
-
-  
-  
+<!-- HERO -->
 <section class="hero">
   <div class="hero-content">
 
     <div class="search-box">
-      <input
-        id="searchInput"
-        type="text"
-        placeholder="ابحث عن فندق..."
-      />
-
+      <input id="searchInput" type="text" placeholder="ابحث عن فندق..." />
       <button onclick="searchHotels(true)">
         <i class="fa-solid fa-magnifying-glass"></i>
       </button>
@@ -146,35 +170,39 @@
   </div>
 </section>
 
+
 <div id="hotels-list" class="hotels-list"></div>
 
-<!-- ================= ABOUT ================= -->
+
+<!-- ABOUT -->
 <section id="about" class="section about-section">
   <div class="container">
+
     <h2 class="section-title">من نحن</h2>
 
     <div class="about-box">
       <p class="section-text">
-        SUNGET.COM هي منصة سياحية متخصصة في حجز الفنادق بجوار الأهرامات و
-        المتحف المصري الجديد، هدفنا هو تسهيل تجربة السفر من خلال توفير أفضل
-        الخيارات بأفضل الأسعار.
+        SUNGET.COM هي منصة سياحية متخصصة في حجز الفنادق بجوار الأهرامات والمتحف المصري الجديد، هدفنا هو تسهيل تجربة السفر من خلال توفير أفضل الخيارات بأفضل الأسعار.
       </p>
 
       <p class="section-text">
-        نعمل على ربط العملاء بالفنادق مباشرة مع نظام شات فوري، لضمان تواصل
-        سريع وآمن وتجربة حجز مريحة وسلسة.
+        نعمل على ربط العملاء بالفنادق مباشرة مع نظام شات فوري، لضمان تواصل سريع وآمن وتجربة حجز مريحة وسلسة.
       </p>
 
       <p class="section-text">
         رؤيتنا هي أن نكون أفضل منصة سياحية في مصر والعالم العربي.
       </p>
+
     </div>
+
   </div>
 </section>
 
-<!-- ================= CONTACT ================= -->
+
+<!-- CONTACT -->
 <section id="contact" class="section contact-section">
   <div class="container">
+
     <h2 class="section-title">تواصل معنا</h2>
 
     <p class="section-text">
@@ -215,14 +243,16 @@
       </div>
 
     </div>
+
   </div>
 </section>
 
-<!-- ================= FOOTER ================= -->
+
+<!-- FOOTER -->
 <footer class="footer">
+
   <div class="footer-container">
 
-    <!-- اللوجو -->
     <div>
       <div class="footer-logo">SUNGET.COM</div>
       <p class="footer-text">
@@ -230,7 +260,6 @@
       </p>
     </div>
 
-    <!-- روابط -->
     <div class="footer-links">
       <strong>روابط</strong>
       <a href="#">الرئيسية</a>
@@ -239,7 +268,6 @@
       <a href="#contact">تواصل معنا</a>
     </div>
 
-    <!-- تواصل -->
     <div class="footer-links">
       <strong>تواصل</strong>
       <a href="mailto:info@sunget.com">info@sunget.com</a>
@@ -247,9 +275,9 @@
       <a href="#">القاهرة - مصر</a>
     </div>
 
-    <!-- سوشيال -->
     <div>
       <strong>تابعنا</strong>
+
       <div class="footer-social">
 
         <a href="https://facebook.com" target="_blank">
@@ -265,6 +293,7 @@
         </a>
 
       </div>
+
     </div>
 
   </div>
@@ -272,6 +301,7 @@
   <div class="footer-bottom">
     © 2026 SUNGET.COM - All Rights Reserved
   </div>
+
 </footer>
   
 
