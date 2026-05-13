@@ -378,69 +378,70 @@ button:disabled {
 
 </div>
 
-
 <script>
 const bookingData = JSON.parse(localStorage.getItem("bookingData"));
 
 if (!bookingData) {
-  alert("لا توجد بيانات حجز");
-  window.location.href = "/";
+  alert("لا توجد بيانات حجز، سيتم تحويلك للرئيسية");
+  window.location.href = "index.html";
 }
 
+// ✅ الإصلاح: amountToPay بدل deposit
 document.getElementById("price").textContent =
   "المبلغ المطلوب (5%): " +
-  bookingData.deposit +
+  Number(bookingData.amountToPay).toLocaleString() +
   " جنيه";
 
 document.getElementById("remaining").textContent =
   "المتبقي للدفع في الفندق: " +
-  bookingData.remaining +
+  Number(bookingData.remaining).toLocaleString() +
   " جنيه";
 
 async function createPayment(type) {
+  const amount = bookingData.amountToPay; // ✅ صح
 
-  if (!bookingData.deposit || bookingData.deposit <= 0) {
-    alert("خطأ في المبلغ");
+  if (!amount || amount <= 0) {
+    alert("خطأ: المبلغ غير صحيح");
     return;
   }
 
-  try {
+  const btn = document.querySelector("button");
+  btn.disabled = true;
+  btn.textContent = "⏳ جارٍ المعالجة...";
 
+  try {
     const res = await fetch("/.netlify/functions/create-payment", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        amount: bookingData.deposit,
-        integration_type: type
+        amount: amount,
+        integration_type: type,
+        booking_id: bookingData.bookingId
       })
     });
 
     const data = await res.json();
-
-    console.log(data);
+    console.log("Payment response:", data);
 
     if (data.payment_url) {
       window.location.href = data.payment_url;
-    }
-
-    else if (data.method === "kiosk") {
-
+    } else if (data.method === "kiosk") {
       document.getElementById("kioskCode").textContent =
         data.bill_reference || "----";
-
       document.getElementById("kioskBox").style.display = "block";
-    }
-
-    else {
-      alert("خطأ: " + JSON.stringify(data));
+      btn.disabled = false;
+      btn.textContent = "تأكيد الحجز";
+    } else {
+      alert("خطأ في الدفع: " + (data.message || JSON.stringify(data)));
+      btn.disabled = false;
+      btn.textContent = "تأكيد الحجز";
     }
 
   } catch (err) {
-    console.error(err);
+    console.error("Payment error:", err);
     alert("حصل خطأ في الاتصال بالسيرفر");
+    btn.disabled = false;
+    btn.textContent = "تأكيد الحجز";
   }
 }
 </script>
