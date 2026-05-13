@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -418,50 +417,46 @@ input:focus, select:focus {
           return;
         }
 
-        // إنشاء الحجز
-        const { data: booking, error: bookingError } = await supabaseClient
-          .from("bookings")
-          .insert([{
-            user_id: userData.user.id,
-            guest_name: userData.user.user_metadata?.name || userData.user.email.split('@')[0],
-            hotel_id: hotelId,
-            room_id: selectedRoomId,
-            check_in: checkIn,
-            check_out: checkOut,
-            payment_method: paymentMethod,
-            status: "pending",
-            total_price: total,
-            nights: Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24))
-          }])
-          .select()
-          .single();
+      const { data: booking, error: bookingError } = await supabaseClient
+  .from("bookings")
+  .insert([{
+    user_id: userData.user.id,
+    hotel_id: hotelId,
+    room_id: selectedRoomId,
+    check_in: checkIn,
+    check_out: checkOut,
+    status: "pending",
+    total_price: total
+  }])
+  .select()
+  .single();
 
-        if (bookingError) {
-          console.error('Booking Error:', bookingError);
-          showMessage(`❌ خطأ في الحجز: ${bookingError.message}`, 'error');
-          enableButton(confirmBtn, originalText);
-          return;
-        }
+if (bookingError) {
+  console.log(bookingError);
+  return alert("خطأ في الحجز");
+}
 
-        showMessage('✅ تم إنشاء الحجز بنجاح!', 'success');
-
-        // ✅ حساب العربون 5%
+// ✅ حساب 5%
 const deposit = Math.round(total * 0.05);
 
-// ✅ حفظ بيانات الدفع
+// ✅ حفظ البيانات
+const bookingData = {
+  bookingId: booking.id,
+  hotelId: hotelId,
+  roomId: selectedRoomId,
+  checkIn: checkIn,
+  checkOut: checkOut,
+  total: total,
+  amountToPay: deposit,
+  remaining: total - deposit
+};
+
+// ✅ تأكد إن البيانات اتخزنت
+console.log("BOOKING DATA:", bookingData);
+
 localStorage.setItem(
   "bookingData",
-  JSON.stringify({
-    bookingId: booking.id,
-    hotelId,
-    roomId: selectedRoomId,
-    checkIn,
-    checkOut,
-    total,
-    amountToPay: deposit,
-    remaining: total - deposit,
-    paymentMethod
-  })
+  JSON.stringify(bookingData)
 );
 
         // تحويل حسب طريقة الدفع
