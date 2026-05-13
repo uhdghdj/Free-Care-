@@ -372,62 +372,12 @@ let hotelData = null;
 let roomsArray = [];
 let roomPrices = {};
 let selectedRoomId = null;
-let currentUserId = null;
 
 /* =========================
    GET HOTEL ID FROM URL
 ========================= */
 const params = new URLSearchParams(window.location.search);
 hotelId = params.get("id");
-
-/* =========================
-   CHECK/GET USER ID
-========================= */
-async function getOrCreateUserId() {
-  // جرب أولاً localStorage
-  const savedUserId = localStorage.getItem('userId');
-  if (savedUserId) {
-    currentUserId = savedUserId;
-    return savedUserId;
-  }
-
-  // جرب الحصول على المستخدم المسجل دخول
-  const { data: userData, error: authError } = await supabaseClient.auth.getUser();
-  
-  if (userData?.user) {
-    currentUserId = userData.user.id;
-    localStorage.setItem('userId', currentUserId);
-    return currentUserId;
-  }
-
-  // إنشاء مستخدم ضيف جديد
-  const guestName = prompt("أدخل اسمك:");
-  if (!guestName) {
-    alert("يجب إدخال اسم");
-    return null;
-  }
-
-  const { data: newUser, error } = await supabaseClient
-    .from("users")
-    .insert([{
-      name: guestName,
-      email: `guest_${Date.now()}@hotel.com`,
-      phone: null,
-      is_guest: true
-    }])
-    .select()
-    .single();
-
-  if (error || !newUser) {
-    console.log(error);
-    alert("خطأ في إنشاء حساب الضيف");
-    return null;
-  }
-
-  currentUserId = newUser.id;
-  localStorage.setItem('userId', currentUserId);
-  return currentUserId;
-}
 
 /* =========================
    CALCULATE TOTAL PRICE
@@ -537,7 +487,7 @@ async function loadHotel() {
 }
 
 /* =========================
-   CONFIRM BOOKING
+   CONFIRM BOOKING - بدون profile خالص
 ========================= */
 document.getElementById("confirmBooking").addEventListener("click", async () => {
   const checkIn = document.getElementById("checkIn").value;
@@ -552,17 +502,15 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
     return alert("السعر غير صحيح");
   }
 
-  // الحصول على/إنشاء user_id
-  const userId = await getOrCreateUserId();
-  if (!userId) {
-    return;
-  }
+  // ✅ خد اسم الضيف بس (اختياري)
+  const guestName = prompt("اسمك (اختياري):") || "ضيف";
 
   try {
     const { data: booking, error } = await supabaseClient
       .from("bookings")
       .insert([{
-        user_id: userId, // 👈 user_id من localStorage أو ضيف جديد
+        // 👈 مفيش user_id خالص!
+        user_id:userId,
         hotel_id: hotelId,
         room_id: selectedRoomId,
         check_in: checkIn,
@@ -591,10 +539,11 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
         checkOut,
         amountToPay: deposit,
         remaining: total - deposit,
-        userId: userId
+        guestName: guestName
       })
     );
 
+    alert("✅ تم الحجز بنجاح!");
     window.location.href = "netlify/functions/paymob.html";
 
   } catch (err) {
@@ -605,6 +554,5 @@ document.getElementById("confirmBooking").addEventListener("click", async () => 
 
 loadHotel();
 </script>
-
 </body>
 </html>
