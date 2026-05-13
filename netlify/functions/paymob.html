@@ -56,7 +56,28 @@ html {
   text-size-adjust: 100%;
   scroll-behavior: smooth;
 }
-
+/* ================== GOOGLE TRANSLATE - COMPLETE HIDE ================== */
+#google_translate_element,
+.goog-te-banner-frame,
+.goog-te-menu-frame,
+.goog-te-balloon-frame,
+.goog-te-gadget,
+.goog-logo-link,
+.goog-te-gadget span,
+.skiptranslate,
+.goog-te-combo,
+.VIpgJd-ZVi9od-ORHb-OEVmkb svg,
+[aria-label*="Google"],
+[title*="Google"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  z-index: -9999 !important;
+}
 html, body {
   height: 100%;
   width: 100%;
