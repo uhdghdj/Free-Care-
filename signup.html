@@ -1,4 +1,5 @@
 
+
 <!doctype html>
 <html lang="ar">
   <head>
@@ -51,8 +52,7 @@
       </div>
       <button class="btn" type="submit" data-i18n="submit_user">سجّل كمستخدم</button>
       <div style="display:flex; gap:10px; margin-bottom:15px">
-  <button type="button" id="google-login" class="btn">تسجيل بجوجل</button>
-  <button type="button" id="facebook-login" class="btn ghost">فيسبوك</button>
+ 
 </div>
       <div id="user-msg" style="margin-top: 10px"></div>
     </form>
@@ -84,14 +84,19 @@
       </div>
       <button class="btn" type="submit" data-i18n="submit_hotel">سجّل كمالك فندق</button>
      
-  <button type="button" id="google-login" class="btn">تسجيل بجوجل</button>
-  <button type="button" id="facebook-login" class="btn ghost">فيسبوك</button>
-
       <div id="hotel-msg" style="margin-top: 10px"></div>
     </form>
   </section>
 </main>
+<div style="display:flex; gap:10px; margin-bottom:15px">
+  <button type="button" class="btn google-btn">
+    تسجيل بجوجل
+  </button>
 
+  <button type="button" class="btn ghost facebook-btn">
+    فيسبوك
+  </button>
+</div>
 <!-- مكتبة Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -278,333 +283,6 @@
 
     <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
     <script>
-/* ============================= */
-/*          I18NEXT INIT         */
-/* ============================= */
-
-const resources = {
-  ar: {
-    translation: {
-      user: "مستخدم",
-      hotel_owner: "مالك فندق",
-      register_user: "تسجيل مستخدم",
-      register_hotel: "تسجيل مالك فندق",
-      full_name: "الاسم الكامل",
-      hotel_name: "اسم الفندق",
-      owner_name: "اسم المالك",
-      phone: "رقم الهاتف",
-      email: "البريد الإلكتروني",
-      password: "كلمة المرور",
-      submit_user: "سجّل كمستخدم",
-      submit_hotel: "سجّل كمالك فندق",
-      msg_user_success: "✅ تم إنشاء حساب المستخدم بنجاح!",
-      msg_hotel_success: "✅ تم إنشاء الحساب بنجاح! سيتم تحويلك بعد لحظات...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "احجز أو أدر فندقك مع SUNGET بسهولة",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  en: {
-    translation: {
-      user: "User",
-      hotel_owner: "Hotel Owner",
-      register_user: "Register User",
-      register_hotel: "Register Hotel Owner",
-      full_name: "Full Name",
-      hotel_name: "Hotel Name",
-      owner_name: "Owner Name",
-      phone: "Phone",
-      email: "Email",
-      password: "Password",
-      submit_user: "Sign Up as User",
-      submit_hotel: "Sign Up as Hotel Owner",
-      msg_user_success: "✅ User account created successfully!",
-      msg_hotel_success: "✅ Account created successfully! Redirecting shortly...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Book or manage your hotel with SUNGET easily",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  fr: {
-    translation: {
-      user: "Utilisateur",
-      hotel_owner: "Propriétaire d'hôtel",
-      register_user: "Inscrire l'utilisateur",
-      register_hotel: "Inscrire le propriétaire de l'hôtel",
-      full_name: "Nom complet",
-      hotel_name: "Nom de l'hôtel",
-      owner_name: "Nom du propriétaire",
-      phone: "Téléphone",
-      email: "Email",
-      password: "Mot de passe",
-      submit_user: "S'inscrire comme utilisateur",
-      submit_hotel: "S'inscrire comme propriétaire d'hôtel",
-      msg_user_success: "✅ Compte utilisateur créé avec succès!",
-      msg_hotel_success: "✅ Compte créé avec succès! Redirection...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Réservez ou gérez votre hôtel facilement avec SUNGET",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  de: {
-    translation: {
-      user: "Benutzer",
-      hotel_owner: "Hotelbesitzer",
-      register_user: "Benutzer registrieren",
-      register_hotel: "Hotelbesitzer registrieren",
-      full_name: "Vollständiger Name",
-      hotel_name: "Hotelname",
-      owner_name: "Name des Besitzers",
-      phone: "Telefon",
-      email: "E-Mail",
-      password: "Passwort",
-      submit_user: "Als Benutzer anmelden",
-      submit_hotel: "Als Hotelbesitzer anmelden",
-      msg_user_success: "✅ Benutzerkonto erfolgreich erstellt!",
-      msg_hotel_success: "✅ Konto erfolgreich erstellt! Weiterleitung...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Buchen oder verwalten Sie Ihr Hotel einfach mit SUNGET",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  es: {
-    translation: {
-      user: "Usuario",
-      hotel_owner: "Propietario del hotel",
-      register_user: "Registrar usuario",
-      register_hotel: "Registrar propietario del hotel",
-      full_name: "Nombre completo",
-      hotel_name: "Nombre del hotel",
-      owner_name: "Nombre del propietario",
-      phone: "Teléfono",
-      email: "Correo electrónico",
-      password: "Contraseña",
-      submit_user: "Registrarse como usuario",
-      submit_hotel: "Registrarse como propietario de hotel",
-      msg_user_success: "✅ ¡Cuenta de usuario creada con éxito!",
-      msg_hotel_success: "✅ ¡Cuenta creada con éxito! Redirigiendo...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Reserva o gestiona tu hotel fácilmente con SUNGET",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  it: {
-    translation: {
-      user: "Utente",
-      hotel_owner: "Proprietario dell'hotel",
-      register_user: "Registrazione utente",
-      register_hotel: "Registrazione proprietario hotel",
-      full_name: "Nome completo",
-      hotel_name: "Nome hotel",
-      owner_name: "Nome proprietario",
-      phone: "Telefono",
-      email: "Email",
-      password: "Password",
-      submit_user: "Registrati come utente",
-      submit_hotel: "Registrati come proprietario hotel",
-      msg_user_success: "✅ Account utente creato con successo!",
-      msg_hotel_success: "✅ Account creato con successo! Reindirizzamento...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Prenota o gestisci il tuo hotel facilmente con SUNGET",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  ru: {
-    translation: {
-      user: "Пользователь",
-      hotel_owner: "Владелец отеля",
-      register_user: "Регистрация пользователя",
-      register_hotel: "Регистрация владельца отеля",
-      full_name: "Полное имя",
-      hotel_name: "Название отеля",
-      owner_name: "Имя владельца",
-      phone: "Телефон",
-      email: "Электронная почта",
-      password: "Пароль",
-      submit_user: "Зарегистрироваться как пользователь",
-      submit_hotel: "Зарегистрироваться как владелец отеля",
-      msg_user_success: "✅ Учетная запись пользователя успешно создана!",
-      msg_hotel_success: "✅ Учетная запись успешно создана! Перенаправление...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Бронируйте или управляйте своим отелем с SUNGET легко",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  tr: {
-    translation: {
-      user: "Kullanıcı",
-      hotel_owner: "Otel Sahibi",
-      register_user: "Kullanıcı Kaydı",
-      register_hotel: "Otel Sahibi Kaydı",
-      full_name: "Tam Adı",
-      hotel_name: "Otel Adı",
-      owner_name: "Sahip Adı",
-      phone: "Telefon",
-      email: "E-posta",
-      password: "Şifre",
-      submit_user: "Kullanıcı olarak kayıt ol",
-      submit_hotel: "Otel sahibi olarak kayıt ol",
-      msg_user_success: "✅ Kullanıcı hesabı başarıyla oluşturuldu!",
-      msg_hotel_success: "✅ Hesap başarıyla oluşturuldu! Yönlendiriliyor...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "SUNGET ile otelinizi kolayca rezerve edin veya yönetin",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  pt: {
-    translation: {
-      user: "Usuário",
-      hotel_owner: "Proprietário do hotel",
-      register_user: "Registrar usuário",
-      register_hotel: "Registrar proprietário do hotel",
-      full_name: "Nome completo",
-      hotel_name: "Nome do hotel",
-      owner_name: "Nome do proprietário",
-      phone: "Telefone",
-      email: "Email",
-      password: "Senha",
-      submit_user: "Cadastrar como usuário",
-      submit_hotel: "Cadastrar como proprietário do hotel",
-      msg_user_success: "✅ Conta de usuário criada com sucesso!",
-      msg_hotel_success: "✅ Conta criada com sucesso! Redirecionando...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Reserve ou gerencie seu hotel facilmente com o SUNGET",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  nl: {
-    translation: {
-      user: "Gebruiker",
-      hotel_owner: "Hoteleigenaar",
-      register_user: "Registreer gebruiker",
-      register_hotel: "Registreer hoteleigenaar",
-      full_name: "Volledige naam",
-      hotel_name: "Hotelnaam",
-      owner_name: "Naam eigenaar",
-      phone: "Telefoon",
-      email: "E-mail",
-      password: "Wachtwoord",
-      submit_user: "Aanmelden als gebruiker",
-      submit_hotel: "Aanmelden als hoteleigenaar",
-      msg_user_success: "✅ Gebruikersaccount succesvol aangemaakt!",
-      msg_hotel_success: "✅ Account succesvol aangemaakt! Doorsturen...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Boek of beheer je hotel eenvoudig met SUNGET",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  pl: {
-    translation: {
-      user: "Użytkownik",
-      hotel_owner: "Właściciel hotelu",
-      register_user: "Rejestracja użytkownika",
-      register_hotel: "Rejestracja właściciela hotelu",
-      full_name: "Pełne imię",
-      hotel_name: "Nazwa hotelu",
-      owner_name: "Imię właściciela",
-      phone: "Telefon",
-      email: "Email",
-      password: "Hasło",
-      submit_user: "Zarejestruj się jako użytkownik",
-      submit_hotel: "Zarejestruj się jako właściciel hotelu",
-      msg_user_success: "✅ Konto użytkownika utworzone pomyślnie!",
-      msg_hotel_success: "✅ Konto utworzone pomyślnie! Przekierowanie...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "Rezerwuj lub zarządzaj swoim hotelem łatwo z SUNGET",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  ja: {
-    translation: {
-      user: "ユーザー",
-      hotel_owner: "ホテルオーナー",
-      register_user: "ユーザー登録",
-      register_hotel: "ホテルオーナー登録",
-      full_name: "氏名",
-      hotel_name: "ホテル名",
-      owner_name: "オーナー名",
-      phone: "電話番号",
-      email: "メール",
-      password: "パスワード",
-      submit_user: "ユーザーとして登録",
-      submit_hotel: "ホテルオーナーとして登録",
-      msg_user_success: "✅ ユーザーアカウントが作成されました！",
-      msg_hotel_success: "✅ アカウントが作成されました！リダイレクト中...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "SUNGETで簡単にホテルを予約または管理",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  ko: {
-    translation: {
-      user: "사용자",
-      hotel_owner: "호텔 소유자",
-      register_user: "사용자 등록",
-      register_hotel: "호텔 소유자 등록",
-      full_name: "이름",
-      hotel_name: "호텔 이름",
-      owner_name: "소유자 이름",
-      phone: "전화번호",
-      email: "이메일",
-      password: "비밀번호",
-      submit_user: "사용자로 등록",
-      submit_hotel: "호텔 소유자로 등록",
-      msg_user_success: "✅ 사용자 계정이 성공적으로 생성되었습니다!",
-      msg_hotel_success: "✅ 계정이 성공적으로 생성되었습니다! 리디렉션 중...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "SUNGET으로 호텔을 쉽게 예약하거나 관리하세요",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  },
-  zh: {
-    translation: {
-      user: "用户",
-      hotel_owner: "酒店所有者",
-      register_user: "注册用户",
-      register_hotel: "注册酒店所有者",
-      full_name: "全名",
-      hotel_name: "酒店名称",
-      owner_name: "所有者姓名",
-      phone: "电话",
-      email: "电子邮件",
-      password: "密码",
-      submit_user: "注册为用户",
-      submit_hotel: "注册为酒店所有者",
-      msg_user_success: "✅ 用户账户创建成功！",
-      msg_hotel_success: "✅ 账户创建成功！正在跳转...",
-      brand_name: "SUNGET.COM",
-      brand_lead: "通过SUNGET轻松预订或管理您的酒店",
-      brand_copy: "© 2025 — SUNGET"
-    }
-  }
-};
-
-// تهيئة i18next
-i18next.init({
-  lng: localStorage.getItem("lang") || "ar",
-  fallbackLng: "en",
-  debug: false,
-  resources
-}, function() {
-  updateContent();
-});
-
-// تحديث المحتوى
-function updateContent() {
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    el.innerHTML = i18next.t(el.dataset.i18n);
-  });
-  document.documentElement.lang = i18next.language;
-  document.documentElement.dir = i18next.language === "ar" ? "rtl" : "ltr";
-}
-
-// لتغيير اللغة
-function changeLanguage(lang) {
-  i18next.changeLanguage(lang, () => {
-    localStorage.setItem("lang", lang);
-    updateContent();
-  });
-}
 
 async function checkUserRole() {
   const { data } = await sup.auth.getUser();
@@ -635,31 +313,91 @@ checkUserRole();
 
 </script>
 <script>
+// Google Login
+document.querySelectorAll(".google-btn").forEach((btn) => {
+  btn.onclick = async () => {
+    const { error } = await sup.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin + "/index.html"
+      }
+    });
 
-// تسجيل دخول Google
-document.getElementById("google-login").onclick = async () => {
-  const { data, error } = await sup.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: window.location.origin + "/index.html"
+    if (error) {
+      console.log(error.message);
+      alert(error.message);
     }
+  };
+});
+
+// Facebook Login
+document.querySelectorAll(".facebook-btn").forEach((btn) => {
+  btn.onclick = async () => {
+    const { error } = await sup.auth.signInWithOAuth({
+      provider: "facebook",
+      options: {
+        redirectTo: window.location.origin + "/index.html"
+      }
+    });
+
+    if (error) {
+      console.log(error.message);
+      alert(error.message);
+    }
+  };
+});
+
+sup.auth.signInWithOAuth({
+  provider: "google",
+  options: {
+    redirectTo: window.location.origin + "/auth-callback.html",
+    queryParams: {
+      role: "user"
+    }
+  }
+});
+
+
+sup.auth.signInWithOAuth({
+  provider: "google",
+  options: {
+    redirectTo: window.location.origin + "/auth-callback.html",
+    queryParams: {
+      role: "provider"
+    }
+  }
+});
+
+
+
+
+</script>
+
+<script>
+(async () => {
+  const { data } = await sup.auth.getUser();
+  const user = data.user;
+
+  if (!user) return;
+
+  // حاول تجيب role من metadata أو fallback
+  const role =
+    user.user_metadata?.role ||
+    new URLSearchParams(window.location.search).get("role") ||
+    "user";
+
+  // حفظه في metadata (اختياري)
+  await sup.auth.updateUser({
+    data: { role }
   });
 
-  if (error) console.log(error.message);
-};
-
-// تسجيل دخول Facebook
-document.getElementById("facebook-login").onclick = async () => {
-  const { data, error } = await sup.auth.signInWithOAuth({
-    provider: "facebook",
-    options: {
-      redirectTo: window.location.origin + "/index.html"
-    }
-  });
-
-  if (error) console.log(error.message);
-};
-
+  // توجيه حسب الدور
+  if (role === "provider") {
+    window.location.href = "تسجيل الفندق.html";
+  } else {
+    window.location.href = "index.html";
+  }
+})();
 </script>
 
   </body>
