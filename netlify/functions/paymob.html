@@ -6,9 +6,9 @@
   <title>الدفع</title>
 
   <style>
-/* ================== SUNGET.COM — PAYMENT PAGE STYLESHEET (FULLY RESPONSIVE) ================== */
+/* ================== GET.COM — MOBILE RESPONSIVE CARD (ENHANCED) ================== */
 
-/* ---------- THEME VARIABLES ---------- */
+/* ---------- THEME VARIABLES (OPTIMIZED FOR MOBILE) ---------- */
 :root,
 [data-theme="dark"] {
   --bg: #0b0b0f;
@@ -17,16 +17,16 @@
   --surface-2: #20202c;
   --text: #ffffff;
   --text-muted: #b8b8c4;
-  --border: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.12);
   --accent: #ffb400;
   --accent-2: #ff7a00;
   --danger: #e63946;
   --success: #27b82e;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.55);
-  --radius: 14px;
-  --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-2));
-  --glow: 0 0 28px rgba(255, 180, 0, 0.35);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 35px 80px rgba(0, 0, 0, 0.7);
+  --radius: 20px;
+  --gradient-accent: linear-gradient(135deg, #ffb400, #ff7a00);
+  --glow: 0 0 40px rgba(255, 180, 0, 0.5);
 }
 
 [data-theme="light"] {
@@ -36,12 +36,12 @@
   --surface-2: #fff7e6;
   --text: #1a1a24;
   --text-muted: #5a5a6a;
-  --border: rgba(0, 0, 0, 0.08);
-  --shadow: 0 10px 30px rgba(255, 122, 0, 0.12);
-  --shadow-lg: 0 25px 60px rgba(255, 122, 0, 0.18);
+  --border: rgba(0, 0, 0, 0.12);
+  --shadow: 0 20px 60px rgba(255, 122, 0, 0.2);
+  --shadow-lg: 0 35px 80px rgba(255, 122, 0, 0.25);
 }
 
-/* ---------- RESET ---------- */
+/* ---------- RESET & BASE ---------- */
 *,
 *::before,
 *::after {
@@ -52,9 +52,77 @@
 
 html {
   font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
   scroll-behavior: smooth;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- MOBILE-OPTIMIZED BACKGROUND ---------- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 180, 0, 0.25), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 122, 0, 0.25), transparent 50%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+  z-index: -2;
+}
+
+/* ---------- MOBILE HEADING (LARGER & BOLDER) ---------- */
+h1 {
+  font-size: clamp(28px, 8vw, 42px);
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 28px;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 50px rgba(255, 180, 0, 0.4);
+  animation: fadeUp 0.8s ease both;
+  line-height: 1.2;
+  padding: 0 12px;
+  letter-spacing: -0.5px;
+}
+
+/* ---------- ULTRA LARGE MOBILE CARD ---------- */
+.box {
+  width: 100%;
+  max-width: 420px;
+  min-height: 380px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(32px, 8vw, 48px);
+  margin: 0 auto;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  position: relative;
+  animation: bounceIn 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
 }
 /* ================== GOOGLE TRANSLATE - COMPLETE HIDE ================== */
 #google_translate_element,
@@ -78,149 +146,82 @@ html {
   position: absolute !important;
   z-index: -9999 !important;
 }
-html, body {
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-body {
-  font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(12px, 4vw, 40px);
-  position: relative;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-img, svg, video {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* ---------- BACKGROUND EFFECTS ---------- */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(255, 180, 0, 0.18), transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(255, 122, 0, 0.18), transparent 45%),
-    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
-  z-index: -2;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(255, 180, 0, 0.5) 1px, transparent 1px);
-  background-size: clamp(30px, 6vw, 60px) clamp(30px, 6vw, 60px);
-  opacity: 0.15;
-  animation: drift 30s linear infinite;
-  z-index: -1;
-}
-
-@keyframes drift {
-  from { background-position: 0 0; }
-  to { background-position: 60px 60px; }
-}
-
-/* ---------- HEADING ---------- */
-h1 {
-  font-size: clamp(20px, 5vw, 34px);
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: clamp(16px, 4vw, 28px);
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 40px rgba(255, 180, 0, 0.25);
-  animation: fadeUp 0.7s ease both;
-  line-height: 1.3;
-  padding: 0 8px;
-}
-
-/* ---------- MAIN BOX ---------- */
-.box {
-  width: 100%;
-  max-width: 460px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(18px, 5vw, 40px);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  position: relative;
-  animation: fadeUp 0.8s ease both;
-}
-
 .box::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: var(--radius);
-  padding: 1px;
+  padding: 2px;
   background: var(--gradient-accent);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0.6;
+  opacity: 0.7;
   pointer-events: none;
 }
 
-/* ---------- PRICE ---------- */
+/* ---------- EXTRA LARGE PRICE CARD ---------- */
 #price {
-  font-size: clamp(16px, 3.5vw, 22px);
-  font-weight: 700;
+  font-size: clamp(24px, 7vw, 36px);
+  font-weight: 900;
   text-align: center;
-  padding: clamp(12px, 3vw, 18px) clamp(14px, 4vw, 20px);
-  margin-bottom: clamp(16px, 4vw, 24px);
-  border-radius: 12px;
+  padding: clamp(24px, 6vw, 36px);
+  margin: 0;
+  border-radius: 18px;
   background: var(--surface-2);
-  border: 2px solid var(--accent);
+  border: 3px solid var(--accent);
   color: var(--text);
   box-shadow:
-    inset 0 0 20px rgba(255, 180, 0, 0.1),
-    0 6px 20px rgba(0, 0, 0, 0.25);
+    inset 0 0 30px rgba(255, 180, 0, 0.15),
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(255, 180, 0, 0.2);
   word-wrap: break-word;
   overflow-wrap: break-word;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  position: relative;
+  z-index: 2;
 }
 
-/* ---------- BUTTONS ---------- */
+#price::before {
+  content: "💰";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- EXTRA LARGE BUTTONS ---------- */
 button {
   display: block;
   width: 100%;
-  padding: clamp(11px, 3vw, 14px) clamp(14px, 4vw, 18px);
-  margin-top: clamp(10px, 2vw, 12px);
+  padding: clamp(20px, 6vw, 28px);
   font-family: inherit;
-  font-size: clamp(14px, 3.5vw, 16px);
-  font-weight: 700;
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 900;
   color: #000;
   background: var(--gradient-accent);
   border: none;
-  border-radius: 12px;
+  border-radius: 18px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.3);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 15px 40px rgba(255, 122, 0, 0.4), var(--glow);
   position: relative;
   overflow: hidden;
-  min-height: 44px;
+  min-height: 60px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
 }
 
 button::before {
@@ -229,16 +230,16 @@ button::before {
   inset: 0;
   background: linear-gradient(120deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.5) 50%,
     transparent 100%);
   transform: translateX(-100%);
-  transition: transform 0.6s ease;
+  transition: transform 0.8s ease;
 }
 
 @media (hover: hover) {
   button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(255, 180, 0, 0.45), var(--glow);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(255, 180, 0, 0.6), var(--glow);
   }
   button:hover::before {
     transform: translateX(100%);
@@ -246,138 +247,148 @@ button::before {
 }
 
 button:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 8px 25px rgba(255, 122, 0, 0.4);
 }
 
 button:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 3px;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ---------- KIOSK BOX ---------- */
-.kiosk-box {
-  display: none;
-  width: 100%;
-  max-width: 460px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(18px, 5vw, 40px);
-  margin-top: clamp(16px, 4vw, 24px);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  text-align: center;
-  animation: fadeUp 0.5s ease both;
-  position: relative;
-}
-
-.kiosk-box h2 {
-  font-size: clamp(16px, 4vw, 24px);
-  font-weight: 800;
-  margin-bottom: 12px;
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  line-height: 1.3;
-}
-
-.kiosk-box .small {
-  font-size: clamp(12px, 3vw, 14px);
-  color: var(--text-muted);
-  margin-bottom: 18px;
-}
-
-/* ---------- KIOSK CODE ---------- */
-.kiosk-code {
-  font-size: clamp(22px, 7vw, 42px);
-  font-weight: 800;
-  letter-spacing: clamp(2px, 1vw, 6px);
-  padding: clamp(14px, 4vw, 22px);
-  margin: clamp(12px, 3vw, 18px) 0;
-  border-radius: 12px;
-  background: var(--bg-2);
-  border: 2px dashed var(--accent);
-  color: var(--accent);
-  font-family: "Courier New", monospace;
-  text-shadow: 0 0 18px rgba(255, 180, 0, 0.5);
-  user-select: all;
-  word-break: break-all;
-  overflow-wrap: break-word;
+  outline: 4px solid var(--accent);
+  outline-offset: 4px;
 }
 
 /* ---------- ANIMATIONS ---------- */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- RESPONSIVE BREAKPOINTS ---------- */
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.8) translateY(40px); }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.98) translateY(-5px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ================== MOBILE RESPONSIVE BREAKPOINTS ================== */
+
+/* ========== LARGE SCREENS ========== */
 @media (min-width: 1440px) {
-  .box, .kiosk-box { max-width: 520px; }
+  .box { max-width: 500px; padding: 60px; }
+  #price { font-size: 40px; padding: 40px; }
 }
 
+/* ========== TABLET ========== */
 @media (max-width: 1024px) {
-  body { padding: 32px 20px; }
+  body { padding: 24px 20px; }
+  .box { max-width: 450px; }
 }
 
-@media (max-width: 768px) {
+/* ========== MOBILE LARGE (iPhone 14 Pro Max, etc.) ========== */
+@media (max-width: 430px) {
   body { padding: 24px 16px; }
-  .box, .kiosk-box { max-width: 100%; }
+  .box { 
+    max-width: 100%; 
+    padding: 40px 32px;
+    min-height: 420px;
+  }
+  h1 { 
+    font-size: 36px; 
+    margin-bottom: 32px; 
+  }
+  #price { 
+    font-size: 32px; 
+    padding: 32px 24px; 
+  }
+  button { 
+    padding: 24px; 
+    font-size: 20px;
+    min-height: 65px;
+  }
 }
 
-@media (max-width: 640px) {
+/* ========== MOBILE MEDIUM (iPhone 13/14) ========== */
+@media (max-width: 375px) {
   body { padding: 20px 14px; }
-  h1 { margin-bottom: 20px; }
+  .box { 
+    padding: 36px 28px; 
+    min-height: 400px;
+  }
+  h1 { font-size: 34px; margin-bottom: 28px; }
+  #price { 
+    font-size: 30px; 
+    padding: 28px 20px; 
+  }
+  button { 
+    padding: 22px; 
+    font-size: 19px;
+    min-height: 62px;
+  }
 }
 
-@media (max-width: 480px) {
-  body { padding: 16px 12px; }
-  .box, .kiosk-box { padding: 20px 16px; border-radius: 12px; }
-  button { margin-top: 10px; }
-  #price { margin-bottom: 16px; }
-}
-
-@media (max-width: 380px) {
-  body { padding: 12px 10px; }
-  .box, .kiosk-box { padding: 16px 12px; }
-  .kiosk-code { letter-spacing: 2px; }
-}
-
+/* ========== MOBILE SMALL (iPhone SE, etc.) ========== */
 @media (max-width: 320px) {
-  h1 { font-size: 18px; }
-  #price { font-size: 14px; padding: 10px; }
-  button { font-size: 13px; padding: 10px 12px; }
-  .kiosk-code { font-size: 20px; padding: 12px; }
+  html { font-size: 15px; }
+  body { padding: 16px 12px; }
+  .box { 
+    padding: 32px 24px; 
+    min-height: 380px;
+  }
+  h1 { 
+    font-size: 30px; 
+    margin-bottom: 24px; 
+  }
+  #price { 
+    font-size: 28px; 
+    padding: 24px 18px; 
+  }
+  button { 
+    padding: 20px; 
+    font-size: 18px;
+    min-height: 58px;
+  }
 }
 
+/* ========== LANDSCAPE MODE ========== */
 @media (max-height: 500px) and (orientation: landscape) {
-  body { justify-content: flex-start; padding: 16px; }
-  h1 { margin-bottom: 12px; font-size: 20px; }
-  .box, .kiosk-box { padding: 16px 20px; }
-  button { padding: 10px 14px; margin-top: 8px; }
+  body { 
+    padding: 16px; 
+    justify-content: flex-start; 
+    align-items: stretch;
+  }
+  .box { 
+    max-width: none; 
+    height: 100vh; 
+    padding: 40px 32px;
+    border-radius: 0;
+    margin: 0;
+  }
+  h1 { 
+    margin-bottom: 20px; 
+    font-size: 28px; 
+  }
+  #price { 
+    font-size: 26px; 
+    padding: 24px 20px; 
+  }
+  button { 
+    padding: 20px; 
+    margin-top: 16px;
+  }
 }
 
+/* ========== ACCESSIBILITY ========== */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0.3s !important;
   }
-  body::after { animation: none; }
 }
 
+/* ========== PRINT ========== */
 @media print {
-  body::before, body::after { display: none; }
+  body::before { display: none; }
   body { background: #fff; color: #000; }
+  .box { box-shadow: none; border: 1px solid #000; }
   button { display: none; }
 }
 
