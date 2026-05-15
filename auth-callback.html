@@ -1,0 +1,37 @@
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_KEY";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+(async () => {
+  // ⛳ انتظر session بعد OAuth
+  const { data: sessionData } = await sb.auth.getSession();
+
+  const user = sessionData?.session?.user;
+
+  if (!user) {
+    // لو مفيش user → ارجع login
+    window.location.href = "login.html";
+    return;
+  }
+
+  // 🔥 هات role من قاعدة البيانات (مش metadata)
+  const { data: profile } = await sb
+    .from("profiles")
+    .select("role")
+    .eq("auth_id", user.id)
+    .single();
+
+  const role = profile?.role || "user";
+
+  // 🚀 توجيه حسب الدور
+  if (role === "provider") {
+    window.location.href = "تسجيل الفندق.html";
+  } else {
+    window.location.href = "index.html";
+  }
+})();
+</script>
