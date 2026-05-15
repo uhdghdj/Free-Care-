@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
@@ -650,122 +651,338 @@ input, button {
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-      // 🚀 كود مبسط بدون ترجمة
-      document.addEventListener('DOMContentLoaded', async function() {
-        
-        // 1️⃣ Supabase
-        const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+document.addEventListener('DOMContentLoaded', async function () {
 
-        // 2️⃣ رسائل ثابتة (عربي فقط)
-        const messages = {
-          loading: "جارٍ تسجيل الدخول...",
-          user_success: "✅ تم تسجيل الدخول كمستخدم بنجاح",
-          provider_success: "✅ تم تسجيل الدخول كمزود خدمة بنجاح",
-          wrong: "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة",
-          no_account: "❌ لا يوجد حساب مرتبط بهذا البريد الإلكتروني",
-          error: "❌ حدث خطأ أثناء تسجيل الدخول",
-          required: "❌ يرجى إدخال البريد الإلكتروني وكلمة المرور",
-          unknown_role: "❌ نوع الحساب غير محدد"
-        };
+  // =========================
+  // 1️⃣ Supabase
+  // =========================
+  const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
 
-        // 3️⃣ دالة الرسائل
-        function showMsg(el, text, type = "error") {
-          if (!el) return;
-          el.innerHTML = `<div class="${type}">${text}</div>`;
+  const SUPABASE_ANON_KEY =
+    "ضع_مفتاح_الanon_هنا";
+
+  const sb = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+  // =========================
+  // 2️⃣ التحقق بعد OAuth
+  // =========================
+  const {
+    data: { session }
+  } = await sb.auth.getSession();
+
+  if (session?.user) {
+
+    let role = session.user.user_metadata?.role;
+
+    // لو الـ role مش موجود ناخده من localStorage
+    if (!role) {
+      role = localStorage.getItem("role");
+    }
+
+    // نحفظه داخل metadata مرة واحدة
+    if (role && !session.user.user_metadata?.role) {
+
+      await sb.auth.updateUser({
+        data: {
+          role: role
+        }
+      });
+
+    }
+
+    // التحويل حسب النوع
+    if (role === "provider") {
+
+      window.location.href = "تسجيل الفندق.html";
+      return;
+
+    } else if (role === "user") {
+
+      window.location.href = "index.html";
+      return;
+
+    }
+  }
+
+  // =========================
+  // 3️⃣ الرسائل
+  // =========================
+  const messages = {
+    loading: "جارٍ تسجيل الدخول...",
+    user_success: "✅ تم تسجيل الدخول كمستخدم بنجاح",
+    provider_success: "✅ تم تسجيل الدخول كمزود خدمة بنجاح",
+    wrong: "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    no_account: "❌ لا يوجد حساب مرتبط بهذا البريد الإلكتروني",
+    error: "❌ حدث خطأ أثناء تسجيل الدخول",
+    required: "❌ يرجى إدخال البريد الإلكتروني وكلمة المرور",
+    unknown_role: "❌ نوع الحساب غير محدد"
+  };
+
+  // =========================
+  // 4️⃣ دالة الرسائل
+  // =========================
+  function showMsg(el, text, type = "error") {
+
+    if (!el) return;
+
+    el.innerHTML =
+      `<div class="${type}">${text}</div>`;
+  }
+
+  // =========================
+  // 5️⃣ عناصر الصفحة
+  // =========================
+  const loginForm =
+    document.getElementById("login-form");
+
+  const loginBtn =
+    document.getElementById("loginBtn");
+
+  const msgEl =
+    document.getElementById("msg");
+
+  // =========================
+  // 6️⃣ تسجيل الدخول العادي
+  // =========================
+  loginForm.addEventListener(
+    "submit",
+    async (e) => {
+
+      e.preventDefault();
+
+      const email =
+        document.getElementById("email")
+        .value
+        .trim();
+
+      const password =
+        document.getElementById("password")
+        .value;
+
+      if (!email || !password) {
+
+        showMsg(
+          msgEl,
+          messages.required
+        );
+
+        return;
+      }
+
+      loginBtn.classList.add("loading");
+
+      loginBtn.innerHTML =
+        `<span>${messages.loading}</span>`;
+
+      try {
+
+        const {
+          data,
+          error
+        } = await sb.auth.signInWithPassword({
+
+          email,
+          password
+
+        });
+
+        if (error) {
+
+          showMsg(
+            msgEl,
+            messages.wrong
+          );
+
+          return;
         }
 
-        // 4️⃣ تسجيل الدخول
-        const loginForm = document.getElementById("login-form");
-        const loginBtn = document.getElementById("loginBtn");
-        const msgEl = document.getElementById("msg");
+        if (!data.user) {
 
-        loginForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
+          showMsg(
+            msgEl,
+            messages.no_account
+          );
 
-          const email = document.getElementById("email").value.trim();
-          const password = document.getElementById("password").value;
+          return;
+        }
 
-          if (!email || !password) {
-            showMsg(msgEl, messages.required);
-            return;
+        console.log(
+          "✅ User logged in:",
+          data.user
+        );
+
+        console.log(
+          "Metadata:",
+          data.user.user_metadata
+        );
+
+        const role =
+          data.user.user_metadata?.role;
+
+        if (role === "user") {
+
+          showMsg(
+            msgEl,
+            messages.user_success,
+            "success"
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "index.html";
+
+          }, 1500);
+
+          return;
+        }
+
+        if (role === "provider") {
+
+          showMsg(
+            msgEl,
+            messages.provider_success,
+            "success"
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "تسجيل الفندق.html";
+
+          }, 1500);
+
+          return;
+        }
+
+        showMsg(
+          msgEl,
+          messages.unknown_role
+        );
+
+      } catch (err) {
+
+        console.error(
+          "❌ Login Error:",
+          err
+        );
+
+        showMsg(
+          msgEl,
+          messages.error
+        );
+
+      } finally {
+
+        loginBtn.classList.remove(
+          "loading"
+        );
+
+        loginBtn.textContent =
+          "تسجيل الدخول";
+      }
+
+    }
+  );
+
+  // =========================
+  // 7️⃣ Google Login
+  // =========================
+  document
+    .getElementById("googleLogin")
+    .addEventListener(
+      "click",
+      async () => {
+
+        // user أو provider
+        localStorage.setItem(
+          "role",
+          "provider"
+        );
+
+        await sb.auth.signInWithOAuth({
+
+          provider: "google",
+
+          options: {
+            redirectTo:
+              window.location.origin +
+              "/index.html"
           }
 
-          loginBtn.classList.add("loading");
-          loginBtn.innerHTML = `<span>${messages.loading}</span>`;
+        });
 
-          try {
-            const { data, error } = await sb.auth.signInWithPassword({ 
-              email, 
-              password 
-            });
+      }
+    );
 
-            if (error) {
-              showMsg(msgEl, messages.wrong);
-              return;
-            }
+  // =========================
+  // 8️⃣ Facebook Login
+  // =========================
+  document
+    .getElementById("facebookLogin")
+    .addEventListener(
+      "click",
+      async () => {
 
-            if (!data.user) {
-              showMsg(msgEl, messages.no_account);
-              return;
-            }
+        localStorage.setItem(
+          "role",
+          "provider"
+        );
 
-            console.log("✅ User logged in:", data.user);
-            console.log("Metadata:", data.user.user_metadata);
+        await sb.auth.signInWithOAuth({
 
-            const role = data.user.user_metadata?.role;
+          provider: "facebook",
 
-            if (role === "user") {
-              showMsg(msgEl, messages.user_success, "success");
-              setTimeout(() => window.location.href = "index.html", 1500);
-              return;
-            }
-
-            if (role === "provider") {
-              showMsg(msgEl, messages.provider_success, "success");
-              setTimeout(() => window.location.href = "تسجيل الفندق.html", 1500);
-              return;
-            }
-
-            showMsg(msgEl, messages.unknown_role);
-
-          } catch (err) {
-            console.error("❌ Login Error:", err);
-            showMsg(msgEl, messages.error);
-          } finally {
-            loginBtn.classList.remove("loading");
-            loginBtn.textContent = "تسجيل الدخول";
+          options: {
+            redirectTo:
+              window.location.origin +
+              "/index.html"
           }
+
         });
 
-        // 5️⃣ Google Login
-        document.getElementById("googleLogin").addEventListener("click", async () => {
-          await sb.auth.signInWithOAuth({
-            provider: "google",
-            options: { redirectTo: window.location.origin + "/index.html" }
-          });
-        });
+      }
+    );
 
-        // 6️⃣ Facebook Login
-        document.getElementById("facebookLogin").addEventListener("click", async () => {
-          await sb.auth.signInWithOAuth({
-            provider: "facebook",
-            options: { redirectTo: window.location.origin + "/index.html" }
-          });
-        });
+  // =========================
+  // 9️⃣ إظهار كلمة المرور
+  // =========================
+  document
+    .getElementById("togglePass")
+    .addEventListener(
+      "click",
+      (event) => {
 
-        // 7️⃣ Password Toggle
-        document.getElementById("togglePass").addEventListener("click", () => {
-          const passwordInput = document.getElementById("password");
-          const isHidden = passwordInput.type === "password";
-          passwordInput.type = isHidden ? "text" : "password";
-          event.target.textContent = isHidden ? "🙈" : "👁";
-        });
+        const passwordInput =
+          document.getElementById(
+            "password"
+          );
 
-        console.log("✅ Login page loaded perfectly!");
-      });
-    </script>
+        const isHidden =
+          passwordInput.type ===
+          "password";
+
+        passwordInput.type =
+          isHidden
+            ? "text"
+            : "password";
+
+        event.target.textContent =
+          isHidden
+            ? "🙈"
+            : "👁";
+      }
+    );
+
+  console.log(
+    "✅ Login page loaded perfectly!"
+  );
+
+});
+</script>
   <script src="translate.js"></script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
