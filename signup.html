@@ -313,92 +313,30 @@ checkUserRole();
 
 </script>
 <script>
-// Google Login
+
 document.querySelectorAll(".google-btn").forEach((btn) => {
   btn.onclick = async () => {
-    const { error } = await sup.auth.signInWithOAuth({
+    await sup.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin + "/index.html"
+        redirectTo: window.location.origin + "/auth-callback.html"
       }
     });
-
-    if (error) {
-      console.log(error.message);
-      alert(error.message);
-    }
   };
 });
 
-// Facebook Login
-document.querySelectorAll(".facebook-btn").forEach((btn) => {
-  btn.onclick = async () => {
-    const { error } = await sup.auth.signInWithOAuth({
-      provider: "facebook",
-      options: {
-        redirectTo: window.location.origin + "/index.html"
-      }
-    });
-
-    if (error) {
-      console.log(error.message);
-      alert(error.message);
-    }
-  };
-});
-
-sup.auth.signInWithOAuth({
-  provider: "google",
-  options: {
-    redirectTo: window.location.origin + "/auth-callback.html",
-    queryParams: {
-      role: "user"
-    }
-  }
-});
+   
 
 
-sup.auth.signInWithOAuth({
-  provider: "google",
-  options: {
-    redirectTo: window.location.origin + "/auth-callback.html",
-    queryParams: {
-      role: "provider"
-    }
-  }
-});
+
+
 
 
 
 
 </script>
 
-<script>
-(async () => {
-  const { data } = await sup.auth.getUser();
-  const user = data.user;
 
-  if (!user) return;
-
-  // حاول تجيب role من metadata أو fallback
-  const role =
-    user.user_metadata?.role ||
-    new URLSearchParams(window.location.search).get("role") ||
-    "user";
-
-  // حفظه في metadata (اختياري)
-  await sup.auth.updateUser({
-    data: { role }
-  });
-
-  // توجيه حسب الدور
-  if (role === "provider") {
-    window.location.href = "تسجيل الفندق.html";
-  } else {
-    window.location.href = "index.html";
-  }
-})();
-</script>
 
   </body>
 </html>
