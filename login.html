@@ -647,342 +647,544 @@ input, button {
       </div>
     </div>
 
-    <!-- 🔥 فقط Supabase (بدون i18next) 🔥 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SUNGET — تسجيل دخول</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="sunget-signup.css">
+  </head>
+  <style>
+/* sunget-login.css - نفس الستايل الداكن الاحترافي 🔥 */
+:root {
+  --bg: #0b0b0f;
+  --bg-2: #14141c;
+  --surface: #1a1a24;
+  --surface-2: #20202c;
+  --text: #ffffff;
+  --text-muted: #b8b8c4;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #ffb400;
+  --accent-2: #ff7a00;
+  --danger: #e63946;
+  --success: #27b82e;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.5);
+  --radius: 20px;
+  --gradient: linear-gradient(135deg, var(--accent), var(--accent-2));
+  --gradient-hover: linear-gradient(135deg, var(--accent-2), var(--accent));
+}
 
-    <script>
-document.addEventListener('DOMContentLoaded', async function () {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  // =========================
-  // 1️⃣ Supabase
-  // =========================
-  const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
 
-  const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 10% 30%, rgba(255, 180, 0, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255, 122, 0, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 40% 10%, rgba(255, 180, 0, 0.06) 0%, transparent 40%);
+  z-index: -1;
+  animation: backgroundFloat 30s ease-in-out infinite;
+}
 
-  const sb = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+@keyframes backgroundFloat {
+  0%, 100% { transform: scale(1) translateY(0px); }
+  33% { transform: scale(1.05) translateY(-20px); }
+  66% { transform: scale(1.02) translateY(-10px); }
+}
 
-  // =========================
-  // 2️⃣ التحقق بعد OAuth
-  // =========================
-  const {
-    data: { session }
-  } = await sb.auth.getSession();
+/* Main Card */
+.card {
+  background: rgba(26, 26, 36, 0.95);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 60px 50px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  animation: cardSlideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  if (session?.user) {
-
-    let role = session.user.user_metadata?.role;
-
-    // لو الـ role مش موجود ناخده من localStorage
-    if (!role) {
-      role = localStorage.getItem("role");
-    }
-
-    // نحفظه داخل metadata مرة واحدة
-    if (role && !session.user.user_metadata?.role) {
-
-      await sb.auth.updateUser({
-        data: {
-          role: role
-        }
-      });
-
-    }
-
-    // التحويل حسب النوع
-    if (role === "provider") {
-
-      window.location.href = "تسجيل الفندق.html";
-      return;
-
-    } else if (role === "user") {
-
-      window.location.href = "index.html";
-      return;
-
-    }
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
   }
-
-  // =========================
-  // 3️⃣ الرسائل
-  // =========================
-  const messages = {
-    loading: "جارٍ تسجيل الدخول...",
-    user_success: "✅ تم تسجيل الدخول كمستخدم بنجاح",
-    provider_success: "✅ تم تسجيل الدخول كمزود خدمة بنجاح",
-    wrong: "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة",
-    no_account: "❌ لا يوجد حساب مرتبط بهذا البريد الإلكتروني",
-    error: "❌ حدث خطأ أثناء تسجيل الدخول",
-    required: "❌ يرجى إدخال البريد الإلكتروني وكلمة المرور",
-    unknown_role: "❌ نوع الحساب غير محدد"
-  };
-
-  // =========================
-  // 4️⃣ دالة الرسائل
-  // =========================
-  function showMsg(el, text, type = "error") {
-
-    if (!el) return;
-
-    el.innerHTML =
-      `<div class="${type}">${text}</div>`;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
+}
 
-  // =========================
-  // 5️⃣ عناصر الصفحة
-  // =========================
-  const loginForm =
-    document.getElementById("login-form");
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--gradient);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
 
-  const loginBtn =
-    document.getElementById("loginBtn");
+/* Logo Section */
+.logo {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+}
 
-  const msgEl =
-    document.getElementById("msg");
+.logo-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.15);
+  margin: 0 auto 24px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  // =========================
-  // 6️⃣ تسجيل الدخول العادي
-  // =========================
-  loginForm.addEventListener(
-    "submit",
-    async (e) => {
+.logo-img:hover {
+  transform: scale(1.08) rotate(5deg);
+  border-color: rgba(255, 180, 0, 0.4);
+  box-shadow: 0 20px 45px rgba(255, 180, 0, 0.3);
+}
 
-      e.preventDefault();
+.logo h3 {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.8px;
+  margin-bottom: 8px;
+}
 
-      const email =
-        document.getElementById("email")
-        .value
-        .trim();
+.logo h3:nth-of-type(2) {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--text);
+  background: none;
+  -webkit-text-fill-color: var(--text);
+  margin-top: 4px;
+  opacity: 0.9;
+}
 
-      const password =
-        document.getElementById("password")
-        .value;
+/* Form */
+#login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
 
-      if (!email || !password) {
+#login-form input {
+  width: 100%;
+  padding: 24px 28px;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-family: inherit;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text);
+  font-weight: 500;
+}
 
-        showMsg(
-          msgEl,
-          messages.required
-        );
+#login-form input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
 
-        return;
-      }
+#login-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 
+    0 0 0 4px rgba(255, 180, 0, 0.15),
+    0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+  background: var(--surface-2);
+}
 
-      loginBtn.classList.add("loading");
+/* Submit Button */
+#login-form button {
+  padding: 24px 36px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  background: var(--gradient);
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow);
+  margin-top: 12px;
+}
 
-      loginBtn.innerHTML =
-        `<span>${messages.loading}</span>`;
+#login-form button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  transition: left 0.7s;
+}
 
-      try {
+#login-form button:hover::before {
+  left: 100%;
+}
 
-        const {
-          data,
-          error
-        } = await sb.auth.signInWithPassword({
+#login-form button:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 40px 60px -15px rgba(255, 180, 0, 0.45);
+}
 
-          email,
-          password
+#login-form button:active {
+  transform: translateY(-4px) scale(1.02);
+}
 
-        });
+/* Messages */
+#msg {
+  margin-top: 30px;
+  min-height: 24px;
+}
 
-        if (error) {
+.success, .error {
+  padding: 20px 28px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 1rem;
+  animation: msgSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(15px);
+  border: 1px solid transparent;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
 
-          showMsg(
-            msgEl,
-            messages.wrong
-          );
+.success {
+  background: rgba(39, 184, 46, 0.18);
+  color: var(--success);
+  border-color: rgba(39, 184, 46, 0.35);
+}
 
-          return;
-        }
+.error {
+  background: rgba(230, 57, 70, 0.18);
+  color: var(--danger);
+  border-color: rgba(230, 57, 70, 0.35);
+}
 
-        if (!data.user) {
+@keyframes msgSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
-          showMsg(
-            msgEl,
-            messages.no_account
-          );
+/* Loading State */
+#login-form button.loading {
+  pointer-events: none;
+  position: relative;
+  color: #000;
+}
 
-          return;
-        }
+#login-form button.loading::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  margin: auto;
+  border: 3px solid transparent;
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
 
-        console.log(
-          "✅ User logged in:",
-          data.user
-        );
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
-        console.log(
-          "Metadata:",
-          data.user.user_metadata
-        );
+/* Pulse Glow Animation */
+#login-form button {
+  animation: buttonPulse 3s ease-in-out infinite alternate;
+}
 
-        const role =
-          data.user.user_metadata?.role;
+@keyframes buttonPulse {
+  from {
+    box-shadow: var(--shadow);
+  }
+  to {
+    box-shadow: 0 0 50px rgba(255, 180, 0, 0.6);
+  }
+}
 
-        if (role === "user") {
+/* Responsive Design */
+@media (max-width: 600px) {
+  .card {
+    padding: 50px 35px;
+    margin: 10px;
+    max-width: none;
+  }
+  
+  .logo-img {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .logo h3 {
+    font-size: 1.8rem;
+  }
+  
+  .logo h3:nth-of-type(2) {
+    font-size: 1.5rem;
+  }
+  
+  #login-form input {
+    padding: 22px 24px;
+    font-size: 1rem;
+  }
+  
+  #login-form button {
+    padding: 22px 32px;
+    font-size: 1.1rem;
+  }
+}
 
-          showMsg(
-            msgEl,
-            messages.user_success,
-            "success"
-          );
+@media (max-width: 400px) {
+  .card {
+    padding: 40px 28px;
+  }
+  
+  body {
+    padding: 10px;
+  }
+}
 
-          setTimeout(() => {
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-            window.location.href =
-              "index.html";
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
 
-          }, 1500);
+::-webkit-scrollbar-thumb {
+  background: var(--surface-2);
+  border-radius: 10px;
+}
 
-          return;
-        }
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
 
-        if (role === "provider") {
+/* RTL Support Enhancement */
+[dir="rtl"] .card {
+  text-align: center;
+}
 
-          showMsg(
-            msgEl,
-            messages.provider_success,
-            "success"
-          );
+[dir="rtl"] input {
+  text-align: right;
+}
 
-          setTimeout(() => {
+/* Floating Particles Effect */
+.card::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 180, 0, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 122, 0, 0.25), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 180, 0, 0.4), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 122, 0, 0.3), transparent);
+  pointer-events: none;
+  animation: particlesFloat 20s linear infinite;
+  opacity: 0.3;
+}
 
-            window.location.href =
-              "تسجيل الفندق.html";
+@keyframes particlesFloat {
+  from { transform: translateY(0px) rotate(0deg); }
+  to { transform: translateY(-100px) rotate(360deg); }
+}
 
-          }, 1500);
+  </style>
+  <body>
+    
+<div class="card">
+      <div class="logo">
+        
+       <h3 data-i18n="brand_name">SUNGET.COM</h3>
 
-          return;
-        }
+<h3 data-i18n="title">تسجيل دخول</h3>
 
-        showMsg(
-          msgEl,
-          messages.unknown_role
-        );
+<form id="login-form">
+  <input
+    id="email"
+    type="email"
+    data-i18n-placeholder="email"
+    placeholder="البريد الإلكتروني"
+    required
+  />
+  <input
+    id="password"
+    type="password"
+    data-i18n-placeholder="password"
+    placeholder="كلمة المرور"
+    required
+  />
+  <button type="submit" data-i18n="login">تسجيل الدخول</button>
+  <div style="display:flex;gap:12px;margin-top:16px;">
+  <button type="button" id="btn-google" style="flex:1;background:#fff;color:#000;">
+    <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C41.3 35.5 44 30.2 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+    Google
+  </button>
+  <button type="button" id="btn-facebook" style="flex:1;background:#1877F2;color:#fff;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M24 12a12 12 0 10-13.9 11.9v-8.4H7v-3.5h3.1V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.2h3.4l-.5 3.5h-2.9v8.4A12 12 0 0024 12z"/></svg>
+    Facebook
+  </button>
+</div>
 
-      } catch (err) {
+</form>
+<div id="msg"></div>
 
-        console.error(
-          "❌ Login Error:",
-          err
-        );
 
-        showMsg(
-          msgEl,
-          messages.error
-        );
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-      } finally {
+<script>
+const SUPABASE_URL = "https://mqvmxqzwvpasdytbpbke.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xdm14cXp3dnBhc2R5dGJwYmtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODMwMjksImV4cCI6MjA3Nzg1OTAyOX0.jHrxC0IcuWYkSaB2y-guc5tl5dPPWFSoasv3rmjcxuM";
 
-        loginBtn.classList.remove(
-          "loading"
-        );
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        loginBtn.textContent =
-          "تسجيل الدخول";
-      }
+/* =========================
+   Helper
+========================= */
+function show(el, text, type = "error") {
+  if (!el) return;
+  el.innerHTML = `<div class="${type}">${text}</div>`;
+}
 
+/* =========================
+   Email Login
+========================= */
+document.getElementById("login-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email")?.value.trim();
+  const password = document.getElementById("password")?.value;
+  const msg = document.getElementById("msg");
+
+  show(msg, "جارٍ تسجيل الدخول...", "success");
+
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      show(msg, "❌ البريد أو كلمة المرور غير صحيحة");
+      return;
     }
-  );
 
-  // =========================
-  // 7️⃣ Google Login
-  // =========================
-  document
-    .getElementById("googleLogin")
-    .addEventListener(
-      "click",
-      async () => {
+    if (!data.user) {
+      show(msg, "❌ حدث خطأ في تسجيل الدخول");
+      return;
+    }
 
-        // user أو provider
-        localStorage.setItem(
-          "role",
-          "provider"
-        );
+    // مهم: لا تودّي المستخدم مباشرة
+    window.location.href = "auth-callback.html";
 
-        await sb.auth.signInWithOAuth({
-
-          provider: "google",
-
-          options: {
-            redirectTo:
-              window.location.origin +
-              "/index.html"
-          }
-
-        });
-
-      }
-    );
-
-  // =========================
-  // 8️⃣ Facebook Login
-  // =========================
-  document
-    .getElementById("facebookLogin")
-    .addEventListener(
-      "click",
-      async () => {
-
-        localStorage.setItem(
-          "role",
-          "provider"
-        );
-
-        await sb.auth.signInWithOAuth({
-
-          provider: "facebook",
-
-          options: {
-            redirectTo:
-              window.location.origin +
-              "/index.html"
-          }
-
-        });
-
-      }
-    );
-
-  // =========================
-  // 9️⃣ إظهار كلمة المرور
-  // =========================
-  document
-    .getElementById("togglePass")
-    .addEventListener(
-      "click",
-      (event) => {
-
-        const passwordInput =
-          document.getElementById(
-            "password"
-          );
-
-        const isHidden =
-          passwordInput.type ===
-          "password";
-
-        passwordInput.type =
-          isHidden
-            ? "text"
-            : "password";
-
-        event.target.textContent =
-          isHidden
-            ? "🙈"
-            : "👁";
-      }
-    );
-
-  console.log(
-    "✅ Login page loaded perfectly!"
-  );
-
+  } catch (err) {
+    console.error(err);
+    show(msg, "❌ حدث خطأ غير متوقع");
+  }
 });
+
+/* =========================
+   OAuth Login Function
+========================= */
+function oauthLogin(provider) {
+  return sb.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: window.location.origin + "/auth-callback.html"
+    }
+  });
+}
+
+/* =========================
+   Google Login
+========================= */
+document.getElementById("btn-google")?.addEventListener("click", () => {
+  oauthLogin("google");
+});
+
+/* =========================
+   Facebook Login
+========================= */
+document.getElementById("btn-facebook")?.addEventListener("click", () => {
+  oauthLogin("facebook");
+});
+
 </script>
+
+
+  </body>
+</html>
   <script src="translate.js"></script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
