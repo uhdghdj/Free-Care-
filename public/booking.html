@@ -1,25 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <link rel="manifest" href="/manifest.json">
-
-<meta name="theme-color" content="#d4af37">
-
-<meta name="mobile-web-app-capable" content="yes">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-
-<link rel="apple-touch-icon" href="/icons/icon-192.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>احجز غرفتك – Sunget</title>
   <link rel="icon" href="favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <style>
-    /* ============================================================
+   /* ============================================================
        SUNGET — Booking Page
     ============================================================ */
 
@@ -40,6 +30,14 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ===== Hide default Google bar ===== */
+.goog-te-banner-frame,
+.skiptranslate { display: none !important; }
+body { top: 0 !important; }
+.goog-te-gadget { font-size: 0 !important; }
+.goog-te-gadget .goog-te-combo { display: none; }
+#google_translate_element { display: none; }
 
     body {
       font-family: "Cairo", sans-serif;
@@ -379,51 +377,28 @@
 
       <!-- ROOM SELECT -->
       <div class="form-group">
-        <label>اختر الغرفة</label>
+        <label><i class="fa-solid fa-door-open" style="color:var(--accent);margin-left:6px"></i>اختر الغرفة</label>
         <select id="roomSelect" required>
           <option value="">جارٍ تحميل الغرف...</option>
         </select>
       </div>
 
-      <!-- ROOM SLIDER -->
+      <!-- ROOM PHOTO SLIDER -->
       <div class="room-slider-wrap" id="roomSliderWrap">
         <div class="room-slider-track" id="sliderTrack"></div>
         <button type="button" class="slider-nav prev" id="prevBtn">‹</button>
         <button type="button" class="slider-nav next" id="nextBtn">›</button>
         <div class="slider-counter" id="sliderCounter"></div>
+        <div class="cover-badge" id="coverBadge" style="display:none">⭐ الصورة الرئيسية</div>
       </div>
 
-      <!-- ROOM INFO -->
-      <div class="room-info-box" id="roomInfoBox">
-        <div class="room-info-row" id="capacityRow" style="display:none">
-           سعة الغرفة: <span class="val" id="capacityVal"></span>
-        </div>
-        <div class="room-info-row" id="roomTypeRow" style="display:none">
-           نوع الغرفة: <span class="val" id="roomTypeVal"></span>
-        </div>
-        <div class="room-info-row" id="bedTypeRow" style="display:none">
-           نوع السرير: <span class="val" id="bedTypeVal"></span>
-        </div>
-        <div class="room-info-row" id="floorRow" style="display:none">
-           الطابق: <span class="val" id="floorVal"></span>
-        </div>
-        <div class="room-info-row" id="viewRow" style="display:none">
-           الإطلالة: <span class="val" id="viewVal"></span>
-        </div>
-        <div class="room-info-row" id="roomSizeRow" style="display:none">
-           المساحة: <span class="val" id="roomSizeVal"></span>
-        </div>
-        <div class="room-info-row" id="amenitiesRow" style="display:none">
-           المرافق: <span class="val" id="amenitiesVal"></span>
-        </div>
-        <div class="room-info-row" id="roomDescRow" style="display:none">
-           <span class="val" id="roomDescVal"></span>
-        </div>
-      </div>
+      <!-- ROOM INFO PANEL -->
+      <div class="room-info-panel" id="roomInfoPanel"></div>
 
       <hr class="divider" />
 
       <!-- DATES -->
+      <div class="section-hdr"><i class="fa-solid fa-calendar-days"></i> تواريخ الإقامة</div>
       <div class="form-row">
         <div class="form-group">
           <label>تاريخ الوصول</label>
@@ -438,6 +413,7 @@
       <hr class="divider" />
 
       <!-- GUEST INFO -->
+      <div class="section-hdr"><i class="fa-solid fa-user"></i> بيانات الضيف</div>
       <div class="form-group">
         <label>رقم الهاتف</label>
         <input type="tel" id="guestPhone" placeholder="+201001234567" required />
@@ -447,69 +423,41 @@
         <label>الدولة</label>
         <select id="guestCountry" required>
           <option value="">اختر الدولة...</option>
-          <option value="Egypt">🇪🇬 مصر</option>
-          <option value="Saudi Arabia">🇸🇦 السعودية</option>
-          <option value="UAE">🇦🇪 الإمارات</option>
-          <option value="Kuwait">🇰🇼 الكويت</option>
-          <option value="Qatar">🇶🇦 قطر</option>
-          <option value="Bahrain">🇧🇭 البحرين</option>
-          <option value="Oman">🇴🇲 عُمان</option>
-          <option value="Jordan">🇯🇴 الأردن</option>
-          <option value="Lebanon">🇱🇧 لبنان</option>
-          <option value="Iraq">🇮🇶 العراق</option>
-          <option value="Syria">🇸🇾 سوريا</option>
-          <option value="Libya">🇱🇾 ليبيا</option>
-          <option value="Tunisia">🇹🇳 تونس</option>
-          <option value="Algeria">🇩🇿 الجزائر</option>
-          <option value="Morocco">🇲🇦 المغرب</option>
-          <option value="Sudan">🇸🇩 السودان</option>
-          <option value="Yemen">🇾🇪 اليمن</option>
-          <option value="UK">🇬🇧 المملكة المتحدة</option>
-          <option value="USA">🇺🇸 الولايات المتحدة</option>
-          <option value="Germany">🇩🇪 ألمانيا</option>
-          <option value="France">🇫🇷 فرنسا</option>
-          <option value="Italy">🇮🇹 إيطاليا</option>
-          <option value="Spain">🇪🇸 إسبانيا</option>
-          <option value="Turkey">🇹🇷 تركيا</option>
-          <option value="India">🇮🇳 الهند</option>
-          <option value="China">🇨🇳 الصين</option>
-          <option value="Russia">🇷🇺 روسيا</option>
-          <option value="Other">🌍 أخرى</option>
         </select>
       </div>
 
       <hr class="divider" />
 
+      <!-- PAYMENT METHOD -->
+      <div class="section-hdr"><i class="fa-solid fa-credit-card"></i> طريقة الدفع</div>
       <div class="payment-methods">
-
-  <label class="payment-option">
-    <input type="radio" name="payment_method" value="paymob" checked>
-    <img class="pay-logo" src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal">
-    <div class="pay-label">
-      <strong>PayPal</strong>
-      <small>دفع إلكتروني فوري وآمن</small>
-    </div>
-  </label>
-
-  <label class="payment-option">
-    <input type="radio" name="payment_method" value="hotel">
-    <span class="pay-icon"></span>
-    <div class="pay-label">
-      <strong>الدفع في الفندق</strong>
-      <small>عربون 5% الآن والباقي عند الوصول</small>
-    </div>
-  </label>
-
-</div>
+        <label class="payment-option">
+          <input type="radio" name="payment_method" value="online">
+          <span class="pay-icon">💳</span>
+          <div class="pay-label">
+            <strong>دفع إلكتروني</strong>
+            <small>ادفع المبلغ كاملاً الآن بأمان</small>
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment_method" value="hotel" checked>
+          <span class="pay-icon">🏨</span>
+          <div class="pay-label">
+            <strong>الدفع في الفندق</strong>
+            <small>أكّد حجزك الآن والدفع عند الوصول</small>
+          </div>
+        </label>
+      </div>
 
       <!-- TOTAL PRICE -->
-      <div class="total-price-box" id="totalPrice">
-        السعر الإجمالي: 0 جنيه
+      <div class="total-price-box" id="totalPriceBox">
+        <div id="totalPriceText">السعر الإجمالي: —</div>
+        <small id="totalPriceSub"></small>
       </div>
 
       <!-- SUBMIT -->
       <button type="submit" id="confirmBooking">
-        ✅ تأكيد الحجز والدفع
+        <i class="fa-solid fa-calendar-check"></i> تأكيد الحجز
       </button>
 
     </form>
@@ -519,7 +467,7 @@
 
   <script>
     /* ============================================================
-       SUPABASE CONFIG
+       SUPABASE
     ============================================================ */
     const sb = supabase.createClient(
       "https://mqvmxqzwvpasdytbpbke.supabase.co",
@@ -527,64 +475,129 @@
     );
 
     /* ============================================================
+       ALL COUNTRIES — ISO 3166-1 with emoji flags
+    ============================================================ */
+    const COUNTRIES = [
+      ["أفغانستان","AF","🇦🇫"],["ألبانيا","AL","🇦🇱"],["الجزائر","DZ","🇩🇿"],["أندورا","AD","🇦🇩"],
+      ["أنغولا","AO","🇦🇴"],["أنتيغوا وباربودا","AG","🇦🇬"],["الأرجنتين","AR","🇦🇷"],["أرمينيا","AM","🇦🇲"],
+      ["أستراليا","AU","🇦🇺"],["النمسا","AT","🇦🇹"],["أذربيجان","AZ","🇦🇿"],["جزر البهاما","BS","🇧🇸"],
+      ["البحرين","BH","🇧🇭"],["بنغلاديش","BD","🇧🇩"],["بربادوس","BB","🇧🇧"],["بيلاروسيا","BY","🇧🇾"],
+      ["بلجيكا","BE","🇧🇪"],["بليز","BZ","🇧🇿"],["بنين","BJ","🇧🇯"],["بوتان","BT","🇧🇹"],
+      ["بوليفيا","BO","🇧🇴"],["البوسنة والهرسك","BA","🇧🇦"],["بوتسوانا","BW","🇧🇼"],["البرازيل","BR","🇧🇷"],
+      ["بروناي","BN","🇧🇳"],["بلغاريا","BG","🇧🇬"],["بوركينا فاسو","BF","🇧🇫"],["بوروندي","BI","🇧🇮"],
+      ["كابو فيردي","CV","🇨🇻"],["كمبوديا","KH","🇰🇭"],["الكاميرون","CM","🇨🇲"],["كندا","CA","🇨🇦"],
+      ["جمهورية أفريقيا الوسطى","CF","🇨🇫"],["تشاد","TD","🇹🇩"],["تشيلي","CL","🇨🇱"],["الصين","CN","🇨🇳"],
+      ["كولومبيا","CO","🇨🇴"],["جزر القمر","KM","🇰🇲"],["الكونغو","CG","🇨🇬"],["كوستاريكا","CR","🇨🇷"],
+      ["كوت ديفوار","CI","🇨🇮"],["كرواتيا","HR","🇭🇷"],["كوبا","CU","🇨🇺"],["قبرص","CY","🇨🇾"],
+      ["التشيك","CZ","🇨🇿"],["الدنمارك","DK","🇩🇰"],["جيبوتي","DJ","🇩🇯"],["دومينيكا","DM","🇩🇲"],
+      ["الجمهورية الدومينيكية","DO","🇩🇴"],["الإكوادور","EC","🇪🇨"],["مصر","EG","🇪🇬"],["السلفادور","SV","🇸🇻"],
+      ["غينيا الاستوائية","GQ","🇬🇶"],["إريتريا","ER","🇪🇷"],["إستونيا","EE","🇪🇪"],["إسواتيني","SZ","🇸🇿"],
+      ["إثيوبيا","ET","🇪🇹"],["فيجي","FJ","🇫🇯"],["فنلندا","FI","🇫🇮"],["فرنسا","FR","🇫🇷"],
+      ["الغابون","GA","🇬🇦"],["غامبيا","GM","🇬🇲"],["جورجيا","GE","🇬🇪"],["ألمانيا","DE","🇩🇪"],
+      ["غانا","GH","🇬🇭"],["اليونان","GR","🇬🇷"],["غرينادا","GD","🇬🇩"],["غواتيمالا","GT","🇬🇹"],
+      ["غينيا","GN","🇬🇳"],["غينيا بيساو","GW","🇬🇼"],["غيانا","GY","🇬🇾"],["هايتي","HT","🇭🇹"],
+      ["هندوراس","HN","🇭🇳"],["المجر","HU","🇭🇺"],["آيسلندا","IS","🇮🇸"],["الهند","IN","🇮🇳"],
+      ["إندونيسيا","ID","🇮🇩"],["إيران","IR","🇮🇷"],["العراق","IQ","🇮🇶"],["أيرلندا","IE","🇮🇪"],
+      ["إسرائيل","IL","🇮🇱"],["إيطاليا","IT","🇮🇹"],["جامايكا","JM","🇯🇲"],["اليابان","JP","🇯🇵"],
+      ["الأردن","JO","🇯🇴"],["كازاخستان","KZ","🇰🇿"],["كينيا","KE","🇰🇪"],["كيريباتي","KI","🇰🇮"],
+      ["كوريا الشمالية","KP","🇰🇵"],["كوريا الجنوبية","KR","🇰🇷"],["الكويت","KW","🇰🇼"],["قيرغيزستان","KG","🇰🇬"],
+      ["لاوس","LA","🇱🇦"],["لاتفيا","LV","🇱🇻"],["لبنان","LB","🇱🇧"],["ليسوتو","LS","🇱🇸"],
+      ["ليبيريا","LR","🇱🇷"],["ليبيا","LY","🇱🇾"],["ليختنشتاين","LI","🇱🇮"],["ليتوانيا","LT","🇱🇹"],
+      ["لوكسمبورغ","LU","🇱🇺"],["مدغشقر","MG","🇲🇬"],["ملاوي","MW","🇲🇼"],["ماليزيا","MY","🇲🇾"],
+      ["جزر المالديف","MV","🇲🇻"],["مالي","ML","🇲🇱"],["مالطا","MT","🇲🇹"],["جزر مارشال","MH","🇲🇭"],
+      ["موريتانيا","MR","🇲🇷"],["موريشيوس","MU","🇲🇺"],["المكسيك","MX","🇲🇽"],["ميكرونيزيا","FM","🇫🇲"],
+      ["مولدوفا","MD","🇲🇩"],["موناكو","MC","🇲🇨"],["منغوليا","MN","🇲🇳"],["الجبل الأسود","ME","🇲🇪"],
+      ["المغرب","MA","🇲🇦"],["موزمبيق","MZ","🇲🇿"],["ميانمار","MM","🇲🇲"],["ناميبيا","NA","🇳🇦"],
+      ["ناورو","NR","🇳🇷"],["نيبال","NP","🇳🇵"],["هولندا","NL","🇳🇱"],["نيوزيلندا","NZ","🇳🇿"],
+      ["نيكاراغوا","NI","🇳🇮"],["النيجر","NE","🇳🇪"],["نيجيريا","NG","🇳🇬"],["مقدونيا الشمالية","MK","🇲🇰"],
+      ["النرويج","NO","🇳🇴"],["عُمان","OM","🇴🇲"],["باكستان","PK","🇵🇰"],["بالاو","PW","🇵🇼"],
+      ["باناما","PA","🇵🇦"],["بابوا غينيا الجديدة","PG","🇵🇬"],["باراغواي","PY","🇵🇾"],["بيرو","PE","🇵🇪"],
+      ["الفلبين","PH","🇵🇭"],["بولندا","PL","🇵🇱"],["البرتغال","PT","🇵🇹"],["قطر","QA","🇶🇦"],
+      ["رومانيا","RO","🇷🇴"],["روسيا","RU","🇷🇺"],["رواندا","RW","🇷🇼"],["سانت كيتس ونيفيس","KN","🇰🇳"],
+      ["سانت لوسيا","LC","🇱🇨"],["سانت فينسنت","VC","🇻🇨"],["ساموا","WS","🇼🇸"],["سان مارينو","SM","🇸🇲"],
+      ["ساو تومي وبرينسيبي","ST","🇸🇹"],["المملكة العربية السعودية","SA","🇸🇦"],["السنغال","SN","🇸🇳"],["صربيا","RS","🇷🇸"],
+      ["سيشيل","SC","🇸🇨"],["سيراليون","SL","🇸🇱"],["سنغافورة","SG","🇸🇬"],["سلوفاكيا","SK","🇸🇰"],
+      ["سلوفينيا","SI","🇸🇮"],["جزر سليمان","SB","🇸🇧"],["الصومال","SO","🇸🇴"],["جنوب أفريقيا","ZA","🇿🇦"],
+      ["جنوب السودان","SS","🇸🇸"],["إسبانيا","ES","🇪🇸"],["سريلانكا","LK","🇱🇰"],["السودان","SD","🇸🇩"],
+      ["سورينام","SR","🇸🇷"],["السويد","SE","🇸🇪"],["سويسرا","CH","🇨🇭"],["سوريا","SY","🇸🇾"],
+      ["تايوان","TW","🇹🇼"],["طاجيكستان","TJ","🇹🇯"],["تنزانيا","TZ","🇹🇿"],["تايلاند","TH","🇹🇭"],
+      ["تيمور الشرقية","TL","🇹🇱"],["توغو","TG","🇹🇬"],["تونغا","TO","🇹🇴"],["ترينيداد وتوباغو","TT","🇹🇹"],
+      ["تونس","TN","🇹🇳"],["تركيا","TR","🇹🇷"],["تركمانستان","TM","🇹🇲"],["توفالو","TV","🇹🇻"],
+      ["أوغندا","UG","🇺🇬"],["أوكرانيا","UA","🇺🇦"],["الإمارات","AE","🇦🇪"],["المملكة المتحدة","GB","🇬🇧"],
+      ["الولايات المتحدة","US","🇺🇸"],["أوروغواي","UY","🇺🇾"],["أوزبكستان","UZ","🇺🇿"],["فانواتو","VU","🇻🇺"],
+      ["الفاتيكان","VA","🇻🇦"],["فنزويلا","VE","🇻🇪"],["فيتنام","VN","🇻🇳"],["اليمن","YE","🇾🇪"],
+      ["زامبيا","ZM","🇿🇲"],["زيمبابوي","ZW","🇿🇼"],["فلسطين","PS","🇵🇸"],["كوسوفو","XK","🇽🇰"],
+    ];
+
+    /* ============================================================
        GLOBALS
     ============================================================ */
-    const params         = new URLSearchParams(window.location.search);
-    const hotelId        = params.get("id");
-    let hotelData        = null;
-    let roomsArray       = [];
-    let roomPrices       = {};
-    let selectedRoomId   = null;
-    let bookedRanges     = [];
-    let sliderIndex      = 0;
-    let sliderImages     = [];
+    const params       = new URLSearchParams(window.location.search);
+    const hotelId      = params.get("id");
+    let hotelData      = null;
+    let roomsArray     = [];           // includes room_photos, room_beds, room_features, room_bathroom_features
+    let roomPrices     = {};
+    let selectedRoom   = null;
+    let bookedRanges   = [];
+    let sliderIndex    = 0;
+    let sliderImages   = [];
+    let sliderPhotos   = [];           // full photo objects [{photo_url, is_cover}]
 
     /* ============================================================
        UTILITIES
     ============================================================ */
+    function esc(s){ const d=document.createElement("div"); d.textContent=s||""; return d.innerHTML; }
     function showMessage(text, type = "info") {
       const el = document.getElementById("message");
       el.innerHTML = `<div class="msg-box ${type}">${text}</div>`;
-      if (type !== "error") setTimeout(() => { el.innerHTML = ""; }, 5000);
-    }
-
-    function parsePhotoUrls(raw) {
-      if (!raw) return [];
-      if (Array.isArray(raw)) return raw.filter(Boolean);
-      if (typeof raw === "string") {
-        try {
-          const p = JSON.parse(raw);
-          return Array.isArray(p) ? p.filter(Boolean) : [];
-        } catch {
-          return raw.split(",").map(s => s.trim()).filter(Boolean);
-        }
-      }
-      return [];
+      if (type !== "error") setTimeout(() => { el.innerHTML = ""; }, 5500);
     }
 
     /* ============================================================
-       SLIDER
+       POPULATE COUNTRIES
     ============================================================ */
-    function renderSlider(imgs) {
+    function populateCountries() {
+      const sel = document.getElementById("guestCountry");
+      COUNTRIES.forEach(([name, code, flag]) => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = `${flag} ${name}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    /* ============================================================
+       PHOTO SLIDER
+    ============================================================ */
+    function renderSlider(photos) {
       const wrap    = document.getElementById("roomSliderWrap");
       const track   = document.getElementById("sliderTrack");
       const counter = document.getElementById("sliderCounter");
-      sliderImages  = imgs;
+      const badge   = document.getElementById("coverBadge");
+      sliderPhotos  = photos;
+      sliderImages  = photos.map(p => p.photo_url);
       sliderIndex   = 0;
 
-      if (!imgs.length) {
+      if (!photos.length) {
         wrap.classList.remove("visible");
         return;
       }
 
-      track.innerHTML = imgs.map(src => `<img src="${src}" alt="صورة الغرفة" />`).join("");
+      track.innerHTML = photos.map(p =>
+        `<img src="${esc(p.photo_url)}" alt="صورة الغرفة" loading="lazy" />`
+      ).join("");
+
       wrap.classList.add("visible");
       updateSlider();
     }
 
     function updateSlider() {
+      const n = sliderImages.length;
       document.getElementById("sliderTrack").style.transform = `translateX(-${sliderIndex * 100}%)`;
-      document.getElementById("sliderCounter").textContent  = (sliderIndex + 1) + " / " + sliderImages.length;
+      document.getElementById("sliderCounter").textContent   = (sliderIndex + 1) + " / " + n;
+      document.getElementById("coverBadge").style.display    = sliderPhotos[sliderIndex]?.is_cover ? "" : "none";
+      document.getElementById("prevBtn").style.display = n > 1 ? "" : "none";
+      document.getElementById("nextBtn").style.display = n > 1 ? "" : "none";
     }
 
     document.getElementById("prevBtn").onclick = () => {
@@ -597,49 +610,95 @@
     /* ============================================================
        ROOM INFO PANEL
     ============================================================ */
-    function showRoomInfo(room) {
-      const box = document.getElementById("roomInfoBox");
-      if (!room) { box.classList.remove("visible"); return; }
+    const CURRENCY_LABELS = { USD:"$", EGP:"ج.م", SAR:"ر.س", AED:"د.إ", EUR:"€", GBP:"£" };
 
-      const showRow = (rowId, valId, val) => {
-        const row = document.getElementById(rowId);
-        const valEl = document.getElementById(valId);
-        if (val) { row.style.display = "flex"; valEl.textContent = val; }
-        else { row.style.display = "none"; }
-      };
+    function polPill(flag, trueLabel, falseLabel) {
+      if (flag === true  || flag === 1)  return `<span class="rpol yes"><i class="fa-solid fa-check"></i> ${trueLabel}</span>`;
+      if (flag === false || flag === 0)  return `<span class="rpol no"><i class="fa-solid fa-xmark"></i> ${falseLabel}</span>`;
+      return "";
+    }
 
-      const cap       = room.max_guests || room.capacity || room.max_adults;
-      const type      = room.room_type || room.type;
-      const bedType   = room.bed_type || room.bed_types || null;
-      const floor     = room.floor != null ? "الطابق " + room.floor : null;
-      const view      = room.view || room.room_view || null;
-      const size      = room.size_sqm ? room.size_sqm + " م²" : null;
-      const amenities = Array.isArray(room.amenities)
-        ? room.amenities.join("، ")
-        : (typeof room.amenities === "string" ? room.amenities : null);
-      const desc      = room.description || null;
+    function renderRoomPanel(room) {
+      const panel = document.getElementById("roomInfoPanel");
+      if (!room) { panel.classList.remove("visible"); panel.innerHTML = ""; return; }
 
-      showRow("capacityRow",  "capacityVal",  cap ? cap + " أشخاص" : null);
-      showRow("roomTypeRow",  "roomTypeVal",  type);
-      showRow("bedTypeRow",   "bedTypeVal",   bedType);
-      showRow("floorRow",     "floorVal",     floor);
-      showRow("viewRow",      "viewVal",      view);
-      showRow("roomSizeRow",  "roomSizeVal",  size);
-      showRow("amenitiesRow", "amenitiesVal", amenities);
-      showRow("roomDescRow",  "roomDescVal",  desc);
+      const cur    = CURRENCY_LABELS[room.currency] || room.currency || "";
+      const price  = room.price ? `<span class="rip-price">${Number(room.price).toLocaleString("ar")} ${esc(cur)} <small>/ ليلة</small></span>` : "";
 
-      box.classList.add("visible");
+      // Beds
+      const beds   = (room.room_beds || []);
+      const bedsHtml = beds.length
+        ? `<div><div class="rip-section-label"><i class="fa-solid fa-bed" style="color:var(--accent)"></i> الأسرّة</div>
+            <div class="rip-chips">${beds.map(b=>`<span class="rip-chip bed"><i class="fa-solid fa-bed"></i> ${esc(b.quantity||1)}× ${esc(b.bed_type||"")}</span>`).join("")}</div></div>`
+        : "";
+
+      // Features
+      const feats  = (room.room_features || []).map(f=>f.feature).filter(Boolean);
+      const bFeats = (room.room_bathroom_features || []).map(f=>f.feature).filter(Boolean);
+      const featsHtml = feats.length
+        ? `<div><div class="rip-section-label"><i class="fa-solid fa-star" style="color:var(--accent)"></i> مرافق الغرفة</div>
+            <div class="rip-chips">${feats.map(f=>`<span class="rip-chip">${esc(f)}</span>`).join("")}</div></div>`
+        : "";
+      const bFeatsHtml = bFeats.length
+        ? `<div><div class="rip-section-label"><i class="fa-solid fa-shower" style="color:var(--accent)"></i> مرافق الحمام</div>
+            <div class="rip-chips">${bFeats.map(f=>`<span class="rip-chip">${esc(f)}</span>`).join("")}</div></div>`
+        : "";
+
+      // Specs
+      let specs = "";
+      if (room.max_adults)     specs += `<span class="rip-spec"><i class="fa-solid fa-user"></i>${room.max_adults} بالغ</span>`;
+      if (room.max_children)   specs += `<span class="rip-spec"><i class="fa-solid fa-child"></i>${room.max_children} طفل</span>`;
+      if (room.size_sqm)       specs += `<span class="rip-spec"><i class="fa-solid fa-vector-square"></i>${room.size_sqm} م²</span>`;
+      if (room.available_rooms)specs += `<span class="rip-spec"><i class="fa-solid fa-door-open"></i>${room.available_rooms} غرفة متاحة</span>`;
+      if (room.min_stay > 1)   specs += `<span class="rip-spec"><i class="fa-solid fa-calendar-days"></i>أدنى ${room.min_stay} ليالٍ</span>`;
+      if (room.max_stay)       specs += `<span class="rip-spec"><i class="fa-solid fa-calendar-check"></i>أقصى ${room.max_stay} ليلة</span>`;
+
+      // Policies
+      let pols = "";
+      pols += polPill(room.breakfast_included, "إفطار مشمول", "إفطار غير مشمول");
+      pols += polPill(room.refundable, "قابل للاسترداد", "غير قابل للاسترداد");
+      pols += polPill(room.children_allowed, "يسمح بالأطفال", "لا يسمح بالأطفال");
+      if (room.smoking_allowed === true)
+        pols += `<span class="rpol neu"><i class="fa-solid fa-smoking"></i> التدخين مسموح</span>`;
+      if (room.crib_available)
+        pols += `<span class="rpol yes"><i class="fa-solid fa-baby"></i> سرير أطفال</span>`;
+      if (room.extra_bed_available)
+        pols += `<span class="rpol neu"><i class="fa-solid fa-bed"></i> سرير إضافي</span>`;
+      if (room.pay_at_arrival)
+        pols += `<span class="rpol neu"><i class="fa-solid fa-money-bill"></i> دفع عند الوصول</span>`;
+
+      panel.innerHTML = `
+        <div class="rip-title">
+          <div>
+            <div class="rip-name">${esc(room.name || "غرفة")}</div>
+            ${room.room_type ? `<div class="rip-type"><i class="fa-solid fa-tag"></i> ${esc(room.room_type)}</div>` : ""}
+          </div>
+          ${price}
+        </div>
+        ${specs ? `<div class="rip-specs">${specs}</div>` : ""}
+        ${bedsHtml}
+        ${featsHtml}
+        ${bFeatsHtml}
+        ${pols ? `<div><div class="rip-section-label"><i class="fa-solid fa-shield-halved" style="color:var(--accent)"></i> السياسات</div><div class="rip-pols">${pols}</div></div>` : ""}
+        ${room.description ? `<div class="rip-desc">${esc(room.description)}</div>` : ""}
+      `;
+      panel.classList.add("visible");
     }
 
     /* ============================================================
-       CALCULATE TOTAL PRICE
+       PRICE CALCULATION
     ============================================================ */
+    const CURRENCY_AR = { USD:"دولار", EGP:"جنيه", SAR:"ريال سعودي", AED:"درهم", EUR:"يورو", GBP:"جنيه إسترليني" };
+
     function calculateTotal() {
       const checkIn  = document.getElementById("checkIn").value;
       const checkOut = document.getElementById("checkOut").value;
+      const txtEl    = document.getElementById("totalPriceText");
+      const subEl    = document.getElementById("totalPriceSub");
 
-      if (!checkIn || !checkOut || !selectedRoomId) {
-        document.getElementById("totalPrice").textContent = "السعر الإجمالي: 0 جنيه";
+      if (!checkIn || !checkOut || !selectedRoom) {
+        txtEl.textContent = "السعر الإجمالي: —";
+        subEl.textContent = "";
         return 0;
       }
 
@@ -648,39 +707,40 @@
       const nights = Math.ceil((end - start) / 86400000);
 
       if (nights <= 0) {
-        document.getElementById("totalPrice").textContent = "السعر الإجمالي: 0 جنيه";
+        txtEl.textContent = "السعر الإجمالي: —";
+        subEl.textContent = "";
         return 0;
       }
 
-      const price = Number(roomPrices[selectedRoomId] || 0);
-      const total = price * nights;
+      const price   = Number(selectedRoom.price || 0);
+      const total   = price * nights;
+      const cur     = CURRENCY_LABELS[selectedRoom.currency] || selectedRoom.currency || "";
+      const curAr   = CURRENCY_AR[selectedRoom.currency]     || selectedRoom.currency || "";
 
-      document.getElementById("totalPrice").textContent =
-        `السعر الإجمالي: ${total.toLocaleString("ar-EG")} جنيه (${nights} ليلة × ${price.toLocaleString("ar-EG")} جنيه)`;
-
+      txtEl.textContent = `${total.toLocaleString("ar")} ${cur} إجمالاً`;
+      subEl.textContent = `${nights} ليلة × ${price.toLocaleString("ar")} ${cur} / ليلة`;
       return total;
     }
 
     /* ============================================================
-       LOAD BOOKED DATES (internal + external)
+       BOOKED DATES (conflict check)
     ============================================================ */
     async function loadBookedDates(roomId) {
       bookedRanges = [];
       if (!roomId) return;
       try {
-        const [{ data: internal }, { data: external }] = await Promise.all([
-          sb.from("bookings").select("check_in,check_out").eq("room_id", roomId).neq("status", "cancelled"),
-          sb.from("external_bookings").select("check_in,check_out").eq("room_id", roomId).eq("status", "confirmed"),
-        ]);
-        const all = [...(internal || []), ...(external || [])];
-        bookedRanges = all.map(b => ({ start: new Date(b.check_in), end: new Date(b.check_out) }));
-      } catch (err) {
-        console.error("loadBookedDates error:", err);
-      }
+        const { data } = await sb.from("bookings")
+          .select("check_in,check_out")
+          .eq("room_id", roomId)
+          .neq("status", "cancelled");
+        (data || []).forEach(b => {
+          bookedRanges.push({ start: new Date(b.check_in), end: new Date(b.check_out) });
+        });
+      } catch(err){ console.error("loadBookedDates:", err); }
     }
 
-    function isRangeBooked(startDate, endDate) {
-      return bookedRanges.some(r => startDate < r.end && endDate > r.start);
+    function isRangeBooked(s, e) {
+      return bookedRanges.some(r => s < r.end && e > r.start);
     }
 
     function validateDates() {
@@ -703,78 +763,82 @@
     }
 
     /* ============================================================
-       CHECK CONFLICTS IN DB BEFORE INSERT
+       CONFLICT CHECK BEFORE INSERT
     ============================================================ */
-    async function checkConflictsBeforeInsert(roomId, checkIn, checkOut) {
-      const [{ data: ext }, { data: intr }] = await Promise.all([
-        sb.from("external_bookings").select("id").eq("room_id", roomId).eq("status", "confirmed").lt("check_in", checkOut).gt("check_out", checkIn),
-        sb.from("bookings").select("id").eq("room_id", roomId).neq("status", "cancelled").lt("check_in", checkOut).gt("check_out", checkIn),
-      ]);
-      if (ext && ext.length > 0) return { conflict: true, source: "external" };
-      if (intr && intr.length > 0) return { conflict: true, source: "internal" };
-      return { conflict: false };
+    async function checkConflict(roomId, ci, co) {
+      const { data } = await sb.from("bookings")
+        .select("id").eq("room_id", roomId).neq("status","cancelled")
+        .lt("check_in", co).gt("check_out", ci);
+      return data?.length > 0;
     }
 
     /* ============================================================
-       LOAD HOTEL + ROOMS
+       LOAD HOTEL + ROOMS (with photos / beds / features)
     ============================================================ */
     async function loadHotel() {
       if (!hotelId) { showMessage("❌ لم يتم تحديد الفندق", "error"); return; }
       showMessage("جارٍ تحميل بيانات الفندق...", "info");
 
       try {
-        const { data: hotel, error: hotelErr } = await sb.from("hotels").select("*").eq("id", hotelId).single();
+        /* Hotel */
+        const { data: hotel, error: hotelErr } = await sb
+          .from("hotels").select("id, hotel_name, payment_method").eq("id", hotelId).single();
         if (hotelErr || !hotel) { showMessage("❌ الفندق غير موجود", "error"); return; }
         hotelData = hotel;
         document.title = "حجز – " + hotel.hotel_name + " | Sunget";
         document.getElementById("hotelName").textContent = hotel.hotel_name;
 
-        const { data: rooms, error: roomsErr } = await sb.from("rooms").select("*").eq("hotel_id", hotelId).order("room_type");
-        if (roomsErr || !rooms?.length) { showMessage("❌ لا توجد غرف متاحة لهذا الفندق حالياً", "error"); return; }
+        /* Rooms with all related data in one query */
+        const { data: rooms2, error: rErr2 } = await sb.from("rooms")
+          .select(`
+            *,
+            room_photos (id, photo_url, is_cover, position),
+            room_beds (bed_type, quantity),
+            room_features (feature),
+            room_bathroom_features (feature)
+          `)
+          .eq("hotel_id", hotelId)
+          .order("created_at", { ascending: true });
 
-        roomsArray = rooms;
+        if (rErr2 || !rooms2?.length) {
+          showMessage("❌ لا توجد غرف متاحة لهذا الفندق حالياً", "error");
+          return;
+        }
+
+        roomsArray = rooms2;
         const roomSelect = document.getElementById("roomSelect");
-        roomSelect.innerHTML = '<option value="">اختر غرفة...</option>';
+        roomSelect.innerHTML = '<option value="">— اختر غرفة —</option>';
         roomPrices = {};
 
-        rooms.forEach(room => {
-          const price = Number(room.price || room.base_price || 0);
-          const label = [
-            room.name || room.room_type,
-            room.room_number ? "رقم " + room.room_number : null,
-            price ? price.toLocaleString("ar-EG") + " جنيه/ليلة" : null,
-          ].filter(Boolean).join(" — ");
-
+        rooms2.forEach(room => {
+          const price    = Number(room.price || 0);
+          const cur      = CURRENCY_LABELS[room.currency] || room.currency || "";
+          const avail    = room.available_rooms != null ? ` · ${room.available_rooms} متاحة` : "";
+          const priceStr = price ? ` — ${price.toLocaleString("ar")} ${cur}/ليلة` : "";
           const opt = document.createElement("option");
-          opt.value              = room.id;
-          opt.textContent        = label;
-          opt.dataset.photoUrls  = JSON.stringify(parsePhotoUrls(room.photo_urls));
-          opt.dataset.roomType   = room.room_type   || "";
-          opt.dataset.capacity   = room.max_guests  || room.capacity || room.max_adults || "";
-          opt.dataset.sizeSqm    = room.size_sqm    || "";
-          opt.dataset.description= room.description || "";
-          roomPrices[room.id]    = price;
+          opt.value       = room.id;
+          opt.textContent = `${room.name || room.room_type || "غرفة"}${priceStr}${avail}`;
+          roomPrices[room.id] = price;
           roomSelect.appendChild(opt);
         });
 
-        /* Pre-select room from URL param if provided */
-        const urlRoomId = params.get("room");
-        if (urlRoomId && roomPrices[urlRoomId]) {
-          roomSelect.value = urlRoomId;
+        /* Pre-select room from URL ?room=... */
+        const urlRoom = params.get("room");
+        if (urlRoom && roomsArray.find(r => r.id === urlRoom)) {
+          roomSelect.value = urlRoom;
           roomSelect.dispatchEvent(new Event("change"));
         }
 
-        /* Pre-fill dates from URL */
-        const ci = params.get("ci");
-        const co = params.get("co");
+        /* Pre-fill dates */
+        const ci = params.get("ci"), co = params.get("co");
         if (ci) document.getElementById("checkIn").value  = ci;
         if (co) document.getElementById("checkOut").value = co;
         if (ci || co) calculateTotal();
 
-        showMessage("✅ تم تحميل " + rooms.length + " غرفة بنجاح", "success");
+        showMessage(`✅ تم تحميل ${rooms2.length} غرفة بنجاح`, "success");
 
-      } catch (err) {
-        console.error("loadHotel error:", err);
+      } catch(err) {
+        console.error("loadHotel:", err);
         showMessage("❌ حدث خطأ في تحميل الصفحة", "error");
       }
     }
@@ -783,23 +847,26 @@
        ROOM SELECT CHANGE
     ============================================================ */
     document.getElementById("roomSelect").addEventListener("change", async function () {
-      const opt = this.selectedOptions[0];
-      selectedRoomId = this.value || null;
+      const rid = this.value || null;
+      selectedRoom = rid ? roomsArray.find(r => r.id === rid) || null : null;
 
-      if (!selectedRoomId) {
+      if (!selectedRoom) {
         renderSlider([]);
-        showRoomInfo(null);
+        renderRoomPanel(null);
         calculateTotal();
         return;
       }
 
-      const room = roomsArray.find(r => r.id === selectedRoomId) || {};
-      const imgs = JSON.parse(opt.dataset.photoUrls || "[]");
+      /* Sort photos: cover first, then position */
+      const photos = [...(selectedRoom.room_photos || [])].sort((a,b) => {
+        if (!!b.is_cover - !!a.is_cover !== 0) return !!b.is_cover - !!a.is_cover;
+        return (a.position ?? 0) - (b.position ?? 0);
+      });
 
-      renderSlider(imgs);
-      showRoomInfo(room);
+      renderSlider(photos);
+      renderRoomPanel(selectedRoom);
 
-      await loadBookedDates(selectedRoomId);
+      await loadBookedDates(rid);
       calculateTotal();
       validateDates();
     });
@@ -808,107 +875,114 @@
     document.getElementById("checkOut").addEventListener("change", () => { calculateTotal(); validateDates(); });
 
     /* ============================================================
-       FORM SUBMIT — CONFIRM BOOKING
+       SUBMIT
     ============================================================ */
     document.getElementById("bookingForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const checkIn       = document.getElementById("checkIn").value;
-      const checkOut      = document.getElementById("checkOut").value;
-      const guestPhone    = document.getElementById("guestPhone").value.trim();
-      const guestCountry  = document.getElementById("guestCountry").value;
-      const paymentMethodEl = document.querySelector('input[name="payment_method"]:checked');
-      if (!paymentMethodEl) { showMessage("❌ اختر طريقة الدفع", "error"); return; }
-      const paymentMethod = paymentMethodEl.value;
+      const checkIn      = document.getElementById("checkIn").value;
+      const checkOut     = document.getElementById("checkOut").value;
+      const guestPhone   = document.getElementById("guestPhone").value.trim();
+      const guestCountry = document.getElementById("guestCountry").value;
+      const payEl        = document.querySelector('input[name="payment_method"]:checked');
+      const payMethod    = payEl?.value;
 
-      if (!selectedRoomId) { showMessage("❌ اختر غرفة من القائمة", "error"); return; }
-      if (!checkIn || !checkOut)  { showMessage("❌ اختر تواريخ الوصول والمغادرة", "error"); return; }
-      if (!guestPhone)            { showMessage("❌ أدخل رقم الهاتف", "error"); return; }
-      if (!guestCountry)          { showMessage("❌ اختر الدولة", "error"); return; }
-      if (!validateDates())        return;
+      if (!selectedRoom)   { showMessage("❌ اختر غرفة من القائمة", "error"); return; }
+      if (!checkIn || !checkOut) { showMessage("❌ اختر تواريخ الوصول والمغادرة", "error"); return; }
+      if (!guestPhone)     { showMessage("❌ أدخل رقم الهاتف", "error"); return; }
+      if (!guestCountry)   { showMessage("❌ اختر الدولة", "error"); return; }
+      if (!payMethod)      { showMessage("❌ اختر طريقة الدفع", "error"); return; }
+      if (!validateDates()) return;
 
       const total = calculateTotal();
       if (total <= 0) { showMessage("❌ تحقق من التواريخ والسعر", "error"); return; }
 
       const btn = document.getElementById("confirmBooking");
       btn.disabled    = true;
-      btn.textContent = "⏳ جارٍ تأكيد الحجز...";
+      btn.innerHTML   = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ تأكيد الحجز...';
 
       try {
+        /* Auth check */
         const { data: userData, error: authErr } = await sb.auth.getUser();
         if (authErr || !userData?.user) {
           showMessage("❌ يجب تسجيل الدخول أولاً للحجز", "error");
           btn.disabled = false;
-          btn.textContent = "✅ تأكيد الحجز والدفع";
+          btn.innerHTML = '<i class="fa-solid fa-calendar-check"></i> تأكيد الحجز';
           return;
         }
 
-        const conflict = await checkConflictsBeforeInsert(selectedRoomId, checkIn, checkOut);
-        if (conflict.conflict) {
-          const msg = conflict.source === "external"
-            ? "❌ الغرفة محجوزة من Booking أو Airbnb في هذه الفترة"
-            : "❌ الغرفة محجوزة بالفعل في هذه الفترة";
-          showMessage(msg, "error");
-          await loadBookedDates(selectedRoomId);
+        /* Conflict check */
+        const hasConflict = await checkConflict(selectedRoom.id, checkIn, checkOut);
+        if (hasConflict) {
+          showMessage("❌ الغرفة محجوزة في هذه الفترة، اختر تواريخ أخرى", "error");
+          await loadBookedDates(selectedRoom.id);
           btn.disabled = false;
-          btn.textContent = "✅ تأكيد الحجز والدفع";
+          btn.innerHTML = '<i class="fa-solid fa-calendar-check"></i> تأكيد الحجز';
           return;
         }
 
+        /* Insert booking */
         const { data: booking, error: bookingErr } = await sb.from("bookings").insert([{
-          hotel_name:    hotelData.hotel_name,
-          user_id:       userData.user.id,
-          hotel_id:      hotelId,
-          room_id:       selectedRoomId,
-          check_in:      checkIn,
-          check_out:     checkOut,
-          guest_phone:   guestPhone,
-          guest_country: guestCountry,
-          status:        "pending",
-          total_price:   total,
-          payment_method: paymentMethod === "paymob" ? "paymob" : "hotel",
+          user_id:        userData.user.id,
+          hotel_id:       hotelId,
+          room_id:        selectedRoom.id,
+          check_in:       checkIn,
+          check_out:      checkOut,
+          guest_phone:    guestPhone,
+          guest_country:  guestCountry,
+          status:         "pending",
+          total_price:    total,
+          payment_method: payMethod,
         }]).select().single();
 
         if (bookingErr || !booking) {
+          console.error("Booking insert error:", bookingErr);
           showMessage("❌ حدث خطأ في إنشاء الحجز، حاول مجدداً", "error");
           btn.disabled = false;
-          btn.textContent = "✅ تأكيد الحجز والدفع";
+          btn.innerHTML = '<i class="fa-solid fa-calendar-check"></i> تأكيد الحجز';
           return;
         }
 
-        const amountToPay = paymentMethod === "paymob" ? total : Math.round(total * 0.05);
-        const remaining   = total - amountToPay;
-
+        /* Save to localStorage for potential redirect */
+        const cur = CURRENCY_LABELS[selectedRoom.currency] || selectedRoom.currency || "";
         localStorage.setItem("bookingData", JSON.stringify({
-          bookingId:  booking.id,
-          hotel_name: hotelData.hotel_name,
+          bookingId:    booking.id,
+          hotel_name:   hotelData.hotel_name,
           hotelId,
-          roomId:     selectedRoomId,
+          roomId:       selectedRoom.id,
+          roomName:     selectedRoom.name || selectedRoom.room_type || "غرفة",
           checkIn,
           checkOut,
           total,
-          amountToPay,
-          remaining,
+          currency:     cur,
+          payMethod,
         }));
 
-        showMessage(
-          `✅ تم إنشاء الحجز بنجاح!<br>${
-            paymentMethod === "paymob"
-              ? "سيتم تحويلك للدفع الإلكتروني..."
-              : "سيتم دفع عربون 5% الآن والباقي في الفندق"
-          }`,
-          "success"
-        );
+        if (payMethod === "online") {
+          /* ELECTRONIC — redirect to payment gateway */
+          showMessage("✅ تم إنشاء الحجز! جارٍ التحويل للدفع الإلكتروني...", "success");
+          setTimeout(() => { window.location.href = "paymob.html"; }, 2000);
+        } else {
+          /* AT HOTEL — confirm immediately, NO charge */
+          showMessage(
+            `✅ تم تأكيد حجزك بنجاح!<br>
+             <strong>${hotelData.hotel_name}</strong> · ${selectedRoom.name || "الغرفة"}<br>
+             الوصول: ${checkIn} — المغادرة: ${checkOut}<br>
+             💰 الدفع عند الوصول — لا يوجد أي رسوم الآن`,
+            "success"
+          );
+          btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> تم الحجز بنجاح';
+          /* Optionally redirect to a confirmation page */
+          setTimeout(() => {
+            window.location.href = `hotel.html?id=${hotelId}`;
+          }, 4000);
+        }
 
-        setTimeout(() => {
-          window.location.href = "Paypal.html";
-        }, 2200);
-
-      } catch (err) {
+      } catch(err) {
         console.error("booking error:", err);
         showMessage("❌ حدث خطأ غير متوقع، حاول مجدداً", "error");
         btn.disabled = false;
-        btn.textContent = "✅ تأكيد الحجز والدفع";
+        btn.innerHTML = '<i class="fa-solid fa-calendar-check"></i> تأكيد الحجز';
       }
     });
 
@@ -919,18 +993,11 @@
       const today = new Date().toISOString().split("T")[0];
       document.getElementById("checkIn").min  = today;
       document.getElementById("checkOut").min = today;
+      populateCountries();
       loadHotel();
     });
   </script>
-<script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js")
-        .then(() => console.log("Service Worker Registered"))
-        .catch(err => console.log(err));
-    });
-}
-</script>
-  
+   <script src="translate.js"></script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
