@@ -406,22 +406,6 @@ html[dir="rtl"] { direction: rtl; text-align: right; }
 }
 .map-btn:hover { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #000; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255,180,0,0.35); border-color: var(--accent); }
 
-/* WhatsApp button */
-.wa-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #25D366;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: none;
-  transition: .3s;
-}
-.wa-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.4); }
-
 /* Social links row */
 .social-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; padding: 10px 0; }
 .social-btn {
@@ -441,8 +425,30 @@ html[dir="rtl"] { direction: rtl; text-align: right; }
 .social-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
 /* Boolean badges */
-.bool-yes { color: var(--success); font-weight: 700; }
-.bool-no { color: var(--danger); font-weight: 700; }
+.bool-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  letter-spacing: .2px;
+  white-space: nowrap;
+}
+.bool-badge i { font-size: 12px; }
+.bool-yes {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
+}
+.bool-no {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+}
 
 /* ---- REVIEWS SECTION ---- */
 .reviews-section { max-width: 960px; margin: 0 auto 60px; padding: 0 5%; }
@@ -705,7 +711,7 @@ html[dir="rtl"] { direction: rtl; text-align: right; }
        Adding a new field to the form + hotels table = it appears automatically.
        ─────────────────────────────────────────────────────────────────────
        type values:
-         text | number | url | email | tel | whatsapp | boolean
+         text | number | url | email | tel | boolean
          stars | chips | images | time | policy | social | hidden
     ===================================================================== */
     const FIELD_SCHEMA = [
@@ -726,7 +732,6 @@ html[dir="rtl"] { direction: rtl; text-align: right; }
 
       /* ── Section: الاتصال ── */
       { key: "phone",     label: "الهاتف",            section: "معلومات الاتصال", type: "tel",      icon: "fa-phone" },
-      { key: "whatsapp",  label: "واتساب",             section: "معلومات الاتصال", type: "whatsapp", icon: "fa-brands fa-whatsapp" },
       { key: "email",     label: "البريد الإلكتروني", section: "معلومات الاتصال", type: "email",    icon: "fa-envelope" },
       { key: "website",   label: "الموقع الإلكتروني", section: "معلومات الاتصال", type: "url",      icon: "fa-globe" },
 
@@ -859,11 +864,6 @@ html[dir="rtl"] { direction: rtl; text-align: right; }
         case "tel":
           return `<a href="tel:${escAttr(value)}"><i class="fa-solid fa-phone"></i> ${escHtml(value)}</a>`;
 
-        case "whatsapp": {
-          const num = String(value).replace(/\D/g, "");
-          return `<a href="https://wa.me/${num}" target="_blank" class="wa-btn"><i class="fa-brands fa-whatsapp"></i> ${escHtml(value)}</a>`;
-        }
-
         case "url":
           return `<a href="${escAttr(value)}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> ${escHtml(value)}</a>`;
 
@@ -871,10 +871,14 @@ html[dir="rtl"] { direction: rtl; text-align: right; }
           return `<a href="${escAttr(value)}" target="_blank" rel="noopener" class="social-btn" style="color:${fieldDef.color||'inherit'}"><i class="${escAttr(fieldDef.icon||'fa-solid fa-link')}"></i> ${escHtml(fieldDef.label)}</a>`;
 
         case "boolean":
-          return value ? '<span class="bool-yes">✅ نعم</span>' : '<span class="bool-no">❌ لا</span>';
+          return value
+            ? '<span class="bool-badge bool-yes"><i class="fa-solid fa-circle-check"></i> متوفر</span>'
+            : '<span class="bool-badge bool-no"><i class="fa-solid fa-circle-xmark"></i> غير متوفر</span>';
 
         case "yesno":
-          return resolved ? `<span class="bool-yes">✅ ${resolved}</span>` : `<span class="bool-no">❌ ${escHtml(String(value))}</span>`;
+          return resolved
+            ? `<span class="bool-badge bool-yes"><i class="fa-solid fa-circle-check"></i> ${escHtml(String(resolved))}</span>`
+            : `<span class="bool-badge bool-no"><i class="fa-solid fa-circle-xmark"></i> ${escHtml(String(value))}</span>`;
 
         case "policy":
           return resolved ? escHtml(resolved) : escHtml(String(value));
