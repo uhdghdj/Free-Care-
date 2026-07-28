@@ -9,10 +9,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-   /* ============================================================
+    /* ============================================================
        SUNGET — Booking Page
     ============================================================ */
-
     :root {
       --bg:        #0b0b0f;
       --bg-2:      #14141c;
@@ -28,17 +27,7 @@
       --shadow:    0 10px 30px rgba(0,0,0,0.45);
       --radius:    14px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    /* ===== Hide default Google bar ===== */
-.goog-te-banner-frame,
-.skiptranslate { display: none !important; }
-body { top: 0 !important; }
-.goog-te-gadget { font-size: 0 !important; }
-.goog-te-gadget .goog-te-combo { display: none; }
-#google_translate_element { display: none; }
-
     body {
       font-family: "Cairo", sans-serif;
       background: var(--bg);
@@ -86,7 +75,7 @@ body { top: 0 !important; }
     /* ── BOOKING CONTAINER ── */
     .booking-container {
       width: 100%;
-      max-width: 740px;
+      max-width: 760px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -111,17 +100,14 @@ body { top: 0 !important; }
 
     /* ── FORM ── */
     form { display: flex; flex-direction: column; gap: 18px; }
-
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
     label {
       font-weight: 700;
       color: var(--text);
       font-size: 13px;
       letter-spacing: .3px;
     }
-
     input, select, textarea {
       width: 100%;
       padding: 14px 16px;
@@ -140,28 +126,7 @@ body { top: 0 !important; }
     }
     select option { background: #1a1a24; color: var(--text); }
 
-    /* ── ROOM INFO BOX ── */
-    .room-info-box {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      display: none;
-      gap: 8px;
-      flex-direction: column;
-    }
-    .room-info-box.visible { display: flex; }
-    .room-info-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-    .room-info-row span.val { color: var(--text); }
-
-    /* ── ROOM SLIDER ── */
+    /* ── ROOM PHOTO SLIDER ── */
     .room-slider-wrap {
       position: relative;
       width: 100%;
@@ -179,14 +144,14 @@ body { top: 0 !important; }
     .room-slider-track img {
       width: 100%;
       flex-shrink: 0;
-      height: 220px;
+      height: 260px;
       object-fit: cover;
     }
     .slider-nav {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0,0,0,.55);
+      background: rgba(0,0,0,.6);
       color: #fff;
       border: none;
       font-size: 26px;
@@ -197,38 +162,202 @@ body { top: 0 !important; }
       line-height: 1;
       transition: background .2s;
     }
-    .slider-nav:hover { background: rgba(255,180,0,.5); }
+    .slider-nav:hover { background: rgba(255,180,0,.55); }
     .slider-nav.prev { left: 8px; }
     .slider-nav.next { right: 8px; }
     .slider-counter {
       position: absolute;
       bottom: 10px;
       right: 14px;
-      background: rgba(0,0,0,.55);
+      background: rgba(0,0,0,.6);
       color: #fff;
       font-size: 12px;
       font-weight: 700;
       padding: 3px 10px;
       border-radius: 20px;
     }
+    .cover-badge {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(255,180,0,.85);
+      color: #000;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
     .no-photos {
       text-align: center;
-      padding: 28px;
+      padding: 34px;
       color: var(--text-muted);
       font-size: 14px;
+    }
+
+    /* ── ROOM INFO PANEL ── */
+    .room-info-panel {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .room-info-panel.visible { display: flex; }
+
+    .rip-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .rip-name { font-size: 16px; font-weight: 800; color: var(--text); }
+    .rip-type {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(255,180,0,.1);
+      border: 1px solid rgba(255,180,0,.25);
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+    .rip-price {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .rip-price small { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-right: 4px; }
+
+    .rip-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .rip-spec {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+    .rip-spec i { color: var(--accent); font-size: 11px; }
+
+    .rip-section-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 4px;
+    }
+    .rip-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .rip-chip {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+    .rip-chip.bed { border-color: rgba(255,180,0,.25); color: var(--accent); }
+
+    .rip-pols {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .rpol {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .rpol.yes { background: rgba(39,184,46,.12); border: 1px solid rgba(39,184,46,.3); color: #4cdb53; }
+    .rpol.no  { background: rgba(230,57,70,.10); border: 1px solid rgba(230,57,70,.3); color: #e63946; }
+    .rpol.neu { background: rgba(255,255,255,.05); border: 1px solid var(--border); color: var(--text-muted); }
+
+    .rip-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
     }
 
     /* ── TOTAL PRICE ── */
     .total-price-box {
       text-align: center;
-      font-size: clamp(18px,3vw,26px);
+      font-size: clamp(17px,3vw,24px);
       font-weight: 800;
       padding: 18px;
       background: linear-gradient(135deg, rgba(255,180,0,.08), rgba(255,122,0,.08));
       border: 2px solid var(--accent);
       border-radius: var(--radius);
       color: var(--accent);
+      line-height: 1.5;
     }
+    .total-price-box small {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── PAYMENT METHODS ── */
+    .payment-methods { display: flex; flex-direction: column; gap: 10px; }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color .25s, background .25s, box-shadow .25s;
+      user-select: none;
+    }
+    .payment-option:hover { border-color: rgba(255,180,0,.45); background: rgba(255,180,0,.04); }
+    .payment-option:has(input:checked) {
+      border-color: var(--accent);
+      background: rgba(255,180,0,.08);
+      box-shadow: 0 0 0 3px rgba(255,180,0,.15);
+    }
+    .payment-option input[type=radio] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--text-muted);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: border-color .2s, background .2s;
+    }
+    .payment-option input[type=radio]:checked {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: inset 0 0 0 4px var(--surface-2);
+    }
+    .payment-option .pay-icon { font-size: 24px; flex-shrink: 0; }
+    .payment-option .pay-label { display: flex; flex-direction: column; gap: 2px; }
+    .payment-option .pay-label strong { font-size: 14px; font-weight: 700; color: var(--text); }
+    .payment-option .pay-label small { font-size: 12px; color: var(--text-muted); }
 
     /* ── SUBMIT BUTTON ── */
     #confirmBooking {
@@ -257,106 +386,31 @@ body { top: 0 !important; }
       text-align: center;
       line-height: 1.6;
     }
-    .msg-box.error   { background: rgba(230,57,70,.12);  border: 1px solid var(--danger);  color: var(--danger); }
-    .msg-box.success { background: rgba(39,184,46,.12);  border: 1px solid var(--success); color: var(--success); }
-    .msg-box.info    { background: rgba(255,180,0,.08);  border: 1px solid rgba(255,180,0,.3); color: var(--text-muted); }
+    .msg-box.error   { background: rgba(230,57,70,.12); border: 1px solid var(--danger); color: var(--danger); }
+    .msg-box.success { background: rgba(39,184,46,.12); border: 1px solid var(--success); color: var(--success); }
+    .msg-box.info    { background: rgba(255,180,0,.08); border: 1px solid rgba(255,180,0,.3); color: var(--text-muted); }
 
     /* ── DIVIDER ── */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 4px 0;
+    .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+
+    /* ── SECTION HEADER ── */
+    .section-hdr {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .section-hdr i { color: var(--accent); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
       body { padding: 20px 12px 50px; }
       .booking-container { padding: 20px 14px; }
       .form-row { grid-template-columns: 1fr; }
+      .room-slider-track img { height: 200px; }
     }
-
-/* ── PAYMENT METHODS ── */
-.payment-methods {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.payment-option {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  background: var(--surface-2);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: border-color .25s, background .25s, box-shadow .25s;
-  user-select: none;
-}
-
-.payment-option:hover {
-  border-color: rgba(255,180,0,.45);
-  background: rgba(255,180,0,.05);
-}
-
-.payment-option:has(input:checked) {
-  border-color: var(--accent);
-  background: rgba(255,180,0,.08);
-  box-shadow: 0 0 0 3px rgba(255,180,0,.15);
-}
-
-.payment-option input[type=radio] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--text-muted);
-  border-radius: 50%;
-  flex-shrink: 0;
-  transition: border-color .2s, background .2s;
-  position: relative;
-}
-
-.payment-option input[type=radio]:checked {
-  border-color: var(--accent);
-  background: var(--accent);
-  box-shadow: inset 0 0 0 4px var(--surface-2);
-}
-
-.payment-option .pay-logo {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  border-radius: 6px;
-  background: #fff;
-  padding: 4px;
-  flex-shrink: 0;
-}
-
-.payment-option .pay-icon {
-  font-size: 22px;
-  flex-shrink: 0;
-}
-
-.payment-option .pay-label {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.payment-option .pay-label strong {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.payment-option .pay-label small {
-  font-size: 12px;
-  color: var(--text-muted);
-  font-weight: 400;
-}
-
   </style>
 </head>
 <body>
@@ -430,24 +484,7 @@ body { top: 0 !important; }
 
       <!-- PAYMENT METHOD -->
       <div class="section-hdr"><i class="fa-solid fa-credit-card"></i> طريقة الدفع</div>
-      <div class="payment-methods">
-        <label class="payment-option">
-          <input type="radio" name="payment_method" value="online">
-          <span class="pay-icon">💳</span>
-          <div class="pay-label">
-            <strong>دفع إلكتروني</strong>
-            <small>ادفع المبلغ كاملاً الآن بأمان</small>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="payment_method" value="hotel" checked>
-          <span class="pay-icon">🏨</span>
-          <div class="pay-label">
-            <strong>الدفع في الفندق</strong>
-            <small>أكّد حجزك الآن والدفع عند الوصول</small>
-          </div>
-        </label>
-      </div>
+      <div class="payment-methods" id="paymentMethods"></div>
 
       <!-- TOTAL PRICE -->
       <div class="total-price-box" id="totalPriceBox">
@@ -773,6 +810,38 @@ body { top: 0 !important; }
     }
 
     /* ============================================================
+       PAYMENT METHODS (dynamic, based on hotels.payment_method)
+    ============================================================ */
+    const PAYMENT_METHODS = {
+      online: { value: "online", icon: "💳", title: "دفع إلكتروني", desc: "ادفع المبلغ كاملاً الآن بأمان" },
+      hotel:  { value: "hotel",  icon: "🏨", title: "الدفع في الفندق", desc: "أكّد حجزك الآن والدفع عند الوصول" },
+    };
+
+    function renderPaymentMethods(paymentMethod) {
+      const box = document.getElementById("paymentMethods");
+      if (!box) return;
+      const mode = (paymentMethod || "hotel").toString().trim().toLowerCase();
+      const keys = mode === "both" ? ["online", "hotel"]
+                 : PAYMENT_METHODS[mode] ? [mode]
+                 : ["hotel"];
+
+      box.innerHTML = "";
+      keys.forEach((key, i) => {
+        const m = PAYMENT_METHODS[key];
+        const label = document.createElement("label");
+        label.className = "payment-option";
+        label.innerHTML = `
+          <input type="radio" name="payment_method" value="${m.value}"${key === keys[keys.length - 1] ? " checked" : ""}>
+          <span class="pay-icon">${m.icon}</span>
+          <div class="pay-label">
+            <strong>${m.title}</strong>
+            <small>${m.desc}</small>
+          </div>`;
+        box.appendChild(label);
+      });
+    }
+
+    /* ============================================================
        LOAD HOTEL + ROOMS (with photos / beds / features)
     ============================================================ */
     async function loadHotel() {
@@ -785,6 +854,7 @@ body { top: 0 !important; }
           .from("hotels").select("id, hotel_name, payment_method").eq("id", hotelId).single();
         if (hotelErr || !hotel) { showMessage("❌ الفندق غير موجود", "error"); return; }
         hotelData = hotel;
+        renderPaymentMethods(hotel.payment_method);
         document.title = "حجز – " + hotel.hotel_name + " | Sunget";
         document.getElementById("hotelName").textContent = hotel.hotel_name;
 
@@ -997,7 +1067,5 @@ body { top: 0 !important; }
       loadHotel();
     });
   </script>
-   <script src="translate.js"></script>
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
